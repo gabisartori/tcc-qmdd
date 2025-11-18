@@ -1,43 +1,46 @@
 % ----------------------------------------------------------
-\chapter{Introdução}
+\chapter{Introdução}\label{chap:intro}
 % ----------------------------------------------------------
 
-As orientações aqui apresentadas são baseadas em um conjunto de normas elaboradas pela \gls{ABNT}. Além das normas técnicas, a Biblioteca também elaborou uma série de tutoriais, guias, \textit{templates} os quais estão disponíveis em seu site, no endereço \url{http://portal.bu.ufsc.br/normalizacao/}.
+Conforme os fenômenos da mecânica quântica foram melhor descritos e compreendidos, um novo paradigma para solução de problemas surge: a computação quântica. Essa nova forma de elaborar algoritmos se mostrou equivalente à computação clássica em termos de computabilidade, já, em termos de complexidade computacional (consumo de recursos), algoritmos quânticos podem oferecer soluções menos custosas para problemas que, na computação clássica, acreditava-se já terem sido resolvidos da forma mais eficaz possível. Por exemplo, dada uma lista de items em sequência sem uma organização prévia, a computação clássica entende que a melhor forma possível de verificar se determinado item está presente nessa lista é percorrendo-a, elemento por elemento, buscando pelo alvo desejado. Essa solução possui complexidade temporal O(n), o que significa que o tempo para encontrar um elemento específico cresce linearmente em relação ao tamanho da lista (uma lista 4 vezes maior que outra leva 4 vezes mais tempo para ser percorrida). Porém, em [[TODO]], Grover demonstrou que, usando da mecânica quântica, é possível resolver esse mesmo problema com uma complexidade temporal O($\sqrt{n}$). Nesse caso, uma lista 4 vezes maior que outra, leva apenas o dobro do tempo para que o elemento desejado seja encontrado. Assim, sabe-se que é possível que algoritmos quânticos superem algoritmos clássicos em desempenho, nesse caso, como a complexidade foi reduizada de $O(n)$ para $(O(\sqrt{n})$, diz-se que houve um ganho quadrático de desempenho. Outros algoritmos quânticos como [[TODO]] apresentam até ganho exponencial.
 
-Paralelamente ao uso deste \textit{template} recomenda-se que seja utilizado o \textbf{Tutorial de Trabalhos Acadêmicos} (disponível neste link \url{https://repositorio.ufsc.br/handle/123456789/180829}) e/ou que o discente \textbf{participe das capacitações oferecidas da Biblioteca Universitária da UFSC}.
+Atualmente, porém, essa área de pesquisa encontra um obstáculo: a dificuldade de executar os algoritmos elaborados, dificultando significativamente o desenvolvimento de novos algoritmos, já que testá-los torna-se uma tarefa manual e demorada sem um computador para realizá-la. Essa dificuldade existe porque hardware que possibilite a execução das operações fundamentais da computação quântica é caro e raramente acessível. Além disso, mesmo quando acessível, hardware quântico moderno apresenta baixa capacidade, permitindo apenas a execução de algoritmos simples sobre casos de exemplos pequenos.
 
-Este \textit{template} está configurado apenas para a impressão utilizando o anverso das folhas, caso você queira imprimir usando a frente e o verso, acrescente a opção \textit{openright} e mude de \textit{oneside} para \textit{twoside} nas configurações da classe \textit{abntex2} no início do arquivo principal \textit{main.tex} \cite{abntex2classe}.
+Dessa forma, para auxiliar no desenvolvimento de algoritmos quânticos, busca-se solução na simulação por meio de computadores clássicos para compensar a falta de hardware quântico para execução dos algoritmos. Visto que ambas as formas de definir algoritmos são computacionalmente equivalentes, sabe-se que todo algoritmo quântico pode ser executado em uma máquina clássica e vice-versa. Então, basta definir uma forma de converter algoritmos quânticos em algoritmos clássicos e executar essa nova versão em uma máquina clássica, cujo custo e capacidade são altamente mais favoráveis para o desenvolvimento.
 
-Os trabalhos de conclusão de curso (TCC) de graduação e de especialização não são entregues em formato impresso na Biblioteca Universitária. Porém, sua versão PDF pode ser disponibilizada no Repositório Institucional, consulte seu curso sobre os procedimentos adotados para a entrega. 
+Por sua vez, a simulação clássica também apresenta desafios. Devido à capacidade dos computadores quânticos de sobrepor um número exponencial de estados possíveis em relação à sua capacidade física, a simulação precisa ser capaz de armazenar uma quantia exponencial de informação, tornando o consumo de memória inviável. De forma a mitigar esse problema, diferentes técnicas de simulação surgem, tentando otimizar o consumo de memória e tempo como a simulação esparsa e o método de tableau.
 
-\nocite{NBR6023:2002}
-\nocite{NBR6027:2012}
-\nocite{NBR6028:2003}
-\nocite{NBR10520:2002}
+Este trabalho consiste na implementação de uma dessas técnicas: o uso de diagramas de decisão para simulação de circuitos quânticos. Nessa técnica, o circuito a ser simulado tem suas portas lógicas convertidas em matrizes e a execução do circuito é representada pela multiplicação sucessiva dessas matrizes. Porém, como mencionado previamente, o tamanho da informação a ser armazenada cresce exponencialmente em relação à largura do circuito, esse crescimento é refletido nas matrizes. Por isso o QMDD (Quantum Multiple-Value Decision Diagram) é útil, essa estrutura de dados permite representar matrizes de forma concisa, explorando a redundância na composição das matrizes. Essa técnica de compressão apresenta ganho variado, pois matrizes com maior redundância serão melhor compactadas que matrizes de menor redundância. Por exemplo, uma matrix 1000x1000 na qual todos os valores são 1 pode ser descrita exatamente dessa forma "uma matriz 1000x1000 preenchida inteiramente com o valor 1" ao invés de dedicar espaço suficiente para armazenar \num{1000000} de números uns um ao lado do outro. Já na matrix a seguir, todos seus valores são diferentes, logo o QMDD consumirá mais memória para representá-la:
+\[
+  \begin{bmatrix}
+    1 & 2 \\
+    3 & 4
+  \end{bmatrix}
+\]
 
-% ----------------------------------------------------------
-\section{Recomendações de uso}
-% ----------------------------------------------------------
+Assim, será feita uma implementação dos algoritmos necessários para simulação de um circuito quântico, envolvendo a conversão de cada porta em um QMDD que representa a matriz equivalente à porta, o produto entre dois QMDDs e a medição sobre determinado QMDD. Essa implementação então será integrada ao desenvolvimento da plataforma Ket, uma interface feita para facilitar a descrição de algoritmos quânticos que, por meio do módulo de simulação por QMDD, permitirá ao usuário simular de forma eficiente algoritmos que não exijam matrizes de baixa redundância para serem simulados.
 
-Este \emph{template} foi elaborado para se compilado em \LaTeX utilizando \abnTeX.  Todas as configurações de diferenciação gráfica nas divisões de seção e subseção seguem a  norma NBR 6027/2012 automaticamente. 
-
-Uma nota de rodapé, já tem seu estilo automático com o comando \texttt{$\backslash$footnote}\footnote{As notas de rodapé possuem fonte tamanho 10. O alinhamento das linhas da nota de rodapé deve ser abaixo da primeira letra da primeira palavra da nota de modo dar destaque ao expoente.}.
+Além disso, como não é intuitivamente claro quais circuitos levarão a uma matriz com alta ou baixa redundância, este trabalho buscará, também, comparar o desempenho de diferentes circuitos de forma a analisar quais, se houverem, são os aspectos em comum entre os circuitos que apresentaram ganho significativo.
 
 
-% ----------------------------------------------------------
+  % ----------------------------------------------------------
 \section{Objetivos}
 % ----------------------------------------------------------
-
-Nas seções abaixo estão descritos o objetivo geral e os objetivos específicos deste TCC.
 
 % ----------------------------------------------------------
 \subsection{Objetivo Geral}
 % ----------------------------------------------------------
-
-Descrição...
-
+Implementar um novo método de simulação para o Ket, que poderá ser escolhido pelo usuário para otimizar a simulação de circuitos cujas representações matriciais possuam grande redundância.
 % ----------------------------------------------------------
 \subsection{Objetivos Específicos}
 % ----------------------------------------------------------
+\begin{enumerate}[label=O\arabic*]
+  \item Compilar e descrever os algoritmos apresentados no artigo TODO
 
-Descrição...
+  \item Implementar um simulador utilizando os algoritmos do artigo
+
+  \item Integrar o simulador produzido ao código fonte do Ket
+
+  \item Comparar o desempenho da implementação com as outras técnicas de simulação disponíveis no Ket, identificando em quais cenários o método desenvolvido apresenta ser vantajoso
+
+\end{enumerate}
