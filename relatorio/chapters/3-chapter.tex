@@ -1,7 +1,7 @@
 % ----------------------------------------------------------
 \chapter{QMDD}
 % ----------------------------------------------------------
-Quantum Multiple-Valued Decision Diagram é uma estrutura de dados composta de um grafo dirigido acíclico cujos vértices são rotulados para representar uma variável de seleção. Por meio dessas informações, é possível percorrer o grafo de forma a reconstruir completamente a matriz que ele representa. Assim, o QMDD se mostra uma forma sem perdas de compactar matrizes. Além disso, é possível manipular QMDDs e realizar operações como adição e multiplicação entre eles sem precisar reconstruir suas matrizes, fazendo com que essas operações também tirem vantagem da capacidade de compressão oferecida pelo QMDD.
+Quantum Multiple-Valued Decision Diagram é uma estrutura de dados composta de um grafo dirigido acíclico cujos vértices são rotulados para representar um dos qubits do circuito. Por meio dessas informações, é possível percorrer o grafo de forma a reconstruir completamente a matriz que ele representa. Assim, o QMDD se mostra uma forma sem perdas de compactar matrizes. Além disso, é possível manipular QMDDs e realizar operações como adição e multiplicação entre eles sem precisar reconstruir suas matrizes, fazendo com que essas operações também tirem vantagem da capacidade de compressão oferecida pelo QMDD.
 
 Como estabelecido na seção \ref{sec:matrixrep}, para que um circuito quântico possa ser convertido em matrizes para ser simulado, são necessárias 3 operações fundamentais: construção da matriz a partir da porta; multiplicação de matrizes; medição. Nesta seção, serão apresentados os algoritmos necessários para realização dessas operações, em conjunto das subrotinas necessárias para os algoritmos. Por exemplo, a multiplicação de QMDDs faz uso da subrotina de adição de QMDDs.
 
@@ -11,7 +11,7 @@ Além disso, também será feita uma breve introdução ao conceito de grafos, e
 \section{Grafos}\label{sec:graph}
 % ----------------------------------------------------------
 
-QMDDs são grafos dirigidos acíclicos nos quais cada vértice possui um número fixo de arestas, de acordo com as dimensões da matriz que ele representa, e com rótulos para cada vértice. Esta seção busca introduzir conceitos fundamentais para grafos de forma que a definição de um QMDD seja clara. %TODO: rewrite this because I don't know how to say "to make it easier 4 u to understand
+QMDDs são grafos dirigidos acíclicos nos quais cada vértice possui um número fixo de arestas, de acordo com as dimensões da matriz que ele representa, e com rótulos para cada vértice. Esta seção busca introduzir conceitos fundamentais para grafos de forma que a definição de um QMDD seja clara. %TODO: rewrite this because I don't know how to say "to make it easier 4 u to understand"
 
 Grafo é o nome dado para estruturas de dados organizadas em elementos e ligações entre esses elementos. Cada elemento do grafo é chamado de vértice e as ligações entre os elementos são chamadas de arestas. Um cenário no qual grafos são úteis, por exemplo, é a representação entre diferentes pontos de ônibus de uma cidade e a existência de uma rota que ligue 2 pontos. Nesse caso, cada ponto de ônibus é um vértice e sempre que exista uma linha de ônibus levando de um ponto A para um ponto B, vai existir uma aresta ligando os vértices A e B. Arestas podem ser representadas como uma tupla com o vértice de saída e o vértice destino da aresta.
 
@@ -52,7 +52,7 @@ A existência de uma aresta saindo de A e levando a B significa que existe um ca
 \subsection{Arestas Ponderadas}
 Além de armazenar apenas a informação de que se existe ou não um caminho entre dois vértices, uma aresta também pode armazenar um valor para esse caminho. Normalmente esse valor é entendido como o custo da aresta, porém, nos QMDDs, esse valor é interpretado como um dos valores que compõem a matriz representada.
 
-No exemplo dos pontos de ônibus, o valor de uma aresta poderia representar o tempo que leva para chegar de um lugar a outro. Isso torna se torna útil em junção com o conceito de caminho indireto: se o caminho de A para C é na verdade o caminho de A para B seguido do caminho de B para C, sabe-se que o custo para chegar em C a partir de A será a soma dos custos para ir de A a B e de B a C. Por exemplo, se a aresta (A, B) tem valor 10 minutos e a aresta (B, C) tem valor 20 minutos, sabe-se que é possível sair de A e chegar em C em 30 minutos.
+No exemplo dos pontos de ônibus, o valor de uma aresta poderia representar o tempo que leva para chegar de um lugar a outro. Isso se torna útil em junção com o conceito de caminho indireto: se o caminho de A para C é na verdade o caminho de A para B seguido do caminho de B para C, sabe-se que o custo para chegar em C a partir de A será a soma dos custos para ir de A a B e de B a C. Por exemplo, se a aresta (A, B) tem valor 10 minutos e a aresta (B, C) tem valor 20 minutos, sabe-se que é possível sair de A e chegar em C em 30 minutos.
 
 \begin{figure}[h]
 \centering

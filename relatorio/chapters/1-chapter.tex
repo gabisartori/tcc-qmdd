@@ -10,15 +10,16 @@ Dessa forma, para auxiliar no desenvolvimento de algoritmos quânticos, busca-se
 
 Por sua vez, a simulação clássica também apresenta desafios. Devido à capacidade dos computadores quânticos de sobrepor um número exponencial de estados possíveis em relação à sua capacidade física, a simulação precisa ser capaz de armazenar uma quantia exponencial de informação, tornando o consumo de memória inviável. De forma a mitigar esse problema, diferentes técnicas de simulação surgem, tentando otimizar o consumo de memória e tempo como a simulação esparsa e o método de tableau.
 
-Este trabalho consiste na implementação de uma dessas técnicas: o uso de diagramas de decisão para simulação de circuitos quânticos. Nessa técnica, o circuito a ser simulado tem suas portas lógicas convertidas em matrizes e a execução do circuito é representada pela multiplicação sucessiva dessas matrizes. Porém, como mencionado previamente, o tamanho da informação a ser armazenada cresce exponencialmente em relação à largura do circuito, esse crescimento é refletido nas matrizes. Por isso o QMDD (Quantum Multiple-Value Decision Diagram) é útil, essa estrutura de dados permite representar matrizes de forma concisa, explorando a redundância na composição das matrizes. Essa técnica de compressão apresenta ganho variado, pois matrizes com maior redundância serão melhor compactadas que matrizes de menor redundância. Por exemplo, uma matriz 1000x1000 na qual todos os valores são 1 pode ser descrita exatamente dessa forma "uma matriz 1000x1000 preenchida inteiramente com o valor 1" ao invés de dedicar espaço suficiente para armazenar \num{1000000} de números uns um ao lado do outro. Já na matriz a seguir, todos seus valores são diferentes, logo o QMDD consumirá mais memória para representá-la:
+Este trabalho consiste na implementação de uma dessas técnicas: o uso de diagramas de decisão para simulação de circuitos quânticos. Nessa técnica, o circuito a ser simulado tem suas portas lógicas convertidas em matrizes e a execução do circuito é representada pela multiplicação sucessiva dessas matrizes. Porém, como mencionado previamente, o tamanho da informação a ser armazenada cresce exponencialmente em relação à largura do circuito, esse crescimento é refletido nas matrizes. Por isso o QMDD (Quantum Multiple-Value Decision Diagram) é útil, essa estrutura de dados permite representar matrizes de forma concisa, explorando a redundância na composição delas. Essa técnica de compressão apresenta ganho variado, pois matrizes com maior redundância serão melhor compactadas que matrizes de menor redundância. Por exemplo, uma matriz 1000x1000 na qual todos os valores são 1 pode ser descrita exatamente dessa forma "uma matriz 1000x1000 preenchida inteiramente com o valor 1" ao invés de dedicar espaço suficiente para armazenar \num{1000000} de números uns um ao lado do outro. Já na matriz \cref{Matriz}, todos seus valores são diferentes, logo o QMDD consumirá mais memória para representá-la:
 \[
   \begin{bmatrix}
     1 & 2 \\
     3 & 4
   \end{bmatrix}
+  \label{Matriz}
 \]
 
-Assim, será feita uma implementação dos algoritmos necessários para simulação de um circuito quântico, envolvendo a conversão de cada porta em um QMDD que representa a matriz equivalente à porta, o produto entre dois QMDDs e a medição sobre determinado QMDD. Essa implementação então será integrada ao desenvolvimento da plataforma Ket, uma interface feita para facilitar a descrição de algoritmos quânticos que, por meio do módulo de simulação por QMDD, permitirá ao usuário simular de forma eficiente algoritmos que não exijam matrizes de baixa redundância para serem simulados.
+Assim, será feita uma implementação dos algoritmos necessários para simulação de um circuito quântico, envolvendo a conversão de cada porta em um QMDD que representa a matriz equivalente à porta, o produto entre dois QMDDs e a medição sobre determinado QMDD. Essa implementação então será integrada à plataforma Ket, uma interface feita para facilitar a descrição de algoritmos quânticos que. Então, por meio do módulo de simulação por QMDD, permitirá ao usuário simular de forma eficiente algoritmos que não exijam matrizes de baixa redundância para serem simulados.
 
 Além disso, como não é intuitivamente claro quais circuitos levarão a uma matriz com alta ou baixa redundância, este trabalho buscará, também, comparar o desempenho de diferentes circuitos de forma a analisar quais, se houverem, são os aspectos em comum entre os circuitos que apresentaram ganho significativo.
 
@@ -39,10 +40,10 @@ Implementar um novo método de simulação para o Ket, que poderá ser escolhido
 \begin{enumerate}[label=O\arabic*]
   \item Compilar e descrever os algoritmos apresentados no artigo TODO
 
-  \item Implementar um simulador utilizando os algoritmos do artigo
+  \item Implementar um simulador utilizando os algoritmos do artigo.
 
-  \item Integrar o simulador produzido ao código fonte do Ket
+  \item Integrar o simulador produzido ao código fonte do Ket.
 
-  \item Comparar o desempenho da implementação com as outras técnicas de simulação disponíveis no Ket, identificando em quais cenários o método desenvolvido apresenta ser vantajoso
+  \item Comparar o desempenho da implementação com as outras técnicas de simulação disponíveis no Ket, identificando em quais cenários o método desenvolvido apresenta ser vantajoso.
 
 \end{enumerate}

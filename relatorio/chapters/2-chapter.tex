@@ -45,7 +45,7 @@ De forma a facilitar
 % ----------------------------------------------------------
 Visto que um qubit pode ser representado por meio de um vetor, naturalmente operações sobre qubits podem ser representadas por meio de matrizes. De forma a respeitar o espaço de estados válidos para um qubit, é importante que a matriz que codifica a transformação seja unitária, de forma que a norma do vetor se mantenha a mesma após a aplicação da matriz.
 
-Um exemplo de matrix próximo da computação clássica é a matrix de Pauli X.
+Um exemplo de matriz próximo da computação clássica é a matriz de Pauli X.
 
 \[
 X = \begin{bmatrix}
@@ -54,7 +54,7 @@ X = \begin{bmatrix}
 \end{bmatrix}
 \]
 
-Essa porta quântica basicamente inverte os coeficientes de \ket{0} e \ket{1}, atuando similarmente à porta NOT. Essa porta pode também agir sobre uma superposição. Considere, por exemplo, o estado $\ket{\psi} = 0.6*\ket{0} + 0.8*\ket{1}$. Nesse estado, ao ser medido, o qubit possui $36\% (|0.6|^2)$ de chance de colapsar em \ket{0} e $64\% (|0.8|^2)$ de colapsar em \ket{1}.
+Essa porta quântica basicamente inverte os coeficientes de \ket{0} e \ket{1}, atuando similarmente à porta NOT no mundo clássico. Essa porta pode também agir sobre uma superposição. Considere, por exemplo, o estado $\ket{\psi} = 0.6*\ket{0} + 0.8*\ket{1}$. Nesse estado, ao ser medido, o qubit possui $36\% (|0.6|^2)$ de chance de colapsar em \ket{0} e $64\% (|0.8|^2)$ de colapsar em \ket{1}.
 
 \[
 \begin{bmatrix}
@@ -73,7 +73,7 @@ Essa porta quântica basicamente inverte os coeficientes de \ket{0} e \ket{1}, a
 \end{bmatrix}
 \]
 
-Após a aplicação da porta X, o qubit agora possui $64\%$ de chance de colapsar em \ket{0} e $36\%$ de chance de colapsar em \ket{1}
+Após a aplicação da porta X, o qubit agora possui $64\%$ de chance de colapsar em \ket{0} e $36\%$ de chance de colapsar em \ket{1}.
 
 Outra porta quântica bastante comum e útil é a porta de Hadamard, representada pela letra H.
 \[
@@ -83,7 +83,7 @@ H = \frac{1}{\sqrt{2}} * \begin{bmatrix}
 \end{bmatrix}
 \]
 
-Ao aplicar essa porta em \ket{0}, o qubit é levado para uma superposição na qual existe 50\% de chance do qubit ser medido em \ket{0} e 50\% de chance de ser medido em \ket{1}. Note que o mesmo aconteceria se a porta fosse aplicada em \ket{1}, mas os resultados são diferentes. Enquanto $H*\ket{0} = \frac{1}{\sqrt{2}}*(\ket{0} + \ket{1})$, $H*\ket{1} = \frac{1}{\sqrt{2}}*(\ket{0} - \ket{1})$. Isso é um exemplo de como um qubit pode ter a sua fase alterada por meio de operações quânticas. Apesar de não alterar o resultado imediato de uma medição, a fase de um qubit pode alterar o resultado da superposição após a aplicação de outras portas quânticas. Por exemplo, nos estados recém mencionados, apesar de que apenas a fase seja diferente, aplicar a porta H neles novamente irá produzir resultados diferentes:
+Ao aplicar essa porta em \ket{0}, o qubit é levado para uma superposição na qual existe 50\% de chance do qubit ser medido em \ket{0} e 50\% de chance de ser medido em \ket{1}. Note que o mesmo aconteceria se a porta fosse aplicada em \ket{1}, mas os resultados são diferentes. Enquanto $H \cdot\ket{0} = \frac{1}{\sqrt{2}}\cdot(\ket{0} + \ket{1})$, $H*\ket{1} = \frac{1}{\sqrt{2}}*(\ket{0} - \ket{1})$. Isso é um exemplo de como um qubit pode ter a sua fase alterada por meio de operações quânticas. Apesar de não alterar o resultado imediato de uma medição, a fase de um qubit pode alterar o resultado da superposição após a aplicação de outras portas quânticas. Por exemplo, nos estados recém mencionados, apesar de que apenas a fase seja diferente, aplicar a porta H neles novamente irá produzir resultados diferentes:
 \[
 H*\begin{bmatrix}
 \frac{1}{\sqrt{2}} \\
@@ -130,7 +130,7 @@ CNOT = \begin{bmatrix}
 Note que a matrix possui dimensão 4x4, para se adequar ao formato do vetor que representa um circuito de 2 qubits (uma dimensão para cada combinação de estados). Assim como os vetores que representam a superposição do circuito, as matrizes que representam as portas do circuito crescem exponencialmente de acordo com o número de qubits envolvidos na porta.
 
 \subsection{Produto Tensorial}\label{sub:kronecker}
-O produto tensorial é uma operação essencial para a construção de matrizes e vetores que representem a interação entre os diferentes elementos presentes em um mesmo circuito quântico. Apesar de que portas quânticas normalmente operem sobre poucos qubits, para que uma matriz represente a porta para qubits específicos e seja compatível com um circuito que possua mais circuitos, essa matriz precisa envolver a informação de que os demais qubits não serão afetados, como se todas as portas na verdade atuassem sobre todos os qubits do circuito e simplesmente o resultado de certos qubits é igual à entrada.
+O produto tensorial é uma operação essencial para a construção de matrizes e vetores que representem a interação entre os diferentes elementos presentes em um mesmo circuito quântico. Apesar de que portas quânticas normalmente operam sobre poucos qubits, para que uma matriz represente a porta para qubits específicos e seja compatível com um circuito que possua mais circuitos, essa matriz precisa envolver a informação de que os demais qubits não serão afetados, como se todas as portas na verdade atuassem sobre todos os qubits do circuito e simplesmente o resultado de certos qubits é igual à entrada.
 
 A operação consiste em estender o segundo operando seguindo o formato ditado pelo primeiro, da seguinte forma:
 \begin{equation}
