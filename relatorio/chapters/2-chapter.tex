@@ -5,9 +5,9 @@ A computação quântica é um paradigma para elaboração de algoritmos que se 
 % ----------------------------------------------------------
 \section{Qubits}
 % ----------------------------------------------------------
-Análogo ao bit da computação clássica, o qubit é a menor unidade de informação de um sistema quântico. Para a computação quântica de circuitos, um qubit é representado por um vetor em C². Diferente do bit clássico que se encontra sempre completamente em 0 ou em 1, o qubit pode so encontrar em uma superposição de estados, ou seja, não se sabe se ele está em 0 ou em 1. Por isso, é importante representá-lo como uma combinação dessas duas possibilidades, como se o qubit estivesse em 0 e 1 ao mesmo tempo. Por sua vez, essa superposição não é perfeitamente equilibrada: um qubit pode se encontrar mais próximo de um estado que outro. Então, os 2 números complexos que representam o qubit indicam o quão próximo o qubit está de cada estado.
+Análogo ao bit da computação clássica, o qubit é a menor unidade de informação de um sistema quântico. Para a computação quântica de circuitos, um qubit é representado por um vetor em $\mathbb{C}^2$. Diferente do bit clássico que se encontra sempre completamente em 0 ou em 1, o qubit pode so encontrar em uma superposição de estados, ou seja, não se sabe se ele está em 0 ou em 1. Por isso, é importante representá-lo como uma combinação dessas duas possibilidades, como se o qubit estivesse em 0 e 1 ao mesmo tempo. Por sua vez, essa superposição não é perfeitamente equilibrada: um qubit pode se encontrar mais próximo de um estado que outro. Então, os 2 números complexos que representam o qubit indicam o quão próximo o qubit está de cada estado.
 
-Para representar essa informação textuasmente, pode-se utilizar a notação bra-ket, na qual vetores que representam estados comuns recebem símbolos específicos para representá-los. Por exemplo o \ket{0} (lê-se "ket zero") e o \ket{1} (ket um) são conhecidos como estados da base computacional e representam os seguintes vetores:
+Para representar essa informação textualmente, pode-se utilizar a notação bra-ket, na qual vetores que representam estados comuns recebem símbolos específicos para representá-los. Por exemplo o \ket{0} (lê-se "ket zero") e o \ket{1} (ket um) são conhecidos como estados da base computacional e representam os seguintes vetores:
 \[
 \ket{0} = \begin{bmatrix}
 1 \\
@@ -28,17 +28,20 @@ Isso significa que \ket{0} se encontra totalmente em 0 e \ket{1} totalmente em 1
 \end{bmatrix}
 \]
 
-sendo $\alpha$ e $\beta$ valores complexos tais que $|\alpha|^2 + |\beta|^2 = 1$. O efeito que esses valores possuem no resultado da computação serão explicados na seção \ref{sub:result}
+sendo $\alpha$ e $\beta$ valores complexos tais que $|\alpha|^2 + |\beta|^2 = 1$. O Motivo dessa restrição e o efeito que esses valores possuem no resultado da computação serão explicados na seção \ref{sub:result}
 
 \subsection{Medição e Colapso da Superposição}\label{sub:result}
-A superposição de estados do qubit não é uma informação que possa ser extraída de um circuito quântico. Ao tentar observar o estado de um qubit em superposição, ele colapsa em \ket{0} ou \ket{1}. Esse colapso é aleatório, mas a probabilidade de cada resultado pode ser alterada: um qubit no estado $\ket{\psi} = \alpha*\ket{0}+\beta*\ket{1}$ possui $|\alpha|^2$ de chance de colapsar para \ket{0} e $|\beta|^2$ de chamce de colapsar em \ket{1}. Por isso, um vetor $\begin{bmatrix} \alpha \\ \beta \end{bmatrix}$ só será um estado válido se a soma do quadrado dos módulos de $\alpha$ e $\beta$ resultarem em 1, ou seja, 100\% de chance que o qubit colapse em 0 ou em 1.
+A superposição de estados do qubit não é uma informação que possa ser extraída de um circuito quântico. Ao tentar observar o estado de um qubit em superposição, ele colapsa em \ket{0} ou \ket{1}. Esse colapso é aleatório, mas a probabilidade de cada resultado pode ser alterada: um qubit no estado $\ket{\psi} = \alpha*\ket{0}+\beta*\ket{1}$ possui $|\alpha|^2$ de chance de colapsar para \ket{0} e $|\beta|^2$ de chance de colapsar em \ket{1}. Por isso, um vetor $\begin{bmatrix} \alpha \\ \beta \end{bmatrix}$ só será um estado válido se a soma do quadrado dos módulos de $\alpha$ e $\beta$ resultarem em 1, ou seja, 100\% de chance que o qubit colapse em 0 ou em 1.
 
 \subsection{Fase}
-% TODO
-O uso de número complexos em vez de números reais positivos para representar a probabilidade de que determinado estado seja medido se deve às propriedades da mecânica quântica, que permite essa codificação extra de informação
+Como a probabilidade de determinado resultado é dada pelo quadrado do módulo do valor que representa esse resultado no vetor do qubit, multiplicar esse valor por qualquer valor complexo de módulo 1 não alterará a medição imediata de um estado. Porém ainda é possível que a evolução temporal do estado seja alterada. A seção \ref{sec:gates} oferece um exemplo desse caso.
 
+Esse fator complexo recebe o nome de fase e pode ser divido em fase global e fase relativa.
+
+\subsubsection{Esfera de Bloch}
+De forma a facilitar
 % ----------------------------------------------------------
-\section{Portas Lógicas}
+\section{Portas Lógicas}\label{sec:gates}
 % ----------------------------------------------------------
 Visto que um qubit pode ser representado por meio de um vetor, naturalmente operações sobre qubits podem ser representadas por meio de matrizes. De forma a respeitar o espaço de estados válidos para um qubit, é importante que a matriz que codifica a transformação seja unitária, de forma que a norma do vetor se mantenha a mesma após a aplicação da matriz.
 
@@ -181,7 +184,7 @@ Para facilitar a descrição e visualização de algoritmos quânticos, a notaç
 \]
 
 % ----------------------------------------------------------
-\section{Representação do Circuito por Meio de Matrizes}
+\section{Representação do Circuito por Meio de Matrizes}\label{sec:matrixrep}
 % ----------------------------------------------------------
 Como explicado na subseção \ref{sub:kronecker}, todo circuito quântico pode ser representado como um vetor inicial que descreve a superposição de todos os qubits do circuito e as várias matrizes que representam cada uma das portas quânticas utilizadas no circuito. Após a conversão de todas as portas em matrizes, pode-se multiplicar todas elas para formar uma única matriz que represente o circuito inteiro, também é possível simular a execução passo a passo, aplicando uma matriz de cada vez, de acordo com a ordem estabelecida pelo circuito, sobre o vetor de superposição do sistema.
 
