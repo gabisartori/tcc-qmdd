@@ -33,18 +33,36 @@ Isso significa que \ket{0} se encontra totalmente em 0 e \ket{1} totalmente em 1
   \end{bmatrix}
 \end{equation}
 
-sendo $\alpha$ e $\beta$ valores complexos tais que $|\alpha|^2 + |\beta|^2 = 1$. O Motivo dessa restrição e o efeito que esses valores possuem no resultado da computação serão explicados na seção \cref{sub:result}
+sendo $\alpha$ e $\beta$ valores complexos tais que $|\alpha|^2 + |\beta|^2 = 1$. O Motivo dessa restrição e o efeito que esses valores possuem no resultado da computação serão explicados na \cref{sub:result}
 
 \subsection{Medição e Colapso da Superposição}\label{sub:result}
 A superposição de estados do qubit não é uma informação que possa ser extraída de um circuito quântico. Ao tentar observar o estado de um qubit em superposição, ele colapsa em \ket{0} ou \ket{1}. Esse colapso é aleatório, mas a probabilidade de cada resultado pode ser alterada: um qubit no estado $\ket{\psi} = \alpha \cdot \ket{0}+\beta \cdot \ket{1}$ possui $|\alpha|^2$ de chance de colapsar para \ket{0} e $|\beta|^2$ de chance de colapsar em \ket{1}. Por isso, um vetor $\begin{bmatrix} \alpha \\ \beta \end{bmatrix}$ só será um estado válido se a soma do quadrado dos módulos de $\alpha$ e $\beta$ resultarem em 1, ou seja, 100\% de chance que o qubit colapse em 0 ou em 1.
 
 \subsection{Fase}
-Como a probabilidade de determinado resultado é dada pelo quadrado do módulo do valor que representa esse resultado no vetor do qubit, multiplicar esse valor por qualquer valor complexo de módulo 1 não alterará a medição imediata de um estado. Porém ainda é possível que a evolução temporal do estado seja alterada. A seção \cref{sec:gates} oferece um exemplo desse caso.
+Como a probabilidade de determinado resultado é dada pelo quadrado do módulo do valor que representa esse resultado no vetor do qubit, multiplicar esse valor por qualquer valor complexo de módulo 1 não alterará a medição imediata de um estado. Porém ainda é possível que a evolução temporal do estado seja alterada. A \cref{sec:gates} oferece um exemplo desse caso.
 
-Esse fator complexo recebe o nome de fase e pode ser divido em fase global e fase relativa.
+Esse fator complexo recebe o nome de fase e pode ser divido em fase global e fase relativa. A fase global é quando todos os estados da superposição possuem um múltiplo em comum e não altera nem a medição nem a evolução temporal do qubit. Isso se dá pelo fato que todas as transformações da evolução temporal são lineares, então esse múltiplo em comum pode ser apenas fatorado.
+
+Já a fase relativa é o nome dado para quando nem todos os estados da superposição possuem múltiplos diferentes, por exemplo no caso $\frac{1}{\sqrt{2}}\cdot(\ket{0} + (-1)\cdot \ket{1})$, \ket{0} é multiplicado por 1 e \ket{1} é multiplicado por -1. Nesse caso, não há nenhuma simplificação a ser feita. 
 
 \subsubsection{Esfera de Bloch}
-De forma a facilitar
+
+Como a fase global não afeta o qubit, é possível representar um qubit $\begin{bmatrix} \alpha \\ \beta\end{bmatrix}$ por meio de uma figura tridimensional. Duas dessas dimensões são ocupadas pelas partes real e imaginária de $\beta$ enquanto $\alpha$ pode ser sempre simplificado para um número real positivo, precisando apenas de uma dimensão para ser representado. Por exemplo, o estado $\frac{1}{\sqrt{2}}\cdot(i \cdot \ket{0} - \ket{1})$ pode ter $i$ fatorado como fase global, sendo equivalente ao estado $\frac{1}{\sqrt{2}}\cdot(\ket{0} + i \cdot \ket{1})$.
+
+Essa forma de transformar $\mathbb{C}^2$ em um espaço tridimensional ao descartar a fase global pode ser visualizada por meio da Esfera de Bloch. Ao longo da latitude da esfera encontra-se a proporção entre \ket{0} e \ket{1} e ao longo da longitude encontra-se a fase relativa, atribuída como um valor de módulo 1 multiplicando a proporção de \ket{1}.
+
+Na \cref{fig:bloch}, o polo norte da esfera representa um qubit completamente em \ket{0} enquanto o polo sul representa um qubit em \ket{1}. Ao longo do equador, estão todos os estados nos quais o qubit tenha a mesma chance de colapsar para \ket{0} ou \ket{1} ao ser medido, diferindo apenas pela fase, indicada pelo ângulo da longitude do ponto. Dessa forma, todos os estados sobre o equador da esfera seguem o formato $\frac{1}{\sqrt{2}}\cdot(\ket{0} + e^{i\theta}\cdot\ket{1})$ sendo $\theta$ o ângulo longitudinal da posição na esfera. % TODO: I think I said "longitude" 20 thousand times in that once sentence.
+
+% TODO: This image was taken from wikipedia https://en.wikipedia.org/wiki/Bloch_sphere
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.7\linewidth]{images/bloch-sphere.png}
+  \caption{Esfera de Bloch}
+  \label{fig:bloch}
+\end{figure}
+
+Os kets $\ket{+}, \ket{+i}, \ket{-} e \ket{-i}$, presentes no equador da esfera, representam 4 estados comuns nos quais $\theta$ vale $0, \pi/2, \pi, 3*pi/2$, respectivamente
+
 
 % ----------------------------------------------------------
 \section{Portas Lógicas}\label{sec:gates}
@@ -123,7 +141,7 @@ Ao aplicar essa porta em \ket{0}, o qubit é levado para uma superposição na q
 \section{Circuitos com Múltiplos Qubits}
 % ----------------------------------------------------------
 
-Para combinar múltiplos qubits em um único sistema, é preciso criar um novo espaço vetorial que represente todas as combinações dos qubits que o compõem. Para isso, a operação do produto tensorial, apresentada na subseção \cref{sub:kronecker}, pode ser utilizada para fazer o produto do espaço vetorial de 2 qubits separados, criando um espaço vetorial que presente 2 qubits. Essa operação pode ser aplicada sucessivamente para todos os qubits do circuito.
+Para combinar múltiplos qubits em um único sistema, é preciso criar um novo espaço vetorial que represente todas as combinações dos qubits que o compõem. Para isso, a operação do produto tensorial, apresentada na \cref{sub:kronecker}, pode ser utilizada para fazer o produto do espaço vetorial de 2 qubits separados, criando um espaço vetorial que presente 2 qubits. Essa operação pode ser aplicada sucessivamente para todos os qubits do circuito.
 
 Na notação bra-ket, múltiplos qubits podem ser representados por meio de um ket com o valor de todos os qubits. Por exemplo $\ket{0} \otimes \ket{0} = \ket{00}$. Então, um sistema com 2 qubits pode se encontrar numa superposição de 4 estados diferentes: \ket{00}, \ket{01}, \ket{10} e \ket{11}. Assim, nota-se que o número de possíveis estados cresce exponencialmente em relação ao número de qubits no circuito, visto que cada novo qubit duplica o número de possibilidades.
 
@@ -252,7 +270,7 @@ Para facilitar a descrição e visualização de algoritmos quânticos, a notaç
 \section{Representação do Circuito por Meio de Matrizes}\label{sec:matrixrep}
 % ----------------------------------------------------------
 
-Como explicado na subseção \cref{sub:kronecker}, todo circuito quântico pode ser representado como um vetor inicial que descreve a superposição de todos os qubits do circuito e as várias matrizes que representam cada uma das portas quânticas utilizadas no circuito. Após a conversão de todas as portas em matrizes, pode-se multiplicar todas elas para formar uma única matriz que represente o circuito inteiro. Também é possível simular a execução passo a passo, aplicando uma matriz de cada vez, de acordo com a ordem estabelecida pelo circuito, sobre o vetor de superposição do sistema.
+Como explicado na \cref{sub:kronecker}, todo circuito quântico pode ser representado como um vetor inicial que descreve a superposição de todos os qubits do circuito e as várias matrizes que representam cada uma das portas quânticas utilizadas no circuito. Após a conversão de todas as portas em matrizes, pode-se multiplicar todas elas para formar uma única matriz que represente o circuito inteiro. Também é possível simular a execução passo a passo, aplicando uma matriz de cada vez, de acordo com a ordem estabelecida pelo circuito, sobre o vetor de superposição do sistema.
 
 Por exemplo, no circuito da \cref{fig:circuit3qubit}, a aplicação da porta X sobre o segundo qubit mais siginificativo pode ser representada por meio da matrix $I \otimes X \otimes I$, sendo I a matriz identidade. Ou seja, o primeiro e o último qubits não serão alterados, enquanto o segundo será negado.
 \begin{figure}[h]
