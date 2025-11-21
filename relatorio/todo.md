@@ -1,0 +1,3 @@
+- [ ] Algoritmos
+- [ ] Adicionar referências
+- [ ] Traduzir palavras usadas por cref
