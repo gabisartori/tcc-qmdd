@@ -6,22 +6,24 @@ Conforme os fenômenos da mecânica quântica foram melhor descritos e compreend
 
 Atualmente, porém, essa área de pesquisa encontra um obstáculo: a dificuldade de executar os algoritmos elaborados, dificultando significativamente o desenvolvimento de novos algoritmos, já que testá-los torna-se uma tarefa manual e demorada sem um computador para realizá-la. Essa dificuldade existe porque hardware que possibilite a execução das operações fundamentais da computação quântica é caro e raramente acessível. Além disso, mesmo quando acessível, hardware quântico moderno apresenta baixa capacidade, permitindo apenas a execução de algoritmos simples sobre casos de exemplos pequenos.
 
-Dessa forma, para auxiliar no desenvolvimento de algoritmos quânticos, busca-se solução na simulação por meio de computadores clássicos para compensar a falta de hardware quântico para execução dos algoritmos. Visto que ambas as formas de definir algoritmos são computacionalmente equivalentes, sabe-se que todo algoritmo quântico pode ser executado em uma máquina clássica e vice-versa. Então, basta definir uma forma de converter algoritmos quânticos em algoritmos clássicos e executar essa nova versão em uma máquina clássica, cujo custo e capacidade são altamente mais favoráveis para o desenvolvimento.
+Dessa forma, para auxiliar no desenvolvimento de algoritmos quânticos, busca-se solução na simulação por meio de computadores clássicos para compensar a falta de hardware quântico. Visto que ambas as formas de definir algoritmos são computacionalmente equivalentes, sabe-se que todo algoritmo quântico pode ser executado em uma máquina clássica e vice-versa. Então, basta definir uma forma de converter algoritmos quânticos em algoritmos clássicos e executar essa nova versão em uma máquina clássica, cujo custo e capacidade são altamente mais favoráveis para o desenvolvimento.
 
 Por sua vez, a simulação clássica também apresenta desafios. Devido à capacidade dos computadores quânticos de sobrepor um número exponencial de estados possíveis em relação à sua capacidade física, a simulação precisa ser capaz de armazenar uma quantia exponencial de informação, tornando o consumo de memória inviável. De forma a mitigar esse problema, diferentes técnicas de simulação surgem, tentando otimizar o consumo de memória e tempo como a simulação esparsa e o método de tableau.
 
-Este trabalho consiste na implementação de uma dessas técnicas: o uso de diagramas de decisão para simulação de circuitos quânticos. Nessa técnica, o circuito a ser simulado tem suas portas lógicas convertidas em matrizes e a execução do circuito é representada pela multiplicação sucessiva dessas matrizes. Porém, como mencionado previamente, o tamanho da informação a ser armazenada cresce exponencialmente em relação à largura do circuito, esse crescimento é refletido nas matrizes. Por isso o QMDD (Quantum Multiple-Value Decision Diagram) é útil, essa estrutura de dados permite representar matrizes de forma concisa, explorando a redundância na composição delas. Essa técnica de compressão apresenta ganho variado, pois matrizes com maior redundância serão melhor compactadas que matrizes de menor redundância. Por exemplo, uma matriz 1000x1000 na qual todos os valores são 1 pode ser descrita exatamente dessa forma "uma matriz 1000x1000 preenchida inteiramente com o valor 1" ao invés de dedicar espaço suficiente para armazenar \num{1000000} de números uns um ao lado do outro. Já na matriz \cref{Matriz}, todos seus valores são diferentes, logo o QMDD consumirá mais memória para representá-la:
+Este trabalho consiste na implementação de uma dessas técnicas: o uso de diagramas de decisão para simulação de circuitos quânticos. Nessa técnica, o circuito a ser simulado tem suas portas lógicas convertidas em matrizes e a execução do circuito é representada pela multiplicação sucessiva dessas matrizes. Porém, como mencionado previamente, o tamanho da informação a ser armazenada cresce exponencialmente em relação à largura do circuito, esse crescimento é refletido nas matrizes. Por isso o QMDD (Quantum Multiple-Value Decision Diagram) é útil, essa estrutura de dados permite representar matrizes de forma concisa, explorando a redundância na composição delas. Essa técnica de compressão apresenta ganho variado, pois matrizes com maior redundância serão melhor compactadas que matrizes de menor redundância. Por exemplo, uma matriz 1000x1000 na qual todos os valores são 1 pode ser descrita exatamente dessa forma "uma matriz 1000x1000 preenchida inteiramente com o valor 1" ao invés de dedicar espaço suficiente para armazenar \num{1000000} de números 1's um ao lado do outro. Já na matriz \cref{distinctmatrix}, todos seus valores são diferentes, logo o QMDD não será capaz de compactá-la com a mesma eficácia, consumindo mais memória.
 \[
   \begin{bmatrix}
-    1 & 2 \\
-    3 & 4
+    1 & 2 & \cdots & 1000 \\
+    1001 & 1002 & \cdots & 2000 \\
+    \vdots & \vdots & \ddots & \vdots \\
+    999001 & 999002 & \cdots & 1000000
   \end{bmatrix}
-  \label{Matriz}
+  \label{distinctmatrix}
 \]
 
-Assim, será feita uma implementação dos algoritmos necessários para simulação de um circuito quântico, envolvendo a conversão de cada porta em um QMDD que representa a matriz equivalente à porta, o produto entre dois QMDDs e a medição sobre determinado QMDD. Essa implementação então será integrada à plataforma Ket, uma interface feita para facilitar a descrição de algoritmos quânticos que. Então, por meio do módulo de simulação por QMDD, permitirá ao usuário simular de forma eficiente algoritmos que não exijam matrizes de baixa redundância para serem simulados.
+Assim, será feita uma implementação dos algoritmos necessários para simulação de um circuito quântico, envolvendo a conversão de cada porta em um QMDD que representa a matriz equivalente à porta, o produto entre dois QMDDs e a medição sobre determinado QMDD. Essa implementação então será integrada à plataforma Ket, uma interface feita para facilitar a descrição de algoritmos quânticos que. Então, por meio do módulo de simulação por QMDD, o usuário poderá simular de forma eficiente algoritmos que não exijam matrizes de baixa redundância.
 
-Além disso, como não é intuitivamente claro quais circuitos levarão a uma matriz com alta ou baixa redundância, este trabalho buscará, também, comparar o desempenho de diferentes circuitos de forma a analisar quais, se houverem, são os aspectos em comum entre os circuitos que apresentaram ganho significativo.
+Além disso, não é intuitivamente claro quais circuitos levarão a uma matriz com alta ou baixa redundância. Então, este trabalho buscará comparar o desempenho de diferentes circuitos de forma a analisar se existem aspectos em comum entre os circuitos que apresentaram ganho significativo.
 
 \section{Metologia}
 % TODO
@@ -38,11 +40,11 @@ Implementar um novo método de simulação para o Ket, que poderá ser escolhido
 \subsection{Objetivos Específicos}
 % ----------------------------------------------------------
 \begin{enumerate}[label=O\arabic*]
-  \item Compilar e descrever os algoritmos apresentados no artigo TODO
+  \item Compilar e descrever os algoritmos necessários para o QMDD;
 
-  \item Implementar um simulador utilizando os algoritmos do artigo.
+  \item Implementar um simulador utilizando os algoritmos do artigo;
 
-  \item Integrar o simulador produzido ao código fonte do Ket.
+  \item Integrar o simulador produzido ao código fonte do Ket;
 
   \item Comparar o desempenho da implementação com as outras técnicas de simulação disponíveis no Ket, identificando em quais cenários o método desenvolvido apresenta ser vantajoso.
 
