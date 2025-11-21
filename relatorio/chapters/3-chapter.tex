@@ -1,6 +1,7 @@
 % ----------------------------------------------------------
 \chapter{QMDD}
 % ----------------------------------------------------------
+
 {\itshape Quantum Multiple-Valued Decision Diagram} é uma estrutura de dados composta de um grafo dirigido acíclico cujos vértices são rotulados para representar um dos qubits do circuito. Por meio dessas informações, é possível percorrer o grafo de forma a reconstruir completamente a matriz que ele representa. Assim, o QMDD se mostra uma forma sem perdas de compactar matrizes. Além disso, é possível manipular QMDDs e realizar operações como adição e multiplicação entre eles sem precisar reconstruir suas matrizes, fazendo com que essas operações também tirem vantagem da capacidade de compressão oferecida pelo QMDD.
 
 Como estabelecido na seção \cref{sec:matrixrep}, para que um circuito quântico possa ser convertido em matrizes para ser simulado, são necessárias 3 operações fundamentais: construção da matriz a partir da porta; multiplicação de matrizes; medição. Nesta seção, serão apresentados os algoritmos necessários para realização dessas operações, em conjunto das subrotinas necessárias para os algoritmos. Por exemplo, a multiplicação de QMDDs faz uso da subrotina de adição de QMDDs.
@@ -18,17 +19,17 @@ Grafo é o nome dado para estruturas de dados organizadas em elementos e ligaç�
 O grafo da \cref{fig:graph2nodes} é composto do conjunto de vértices \{A, B\} e do conjunto de arestas \{(A, B)\}
 
 \begin{figure}[h]
-\centering
-\begin{tikzpicture}[>=stealth, node distance=2cm]
+  \centering
+  \begin{tikzpicture}[>=stealth, node distance=2cm]
 
-\node (A) [circle, draw] {A};
-\node (B) [circle, draw, right of=A] {B};
+  \node (A) [circle, draw] {A};
+  \node (B) [circle, draw, right of=A] {B};
 
-\draw[->] (A) -- (B);
+  \draw[->] (A) -- (B);
 
-\end{tikzpicture}
-\caption{Grafo com 2 vértices}
-\label{fig:graph2nodes}
+  \end{tikzpicture}
+  \caption{Grafo com 2 vértices}
+  \label{fig:graph2nodes}
 \end{figure}
 
 
@@ -36,18 +37,18 @@ O grafo da \cref{fig:graph2nodes} é composto do conjunto de vértices \{A, B\} 
 A existência de uma aresta saindo de A e levando a B significa que existe um caminho de A para B. Nem todos os vértices do precisam estar diretamente ligados por uma aresta, é possível que exista um caminho indireto entre dois vértices. Por exemplo, no grafo~\cref{fig:graph3node}, existe um caminho de A para B e um de B para C, isso significa que, indiretamente, também existe um caminho de A para C.
 
 \begin{figure}[h]
-\centering
-\begin{tikzpicture}[>=stealth, node distance=2cm]
+  \centering
+  \begin{tikzpicture}[>=stealth, node distance=2cm]
 
-\node (A) [circle, draw] {A};
-\node (B) [circle, draw, right of=A] {B};
-\node (C) [circle, draw, right of=B] {C};
+  \node (A) [circle, draw] {A};
+  \node (B) [circle, draw, right of=A] {B};
+  \node (C) [circle, draw, right of=B] {C};
 
-\draw[->] (A) -- (B);
-\draw[->] (B) -- (C);
+  \draw[->] (A) -- (B);
+  \draw[->] (B) -- (C);
 
-\end{tikzpicture}
-\label{fig:graph3node}
+  \end{tikzpicture}
+  \label{fig:graph3node}
 \end{figure}
 
 \subsection{Arestas Ponderadas}
@@ -56,18 +57,18 @@ Além de armazenar apenas a informação de que se existe ou não um caminho ent
 No exemplo dos pontos de ônibus, o valor de uma aresta poderia representar o tempo que leva para chegar de um lugar a outro. Isso se torna útil em junção com o conceito de caminho indireto: se o caminho de A para C é na verdade o caminho de A para B seguido do caminho de B para C, sabe-se que o custo para chegar em C a partir de A será a soma dos custos para ir de A a B e de B a C. Por exemplo, se a aresta (A, B) tem valor 10 minutos e a aresta (B, C) tem valor 20 minutos, sabe-se que é possível sair de A e chegar em C em 30 minutos.
 
 \begin{figure}[h]
-\centering
-\begin{tikzpicture}[>=stealth, node distance=2cm]
+  \centering
+  \begin{tikzpicture}[>=stealth, node distance=2cm]
 
-\node (A) [circle, draw] {A};
-\node (B) [circle, draw, right of=A] {B};
-\node (C) [circle, draw, right of=B] {C};
+  \node (A) [circle, draw] {A};
+  \node (B) [circle, draw, right of=A] {B};
+  \node (C) [circle, draw, right of=B] {C};
 
-\draw[->] (A) -- (B) node[midway, above] {10};
-\draw[->] (B) -- (C) node[midway, above] {20};
+  \draw[->] (A) -- (B) node[midway, above] {10};
+  \draw[->] (B) -- (C) node[midway, above] {20};
 
-\end{tikzpicture}
-\label{fig:graph3nodeweighted}
+  \end{tikzpicture}
+  \label{fig:graph3nodeweighted}
 \end{figure}
 
 
@@ -79,7 +80,7 @@ Por outro lado, no caso de grafos dirigidos, a existência de um ciclo passa a s
 O grafo \cref{fig:acyclicgraph} é acíclico, visto que não existe caminho de nenhum vértice para si mesmo, já no grafo \cref{fig:cyclicgraph}, existe um caminho de A para A, passando pelos vértices B e C, logo esse grafo é cíclico.
 
 \begin{figure}[h]
-\centering
+  \centering
   \begin{minipage}{0.45\textwidth}
     \centering
     \begin{tikzpicture}[>=stealth, every node/.style={circle,draw,minimum size=7mm}]
@@ -127,6 +128,7 @@ O grafo \cref{fig:acyclicgraph} é acíclico, visto que não existe caminho de n
 % ----------------------------------------------------------
 \subsection{Construção a Partir de Portas}
 % ----------------------------------------------------------
+
 A construção de um QMDD a partir de uma porta quântica pode ser feita de duas formas possíveis: uma porta arbitrária para um único qubit ou uma porta arbitrária controlada, com um qubit alvo e múltiplos qubits de controle.
 
 A construção de uma porta arbitrária se dá pelo produto tensorial entre matrizes identidade e a matriz que representa a porta arbitrária, de forma a produzir uma única matriz que opere sobre todos os qubits, mantendo todos exceto o qubit alvo da porta inalterados e aplicando o efeito da porta sobre o qubit desejado. Para isso, basta utilizar o algoritmo de produto tensorial definido em \cref{subsub:kronecker}.
