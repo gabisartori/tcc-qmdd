@@ -1,6 +1,4 @@
-% ----------------------------------------------------------
-\chapter{QMDD}
-% ----------------------------------------------------------
+\chapter{QMDD}\label{chap:qmdd}
 
 {\itshape Quantum Multiple-Valued Decision Diagram} é uma estrutura de dados composta de um grafo dirigido acíclico cujos vértices são rotulados para representar um dos qubits do circuito. Por meio dessas informações, é possível percorrer o grafo de forma a reconstruir completamente a matriz que ele representa. Assim, o QMDD se mostra uma forma sem perdas de compactar matrizes. Além disso, é possível manipular QMDDs e realizar operações como adição e multiplicação entre eles sem precisar reconstruir suas matrizes, fazendo com que essas operações também tirem vantagem da capacidade de compressão oferecida pelo QMDD.
 
@@ -21,15 +19,13 @@ Como estabelecido na \cref{sec:matrixrep}, para que um circuito quântico possa 
 
 Além disso, também será feita uma breve introdução ao conceito de grafos, e como eles oferecem formas eficazes de percorrer dados por meio de caminhos, uma funcionalidade essencial para a manipulação e recuperação das informações contidas em QMDDs.
 
-% ----------------------------------------------------------
 \section{Grafos}\label{sec:graph}
-% ----------------------------------------------------------
 
 Visto que QMDDs dependem integralmente de grafos, esta seção busca introduzir os conceitos necessários para compreender as definições do QMDD e as restrições necessárias para que um grafo seja válido para um QMDD.
 
 Grafo é o nome dado para estruturas de dados organizadas em elementos e ligações entre esses elementos. Cada elemento do grafo é chamado de vértice e as ligações entre os elementos são chamadas de arestas. Um cenário no qual grafos são úteis, por exemplo, é a representação entre diferentes pontos de ônibus de uma cidade e a existência de uma rota que ligue 2 pontos. Nesse caso, cada ponto de ônibus é um vértice e sempre que exista uma linha de ônibus levando de um ponto A para um ponto B, vai existir uma aresta ligando os vértices A e B. Arestas podem ser representadas como uma tupla com o vértice de saída e o vértice destino da aresta.
 
-O grafo da \cref{fig:graph2nodes} é composto do conjunto de vértices \{A, B\} e do conjunto de arestas \{(A, B)\}
+O grafo da \cref{fig:graph2nodes} é composto do conjunto de vértices \{A, B\} e do conjunto de arestas \{(A, B)\}.
 
 \begin{figure}[h]
   \centering
@@ -123,13 +119,32 @@ O presente grafo na \cref{fig:acyclicgraph} é acíclico, visto que não existe 
   \end{minipage}
 \end{figure}
 
+\subsection{Representação de Vértices e Arestas}
 
+No começo desta seção, vértices foram apresentadas como sendo elementos arbitrários de um conjunto e arestas como sendo tuplas dos vértices conectados e, opcionalmente, um peso. Para a descrição dos algoritmos do QMDD, uma notação diferente será utilizada. Nela, cada aresta possui apenas um valor e um vértice destino, enquanto cada vértice será uma tupla com seu rótulo e um conjunto de arestas.
 
-% ----------------------------------------------------------
+Assim, o grafo da \cref{fig:graph3nodeweighted} pode ser representado como o conjunto de vértices $\{(A, \{(10, B)\}), (B, \{(20, C)\}), (C, \{\})\}$
+
 \section{Algoritmos}
-% ----------------------------------------------------------
 
-As operações entre QMDDs são definidas de forma recursiva e operam sobre as arestas dos grafos, criando novos grafos a partir dos valores originais e retornando uma nova aresta que aponta para o grafo criado.
+As operações entre QMDDs podem ser traduzidas para operações sobre suas arestas iniciais. Dessa forma, a definição recursiva para operação entre arestas é suficiente. Ao fim, essas operações retornam uma aresta que aponta para o nodo inicial do diagrama resultante da operação realizada.
+
+\subsection{Funções Fundamentais}\label{sub:fundamentals}
+
+Para definição sucinta dos algoritmos, serão utilizadas algumas notações para se referir a informações presentes nos vértices e arestas do QMDD.
+
+\begin{enumerate}
+  \item $x(v)$: $v$ é um vértice e $x(v)$ signfica o rótulo do vértice $v$;
+  \item $v(e)$: $e$ é uma aresta e $v(e)$ representa o vértice ao qual a aresta aponta;
+  \item $w(e)$: $e$ é uma aresta e $w(e)$ é o peso dessa aresta;
+  \item $E_i(x)$: Quando $x$ é um vértice, $E_i(x)$ é a i-ésima aresta do vértice. Quando $x$ é uma aresta, $E_i(x)$ é a i-ésima aresta do vértice ao qual $x$ aponta;
+  \item $T(e)$: $e$ é uma aresta e $T(e)$ é um valor verdadeiro ou falso que indica se a aresta é terminal. Ou seja, se o vértice ao qual $e$ aponta é o vértice terminal;
+  \item $v_t$: é o vértice terminal do QMDD, que não contém nenhuma aresta.
+
+\end{enumerate}
+
+
+Além disso, note que, para representar as matrizes utilizadas por circuitos quânticos, o número de arestas por vértice do QMDD será sempre 4. Apesar de ser possível que diferentes usos de matrizes requeiram diferentes números de arestas por vértice, os algoritmos serão descritos com os valores fixos para as matrizes relevantes para a simulação de circuitos quânticos.
 
 \subsection{Normalização e Eliminação de Redundância}
 
@@ -140,7 +155,7 @@ Após a aplicação de cada algoritmo, é necessário normalizar novamente cada 
 \begin{algorithm}[H]
   \caption{Normalização de Vértice da Aresta}
   \label{alg:normalization}
-  \KwIn{Aresta: $e$}
+  \KwIn{Aresta $e$}
   \KwOut{Aresta}
 
   \If{$E_0(e) = E_1(e) = E_2(e) = E_3(e)$}{
@@ -148,54 +163,188 @@ Após a aplicação de cada algoritmo, é necessário normalizar novamente cada 
   }
   \Else{
     $w \gets w(E_0(e))$ \;
-    \For{$i \gets 0$ \KwTo $4$}{
+    \For{$i \gets 0$ \KwTo $3$}{
       $w(E_i(e)) \gets w(E_i(e))/w$
     }
   }
+
+  $w(e) \gets w * w(e) $
 
   \Return $e$
 
 \end{algorithm}
 
-% ----------------------------------------------------------
 \subsection{Multiplicação}
-% ----------------------------------------------------------
 
 A multiplicação de QMDDs faz uso de uma subrotina de adição, que será apresentada antes do algoritmo em si.
 
-% ----------------------------------------------------------
 \subsubsection{Adição}
-% ----------------------------------------------------------
 
 A adição de dois diagramas é feita de forma recursiva, arestas que apontam para o vértice terminal têm seus valores somados, e arestas que apontam para vértices não terminais vão apontar para o resultado da soma das arestas de seus vértices alvos.
 
+\begin{algorithm}[H]
+  \caption{Adição de Arestas}
+  \label{alg:addition}
+  \KwIn{Aresta $e_0$, Aresta $e_1$}
+  \KwOut{Aresta}
 
-% ----------------------------------------------------------
+  \If{$T(e_1)$}{
+    $e_0, e_1 \gets e_1, e_0$
+  }
+  \If{$T(e_0)$}{
+    \If{$w(e_0) = 0$}{
+      \Return $e_1$
+    }
+    \If{$T(e_0)$}{
+      $e_n \gets Aresta(w(e_0)+w(e_1), v(e_0))$ \;
+      \Return $e_n$
+    }
+  }
+  $v_n \gets Vertice(x(e_0), \emptyset)$ \;
+  \For{$i \gets 0$ \KwTo $3$}{
+    $p \gets Aresta(w(e_0)*w(E_i(e_0)), v(e_0))$ \;
+    $q \gets Aresta(w(e_1)*w(E_i(e_1)), v(e_1))$ \;
+    $E_i(v_n) \gets p + q$
+  }
+  \Return $normalize(Aresta(1, v_n))$
+
+\end{algorithm}
+
 \subsubsection{Algoritmo}
-% ----------------------------------------------------------
+
+\begin{algorithm}[H]
+  \caption{Multiplicação de Arestas}
+  \label{alg:multiplication}
+  \KwIn{Aresta $e_0$, Aresta $e_1$}
+  \KwOut{Aresta}
+
+  \If{$T(e_1)$}{
+    $e_0, e_1 \gets e_1, e_0$
+  }
+  \If{$T(e_0)$}{
+    \If{$w(e_0) = 0 $}{
+      \Return $e_0$
+    }
+    \If{$w(e_0) = 1$}{
+      \Return $e_1$
+    }
+    \Return $Aresta(w(e_0)*w(e_1), v(e_1))$
+  }
+  $v_n \gets Vertice(x(e_0), \emptyset)$
+  \For{$i \gets 0$ \KwTo $1$}{
+    \For{$j \gets 0$ \KwTo $1$}{
+      $E_{2*i+j}(v_n) \gets Aresta(0, v_t)$ \;
+      \For{$k \gets 0$ \KwTo $1$}{
+        $p \gets Aresta(w(e_0)*w(E_{2*i+k(e_0)}), v(E_{2*i+k}(e_0)))$ \;
+        $q \gets Aresta(w(e_1)*w(E_{j+2*k(e_0)}), v(E_{j+2*k}(e_1)))$ \;
+        $E_{2*i+j}(v_n) \gets E_{2*i+j}(v_n) + p*q$
+      }
+    }
+  }
+  $e_n \gets normalize(Aresta(1, v_n$)) \;
+  \Return $e_n$
+
+\end{algorithm}
 
 
+\subsection{Construção a Partir de Portas}\label{sec:gateconstruct}
 
-% ----------------------------------------------------------
-\subsection{Construção a Partir de Portas}
-% ----------------------------------------------------------
+A construção de um QMDD a partir de uma porta quântica pode ser feita de duas formas: uma porta arbitrária para um único qubit ou uma porta arbitrária controlada, com um qubit alvo e múltiplos qubits de controle.
 
-A construção de um QMDD a partir de uma porta quântica pode ser feita de duas formas possíveis: uma porta arbitrária para um único qubit ou uma porta arbitrária controlada, com um qubit alvo e múltiplos qubits de controle.
+A construção de uma porta arbitrária se dá pelo produto tensorial entre matrizes identidade e a matriz que representa a porta arbitrária, de forma a produzir uma única matriz que opere sobre todos os qubits, mantendo todos exceto o qubit alvo da porta inalterados e aplicando o efeito da porta sobre o qubit desejado. Para isso, basta utilizar o algoritmo de produto tensorial definido na \cref{subsub:kronecker}. Assim, para aplicar uma porta U no i-ésimo qubit de um circuito com k qubits, basta realizar o produto tensorial $I^{\otimes i-1} \otimes U \otimes I^{\otimes k-i}$. 
 
-A construção de uma porta arbitrária se dá pelo produto tensorial entre matrizes identidade e a matriz que representa a porta arbitrária, de forma a produzir uma única matriz que opere sobre todos os qubits, mantendo todos exceto o qubit alvo da porta inalterados e aplicando o efeito da porta sobre o qubit desejado. Para isso, basta utilizar o algoritmo de produto tensorial definido em \cref{subsub:kronecker}.
-% ----------------------------------------------------------
+Já a construção de portas controlodas possui duas etapas: uma para os qubits de controle mais significativos que o qubit alvo e uma para os menos significativos. Essas duas etapas são descritas na \cref{subsub:controledgate}
+
 \subsubsection{Produto Tensorial}\label{subsub:kronecker}
-% ----------------------------------------------------------
 
-% ----------------------------------------------------------
-\subsubsection{Construção de Portas Controladas}
-% ----------------------------------------------------------
+O produto tensorial consiste basicamente do encadeamento dos grafos de cada diagrama. $A \otimes B$ significa que as arestas terminais de A serão conectadas ao vértice inicial de B. Note que, por não criar novos vértices, o resultado do produto tensorial não consome mais memória que os dois valores de entrada do produto. Isso representa um ganho exponencial em relação à representação matricial do produto tensorial, cujo tamanho do resultado é o produto dos tamanhos das entradas.
 
-% ----------------------------------------------------------
-\subsection{Medição}
-% ----------------------------------------------------------
+\begin{algorithm}
+  \caption{Produto Tensorial Entre Arestas}
+  \label{alg:kronecker}
+  \KwIn{Aresta $e_0$, Aresta $e_1$}
+  \KwOut{Aresta}
+  
+  \If{$T(e_0)$}{
+    \If{$w(e_0) = 0$}{
+      \Return $e_0$
+    }
+    \If{$w(e_0) = 1$}{
+      \Return $e_1$
+    }
+    \Return $Aresta(w(e_0)*w(e_1), v(e_1))$
+  }
 
-% ----------------------------------------------------------
-\section{Simulação de Circuitos}
-% ----------------------------------------------------------
+  $v_n \gets Vertice(x(e_0), \emptyset)$ \;
 
+  \For{$i \gets 0$ \KwTo $3$}{
+    $E_i(v_n) \gets tensorial(E_i(e_0), e_1)$
+  }
+  \Return $normalize(Aresta(1, v_n))$
+\end{algorithm}
+
+\subsubsection{Construção de Portas Controladas}\label{subsub:controlgate}
+
+Como dito na \cref{sec:gateconstruct}, a construção de portas controlodas se divide em duas partes: qubits de controle menos significativos que o alvo e qubits mais significativos. A construção do QMDD por meio desse método ocorre do vértice terminal ao vértice inicial, qubit a qubit. Assim, para cada qubit controlado, é construído um QMDD que represente o comportamento de controle e para cada qubit que não faz parte da aplicação da porta, é construído um QMDD que represente a matriz identidade. Note que, no caso em que não há qubits de controle, este algoritmo funciona identicamente ao algoritmo para construção de QMDDs de portas únicas, já que todos os qubits além 
+
+\begin{algorithm}
+  \caption{Construção de Portas Controlodas}
+  \label{alg:controlgateconstruct}
+  \KwIn{Número de qubits do circuito $k$; Índice do qubit alvo $t$; Conjunto de índices dos qubits de controle $C$; Matriz da porta $m$}
+  \KwOut{Aresta}
+
+  $v_qt \gets Vertice(t, {(v_t, m00),(v_t, m01),(v_t, m10),(v_t, m11)})$
+  $x \gets \emptyset $
+
+  % \For{$i \gets 0$ \KwTo $k-1$}{
+  %   \If{$i < t-1$}{
+  %     \If{$i \belongs C$}{
+
+  %     } \Else {
+
+  %     }
+  %   } \ElseIf{$i = t-1$}{
+      
+  %   } \Else {
+  %     \If{$i \belongs C$}{
+
+  %     }  \Else {
+
+  %     }     
+  %   }
+  % }
+\end{algorithm}
+
+\subsection{Medição}\label{sub:measurement}
+
+A operação de medição sobre o estado também pode ser representada por meio de um produto matricial. Para construir a matriz que representa essa operação, basta aplicar as matrizes $M_0$ e $M_1$, apresentadas na \cref{eq:measurementmatrices} sobre o qubit a ser medido, de acordo com o resultado obtido. Assim, pode-se tirar vantagem dos algoritmos já definidos para multiplicação de matrizes e produto tensorial para construir a matrix $I^{\otimes n-1} \otimes (M_0 ou M_1) \otimes I^{\otimes k-n}$, sendo $k$ o número de qubits no circuito e $n$ o índice do qubit medido.
+
+\begin{equation}
+  % \caption{Matrizes de Medição}
+  \label{eq:measurementmatrices}
+  M_0
+  =
+  \begin{bmatrix}
+    1 & 0 \\
+    0 & 0
+  \end{bmatrix}
+  \qquad
+  M_1
+  =
+  \begin{bmatrix}
+    0 & 0 \\
+    0 & 1
+  \end{bmatrix}
+\end{equation}
+
+Além disso, para extrair um resultado que obedeça à distribuição de probabilidade ao final da execução do algoritmo, é possível percorrer o grafo do vértice inicial ao final escolhendo as arestas aleatoriamente de acordo com seus pesos. Para isso, é preciso considerar apenas duas das quatro arestas dos vértices, sendo as arestas 1 e 3 responsáveis pelo resultado caso o qubit do vértice tenha sido inicializado em \ket{0} e as arestas 2 e 4 para \ket{1}.
+
+Esse método de obtenção de um único resultado aleatório de acordo com a distribuição probabilística do estado é chamada de simulação fraca. 
+
+\section{Extração de Resultados}
+
+QMMDs permitem a realização de simulação quântica forte. Isso significa que é possível extrair a probabilidade de cada resultado após a execução do circuito. Essa operação inevitavelmente possui custo exponencial, pois n qubits geram $2^n$ possíveis resultados, por isso estratégias de simulação fraca como a apresentada na \cref{sub:measurement} são utilizadas para circuitos com mais qubits.
+
+Caso o circuito possua uma quantia moderada de qubits, é possível realizar um procedimento semelhante à busca descrita na \cref{sub:measurement}. A diferença é que, ao invés de escolher arestas aleatoriamente, cada escolha leva ao valor que representa um resultado possível, logo basta visitar todos os caminhos possíveis.
+
+Lembrando que o QMDD resultante do produto de todas as portas lógicas representa toda a transformação linear do circuito, envolvendo informações de resultados para circuitos inicializados em estados arbitrários e não apenas $\ket{0}^{\otimes n}$. Para extrair o resultado considerando que o circuito foi inicializado em $\ket{0}^{\otimes n}$, basta ignorar as arestas 2 e 4 de cada vértice.

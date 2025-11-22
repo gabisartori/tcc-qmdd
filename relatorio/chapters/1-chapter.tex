@@ -1,6 +1,4 @@
-% ----------------------------------------------------------
 \chapter{Introdução}\label{chap:intro}
-% ----------------------------------------------------------
 
 Conforme os fenômenos da mecânica quântica foram melhor descritos e compreendidos, um novo paradigma para solução de problemas surge: a computação quântica. Essa nova forma de elaborar algoritmos se mostrou equivalente à computação clássica em termos de computabilidade, já, em termos de complexidade computacional (consumo de recursos), algoritmos quânticos podem oferecer soluções menos custosas para problemas que, na computação clássica, acreditava-se já terem sido resolvidos da forma mais eficaz possível. Por exemplo, dada uma lista de items em sequência sem uma organização prévia, a computação clássica entende que a melhor forma possível de verificar se determinado item está presente nessa lista é percorrendo-a, elemento por elemento, buscando pelo alvo desejado. Essa solução possui complexidade temporal O(n), o que significa que o tempo para encontrar um elemento específico cresce linearmente em relação ao tamanho da lista (uma lista 4 vezes maior que outra leva 4 vezes mais tempo para ser percorrida). Porém, Grover demonstrou que, usando da mecânica quântica, é possível resolver esse mesmo problema com uma complexidade temporal O($\sqrt{n}$). Nesse caso, uma lista 4 vezes maior que outra, leva apenas o dobro do tempo para que o elemento desejado seja encontrado. Assim, sabe-se que é possível que algoritmos quânticos superem algoritmos clássicos em desempenho, nesse caso, como a complexidade foi reduizada de $O(n)$ para $O(\sqrt{n})$, diz-se que houve um ganho quadrático de desempenho.
 
@@ -26,19 +24,19 @@ Assim, será feita uma implementação dos algoritmos necessários para simulaç
 Além disso, não é intuitivamente claro quais circuitos levarão a uma matriz com alta ou baixa redundância. Então, este trabalho buscará comparar o desempenho de diferentes circuitos de forma a analisar se existem aspectos em comum entre os circuitos que apresentaram ganho significativo.
 
 \section{Metologia}
-% TODO
 
-% ----------------------------------------------------------
+Este trabalho apresenta a construção de um simulador a partir de um método de simulação ainda não utilizado pela plataforma Ket. A construção desse simulador será feita por meio da compilação de algoritmos existentes na literatura de forma cumprir todos os requisitos do Ket para simulação de circuitos quânticos.
+
+Os resultados da implementação serão analisados de forma qualiquantitativa. Será feita uma comparação das estatísticas produzidas pela análise de desempenho do simulador implementado e dos simuladores já disponíveis no Ket de forma a verifcar que existem cenários nos quais o novo simulador apresenta vantagem em relação aos já existentes. Além disso, será análisado em quais cenários o novo simulador apresentou vantagem e em quais o ganho não foi significativo para identificar aspectos em comum dos algoritmos quânticos que puderam ser simulados de forma eficaz por meio do método apresentado. 
+
 \section{Objetivos}
-% ----------------------------------------------------------
 
-% ----------------------------------------------------------
 \subsection{Objetivo Geral}
-% ----------------------------------------------------------
+
 Implementar um novo método de simulação para o Ket, que poderá ser escolhido pelo usuário para otimizar a simulação de circuitos cujas representações matriciais possuam grande redundância.
-% ----------------------------------------------------------
+
 \subsection{Objetivos Específicos}
-% ----------------------------------------------------------
+
 \begin{enumerate}[label=O\arabic*]
   \item Compilar e descrever os algoritmos necessários para o QMDD;
 
@@ -46,6 +44,5 @@ Implementar um novo método de simulação para o Ket, que poderá ser escolhido
 
   \item Integrar o simulador produzido ao código fonte do Ket;
 
-  \item Comparar o desempenho da implementação com as outras técnicas de simulação disponíveis no Ket, identificando em quais cenários o método desenvolvido apresenta ser vantajoso.
-
+  \item Identificar em quais cenários o simulador produzido apresenta vantagem em relação aos métodos de simulação já disponíveis na plataforma.
 \end{enumerate}

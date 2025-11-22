@@ -154,13 +154,8 @@
 % ---
 
 % Declaração das siglas
-\siglalista{ABNT}{Associação Brasileira de Normas Técnicas}
+\siglalista{QMDD}{{\itshape Quantum Multiple-valued Decision Diagram}}
 
-% Declaração dos simbolos
-\simbololista{C}{\ensuremath{C}}{Circunferência de um círculo}
-\simbololista{pi}{\ensuremath{\pi}}{Número pi} 
-\simbololista{r}{\ensuremath{r}}{Raio de um círculo}
-\simbololista{A}{\ensuremath{A}}{Área de um círculo}
 
 % compila a lista de abreviaturas e siglas e a lista de símbolos
 \makenoidxglossaries 
@@ -191,9 +186,7 @@
 % Corrige justificação
 %\sloppy
 
-% ----------------------------------------------------------
 % ELEMENTOS PRÉ-TEXTUAIS
-% ----------------------------------------------------------
 % \pretextual %a macro \pretextual é acionado automaticamente no início de \begin{document}
 % ---
 % Capa, folha de rosto, ficha bibliografica, errata, folha de apróvação
@@ -202,9 +195,7 @@
 \input{beforetext/beforetext}
 % ---
 
-% ----------------------------------------------------------
 % ELEMENTOS TEXTUAIS
-% ----------------------------------------------------------
 \textual
 
 % ---
@@ -214,70 +205,59 @@
 % ---
 
 % ---
-% 2 - Capítulo 2
+% 2 - Computação Quântica
 % ---
 \include{chapters/2-chapter}
 % ---
 
 % ---
-% 3 - Capítulo 3
+% 3 - QMDD
 % ---
 \include{chapters/3-chapter}
 % ---
 
 % ---
-% 4 - Conclusão
+% 4 - Planejamento para TCC 2
 % ---
 %\phantompart
 \include{chapters/4-chapter}
 % ---
 
-% ----------------------------------------------------------
 % ELEMENTOS PÓS-TEXTUAIS
-% ----------------------------------------------------------
 \postextual
-% ----------------------------------------------------------
 
-% ----------------------------------------------------------
 % Referências bibliográficas
-% ----------------------------------------------------------
 \begingroup
-    \SingleSpacing\printbibliography[title=REFERÊNCIAS]
+	\SingleSpacing\printbibliography[title=REFERÊNCIAS]
 \endgroup
 
-% ----------------------------------------------------------
 % Glossário
-% ----------------------------------------------------------
 %
 % Consulte o manual da classe abntex2 para orientações sobre o glossário.
 %
 %\glossary
 
-% ----------------------------------------------------------
 % Apêndices
-% ----------------------------------------------------------
 
 % ---
 % Inicia os apêndices
 % ---
-\begin{apendicesenv}
-%	\partapendices* 
-	\input{aftertext/apendice_a}
-\end{apendicesenv}
+% \begin{apendicesenv}
+%  	\partapendices* 
+%		\input{aftertext/apendice_a}
+% \end{apendicesenv}
 % ---
 
 
-% ----------------------------------------------------------
 % Anexos
-% ----------------------------------------------------------
 
 % ---
 % Inicia os anexos
 % ---
-\begin{anexosenv}
+%\begin{anexosenv}
 %	\partanexos*
-	\input{aftertext/anexo_a}
-\end{anexosenv}
+%	\input{aftertext/anexo_a}
+%\end{anexosenv}
 
 %---------------------------------------------------------------------
 % INDICE REMISSIVO

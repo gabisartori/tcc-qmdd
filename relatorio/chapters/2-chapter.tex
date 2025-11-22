@@ -1,10 +1,6 @@
-% ----------------------------------------------------------
 \chapter{Computação Quântica}\label{cap:compq}
-% ----------------------------------------------------------
 A computação quântica é um paradigma para elaboração de algoritmos que se baseia nos fenômenos da mecânica quântica, como a superposição de estados. Existem diferentes modelos de computação quântica, neste trabalho as propriedades quânticas de um sistema serão representadas por meio de circuitos, que, por sua vez, fazem uso de bits e portas lógicas quânticas (chamados de qubits e portas quânticas). Esse modelo representa sistemas quânticos por meio de espaços vetoriais de números complexos, nos quais cada dimensão representa um dos possíveis resultados a serem obtidos ao final da execução de um algoritmo.
-% ----------------------------------------------------------
 \section{Qubits}
-% ----------------------------------------------------------
 Análogo ao bit da computação clássica, o qubit é a menor unidade de informação de um sistema quântico. Para a computação quântica de circuitos, um qubit é representado por um vetor em $\mathbb{C}^2$. Diferente do bit clássico que se encontra sempre completamente em 0 ou em 1, o qubit pode so encontrar em uma superposição de estados, ou seja, é possível que o resultado da medição seja tanto 0 quanto 1. Por isso, é importante representá-lo como uma combinação dessas duas possibilidades, como se o qubit estivesse em 0 e 1 ao mesmo tempo. Por sua vez, essa superposição não é perfeitamente equilibrada: um qubit pode se encontrar mais próximo de um estado que outro. Então, os 2 números complexos que representam o qubit indicam o quão próximo o qubit está de cada estado.
 
 Para representar essa informação textualmente, pode-se utilizar a notação bra-ket, na qual vetores que representam estados comuns recebem símbolos específicos para representá-los. Por exemplo o \ket{0} (lê-se "ket zero") e o \ket{1} (ket um) são conhecidos como estados da base computacional e representam os seguintes vetores:
@@ -64,9 +60,7 @@ Na \cref{fig:bloch}, o polo norte da esfera representa um qubit completamente em
 Os kets $\ket{+}, \ket{+i}, \ket{-} e \ket{-i}$, presentes no equador da esfera, representam 4 estados comuns nos quais $\theta$ vale $0, \pi/2, \pi, 3*pi/2$, respectivamente
 
 
-% ----------------------------------------------------------
 \section{Portas Lógicas}\label{sec:gates}
-% ----------------------------------------------------------
 
 Visto que um qubit pode ser representado por meio de um vetor, naturalmente operações sobre qubits podem ser representadas por meio de matrizes. De forma a respeitar o espaço de estados válidos para um qubit, é importante que a matriz que codifica a transformação possua determinante de valor 1. Isso é importante pois, uma matriz unitária, não altera a norma dos vetores aos quais ela é aplicada. Para a representação do qubit, isso significa que a soma das probabilidades de ambos os resultados possíveis não será alterada.
 
@@ -137,9 +131,7 @@ Ao aplicar essa porta em \ket{0}, o qubit é levado para uma superposição na q
   \end{bmatrix}
 \end{equation}
 
-% ----------------------------------------------------------
 \section{Circuitos com Múltiplos Qubits}
-% ----------------------------------------------------------
 
 Para combinar múltiplos qubits em um único sistema, é preciso criar um novo espaço vetorial que represente todas as combinações dos qubits que o compõem. Para isso, a operação do produto tensorial, apresentada na \cref{sub:kronecker}, pode ser utilizada para fazer o produto do espaço vetorial de 2 qubits separados, criando um espaço vetorial que presente 2 qubits. Essa operação pode ser aplicada sucessivamente para todos os qubits do circuito.
 
@@ -266,9 +258,7 @@ Para facilitar a descrição e visualização de algoritmos quânticos, a notaç
   \label{fig:bellcircuit}
 \end{figure}
 
-% ----------------------------------------------------------
 \section{Representação do Circuito por Meio de Matrizes}\label{sec:matrixrep}
-% ----------------------------------------------------------
 
 Como explicado na \cref{sub:kronecker}, todo circuito quântico pode ser representado como um vetor inicial que descreve a superposição de todos os qubits do circuito e as várias matrizes que representam cada uma das portas quânticas utilizadas no circuito. Após a conversão de todas as portas em matrizes, pode-se multiplicar todas elas para formar uma única matriz que represente o circuito inteiro. Também é possível simular a execução passo a passo, aplicando uma matriz de cada vez, de acordo com a ordem estabelecida pelo circuito, sobre o vetor de superposição do sistema.
 

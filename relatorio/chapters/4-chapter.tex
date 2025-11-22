@@ -1,5 +1,23 @@
-% ----------------------------------------------------------
-\chapter{Conclusão}
-% ----------------------------------------------------------
+\chapter{Planejamento para Relatório II}
 
-As conclusões devem responder às questões da pesquisa, em relação aos objetivos e às hipóteses. Devem ser breves, podendo apresentar recomendações e sugestões para trabalhos futuros.
+Na segunda etapa deste trabalho, os algoritmos descritos em \cref{chap:qmdd} serão implementados na linguagem de programação Rust, de forma a serem eventualmente integrados à plataforma de desenvolvimento quântico Ket.
+
+Além disso, a implementação será utilizada para realizar experimentos de forma a documentar o desempenho do método de simulação apresentado e identificar a natureza dos cenários nos quais o método apresenta desempenho superior aos métodos convencionais.
+
+\section{Cronograma}
+
+\subsection{Implementação dos Algoritmos}
+
+A primeira atividade a ser desenvolvida será a codificação dos algoritmos na linguagem de programação Rust em conjunto das estruturas de dados necessárias para execução eficaz das funções fundamentais descritas em \cref{sub:fundamentals}. 
+
+\subsection{Validação da Implementação}
+
+Em conjunto com a implementação, casos de teste serão elaborados, utilizando os simuladores já existentes no Ket para validar os resultados produzidos pela implementação Rust do QMDD.
+
+\subsection{Documentação da Implementação e Integração com o Ket}
+
+Para que o simulador seja apropriadamente adicionado como uma funcionalidade Ket, é necessário que ele cumpra com as interfaces definidas pela plataforma sejam satisfeitas. Nesta atividade, a forma como o simulador cumpre esses requisitos será descrita de forma a permitir futura compreensão do sistema por terceiros.
+
+\subsection{Análise dos Experimentos e Conclusão Sobre Vantagem do QMDD}
+
+Uma vez que o simulador esteja disponível para uso integrado com o Ket, diferentes algoritmos quânticos serão executados utilizando as várias opções de simulação disponíveis no Ket. Estatítistcas de desempenho de programas como tempo de execução e consumo de memória serão coletadas e comparadas entre os métodos para cada algoritmo.
