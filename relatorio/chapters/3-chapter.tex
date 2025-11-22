@@ -1,6 +1,6 @@
 \chapter{QMDD}\label{chap:qmdd}
 
-{\itshape Quantum Multiple-Valued Decision Diagram} é uma estrutura de dados composta de um grafo dirigido acíclico cujos vértices são rotulados para representar um dos qubits do circuito. Por meio dessas informações, é possível percorrer o grafo de forma a reconstruir completamente a matriz que ele representa. Assim, o QMDD se mostra uma forma sem perdas de compactar matrizes. Além disso, é possível manipular QMDDs e realizar operações como adição e multiplicação entre eles sem precisar reconstruir suas matrizes, fazendo com que essas operações também tirem vantagem da capacidade de compressão oferecida pelo QMDD.
+{\itshape Quantum Multiple-Valued Decision Diagram} é uma estrutura de dados composta de um grafo dirigido acíclico cujos vértices são rotulados para representar um dos qubits do circuito. Por meio dessas informações, é possível percorrer o grafo de forma a reconstruir completamente a matriz que ele representa. Assim, o QMDD se mostra uma forma sem perdas de compactar matrizes. Além disso, é possível manipular QMDDs e realizar operações como adição e multiplicação entre eles sem precisar reconstruir suas matrizes, fazendo com que essas operações também tirem vantagem da capacidade de compressão oferecida pelo QMDD. [QUOTE: QMDD1]
 
 Para que o diagrama não cresça exponencialmente em relação ao número de qubits no circuito, são necessárias outras restrições cujos algoritmos devem se ater a não violar. % TODO: As regras estão a seguir:
 
@@ -34,7 +34,7 @@ Ao atingir o vértice terminal, basta multiplicar os pesos de todas as arestas p
 
 \section{Grafos}\label{sec:graph}
 
-Visto que QMDDs dependem integralmente de grafos, esta seção busca introduzir os conceitos necessários para compreender as definições do QMDD e as restrições necessárias para que um grafo seja válido para um QMDD.
+Visto que QMDDs dependem integralmente de grafos, esta seção busca introduzir os conceitos necessários para compreender as definições do QMDD e as restrições necessárias para que um grafo seja válido para um QMDD. [QUOTE: livro do santiago sobre grafos]
 
 Grafo é o nome dado para estruturas de dados organizadas em elementos e ligações entre esses elementos. Cada elemento do grafo é chamado de vértice e as ligações entre os elementos são chamadas de arestas. Um cenário no qual grafos são úteis, por exemplo, é a representação entre diferentes pontos de ônibus de uma cidade e a existência de uma rota que ligue 2 pontos. Nesse caso, cada ponto de ônibus é um vértice e sempre que exista uma linha de ônibus levando de um ponto A para um ponto B, vai existir uma aresta ligando os vértices A e B. Arestas podem ser representadas como uma tupla com o vértice de saída e o vértice destino da aresta.
 
@@ -161,9 +161,94 @@ Além disso, note que, para representar as matrizes utilizadas por circuitos qu�
 
 \subsection{Normalização e Eliminação de Redundância}
 
-Garantir que os vértices estão normalizados é um esforço adicional para cada um dos algoritmos, visto que, por exemplo, a soma de dois vértices normalizados pode resultar em um vértice não normalizado. A normalização de um vértice se dá por meio da aresta que aponta para esse vértice. Caso o vértice seja redundante, a aresta que aponta para ele tem seu alvo substituído para o alvo das arestas do vértice, já, caso o vértice não seja redundante, a aresta original é mantida.
+Garantir que os vértices estão normalizados é um esforço adicional para cada um dos algoritmos, visto que, por exemplo, a soma de dois vértices normalizados pode resultar em um vértice não normalizado. Imagine dois vértices, um com arestas de peso 1, 0, 0 e 1 e outro vértice com arestas de peso 0, 1, 1 e 0, todas apontadas para o mesmo vértice. Apesar de estarem normalizados, a soma dos dois vértices resultará em um vértice com arestas de peso 1, 1, 1 e 1, todas apontando para o mesmo vértice. Esse vértice por sua vez é reduntante, já que todas as arestas possuem mesmo peso e apontam para o mesmo vértice. Logo, é necessário normalizá-lo antes de retornar o resultado da soma.
 
-Após a aplicação de cada algoritmo, é necessário normalizar novamente cada vértice de acordo com \cref{alg:normalization}.
+\[
+  \begin{tikzpicture}[
+    node distance=1.5cm,
+    root/.style={circle,draw,minimum size=8mm},
+    leaf/.style={rectangle,draw,minimum size=6mm},
+    baseline={(current bounding box.center)}
+  ]
+
+    % terminal node
+    \node[leaf] (t) at (0,0) {$1$};
+
+    % QMDD internal node
+    \node[root] (v) at (0,2) {};
+
+    % incoming edge of weight 1
+    \node[above=of v] (src) {};
+    \draw[->] (src) -- node[right] {$1$} (v);
+
+    % four outgoing edges, one for each matrix entry (1,0,0,1)
+    \draw[->] (v) edge[bend left=90]  node[right]  {$1$} (t); % (0,0)
+    \draw[->] (v) edge[bend left=30]  node[right]  {$0$} (t); % (0,1)
+    \draw[->] (v) edge[bend right=30] node[right] {$0$} (t); % (1,0)
+    \draw[->] (v) edge[bend right=90] node[right] {$1$} (t); % (1,1)
+
+  \end{tikzpicture}
+  \;+\;
+  \begin{tikzpicture}[
+    node distance=1.5cm,
+    root/.style={circle,draw,minimum size=8mm},
+    leaf/.style={rectangle,draw,minimum size=6mm},
+    baseline={(current bounding box.center)}
+  ]
+
+    \node[leaf] (t) at (0,0) {$1$};
+    \node[root] (v) at (0,2) {};
+
+    \node[above=of v] (src) {};
+    \draw[->] (src) -- node[right] {$1$} (v);
+
+    \draw[->] (v) edge[bend left=90]  node[right]  {$0$} (t);
+    \draw[->] (v) edge[bend left=30]  node[right]  {$1$} (t);
+    \draw[->] (v) edge[bend right=30] node[right] {$1$} (t);
+    \draw[->] (v) edge[bend right=90] node[right] {$0$} (t);
+
+  \end{tikzpicture}
+  \;=\;
+  \begin{tikzpicture}[
+    node distance=1.5cm,
+    root/.style={circle,draw,minimum size=8mm},
+    leaf/.style={rectangle,draw,minimum size=6mm},
+    baseline={(current bounding box.center)}
+  ]
+
+    \node[leaf] (t) at (0,0) {$1$};
+    \node[root] (v) at (0,2) {};
+
+    \node[above=of v] (src) {};
+    \draw[->] (src) -- node[right] {$1$} (v);
+
+    \draw[->] (v) edge[bend left=90]  node[right]  {$1$} (t); % (0,0)
+    \draw[->] (v) edge[bend left=30]  node[right]  {$1$} (t); % (0,1)
+    \draw[->] (v) edge[bend right=30] node[right] {$1$} (t); % (1,0)
+    \draw[->] (v) edge[bend right=90] node[right] {$1$} (t); % (1,1)
+
+  \end{tikzpicture}
+  \quad\Longrightarrow\quad
+  \begin{tikzpicture}[
+    node distance=1.5cm,
+    root/.style={circle,draw,minimum size=8mm},
+    leaf/.style={rectangle,draw,minimum size=6mm},
+    baseline={(current bounding box.center)}
+  ]
+
+    % terminal node
+    \node[leaf] (t) at (0,0) {$1$};
+
+    % incoming edge of weight 1
+    \node[above=of t] (src) {};
+    \draw[->] (src) -- node[right] {$1$} (t);
+
+  \end{tikzpicture}
+\]
+
+A normalização de um vértice se dá por meio da aresta que aponta para esse vértice. Caso o vértice seja redundante, a aresta que aponta para ele tem seu alvo substituído para o alvo das arestas do vértice, já, caso o vértice não seja redundante, a aresta original é mantida.
+
+Após a aplicação de cada algoritmo, é necessário normalizar novamente cada vértice de acordo com \cref{alg:normalization}. [QUOTE: QMDD1]
 
 \begin{algorithm}[H]
   \caption{Normalização de Vértice da Aresta}
@@ -193,7 +278,7 @@ A multiplicação de QMDDs faz uso de uma subrotina de adição, que será apres
 
 \subsubsection{Adição}
 
-A adição de dois diagramas é feita de forma recursiva, arestas que apontam para o vértice terminal têm seus valores somados, e arestas que apontam para vértices não terminais vão apontar para o resultado da soma das arestas de seus vértices alvos.
+A adição de dois diagramas é feita de forma recursiva, arestas que apontam para o vértice terminal têm seus valores somados, e arestas que apontam para vértices não terminais vão apontar para o resultado da soma das arestas de seus vértices alvos. [QUOTE: QMDD1]
 
 \begin{algorithm}[H]
   \caption{Adição de Arestas}
@@ -224,6 +309,8 @@ A adição de dois diagramas é feita de forma recursiva, arestas que apontam pa
 \end{algorithm}
 
 \subsubsection{Algoritmo}
+
+Dada a adição de duas matrizes, a multiplicação pode ser entendida como a soma das matrizes produzidas pelas convoluções das matrizes a serem somadas, logo basta multiplicar os pesos das arestas dos pares de vértices correspondentes, criando um QMDD para cada combinação de arestas e, então, somando-os. [QUOTE: QMDD2]
 
 \begin{algorithm}[H]
   \caption{Multiplicação de Arestas}
@@ -266,7 +353,7 @@ A construção de um QMDD a partir de uma porta quântica pode ser feita de duas
 
 A construção de uma porta arbitrária se dá pelo produto tensorial entre matrizes identidade e a matriz que representa a porta arbitrária, de forma a produzir uma única matriz que opere sobre todos os qubits, mantendo todos exceto o qubit alvo da porta inalterados e aplicando o efeito da porta sobre o qubit desejado. Para isso, basta utilizar o algoritmo de produto tensorial definido na \cref{subsub:kronecker}. Assim, para aplicar uma porta U no i-ésimo qubit de um circuito com k qubits, basta realizar o produto tensorial $I^{\otimes i-1} \otimes U \otimes I^{\otimes k-i}$. 
 
-Já a construção de portas controlodas possui duas etapas: uma para os qubits de controle mais significativos que o qubit alvo e uma para os menos significativos. Essas duas etapas são descritas na \cref{subsub:controledgate}
+Já a construção de portas controlodas possui duas etapas: uma para os qubits de controle mais significativos que o qubit alvo e uma para os menos significativos. Essas duas etapas são descritas na \cref{subsub:controledgate} [QUOTE QMDD1, QMDD2]
 
 \subsubsection{Produto Tensorial}\label{subsub:kronecker}
 
@@ -352,13 +439,13 @@ A operação de medição sobre o estado também pode ser representada por meio 
   \end{bmatrix}
 \end{equation}
 
-Além disso, para extrair um resultado que obedeça à distribuição de probabilidade ao final da execução do algoritmo, é possível percorrer o grafo do vértice inicial ao final escolhendo as arestas aleatoriamente de acordo com seus pesos. Para isso, é preciso considerar apenas duas das quatro arestas dos vértices, sendo as arestas 1 e 3 responsáveis pelo resultado caso o qubit do vértice tenha sido inicializado em \ket{0} e as arestas 2 e 4 para \ket{1}.
+Além disso, para extrair um resultado que obedeça à distribuição de probabilidade ao final da execução do algoritmo, é possível percorrer o grafo do vértice inicial ao final escolhendo as arestas aleatoriamente de acordo com seus pesos. Para isso, é preciso considerar apenas duas das quatro arestas dos vértices, sendo as arestas 1 e 3 responsáveis pelo resultado caso o qubit do vértice tenha sido inicializado em \ket{0} e as arestas 2 e 4 para \ket{1}. [QUOTE: QMDD2]
 
-Esse método de obtenção de um único resultado aleatório de acordo com a distribuição probabilística do estado é chamada de simulação fraca. 
+Esse método de obtenção de um único resultado aleatório de acordo com a distribuição probabilística do estado é chamada de simulação fraca. [QUOTE: weak simulation]
 
 \section{Extração de Resultados}
 
-QMMDs permitem a realização de simulação quântica forte. Isso significa que é possível extrair a probabilidade de cada resultado após a execução do circuito. Essa operação inevitavelmente possui custo exponencial, pois n qubits geram $2^n$ possíveis resultados, por isso estratégias de simulação fraca como a apresentada na \cref{sub:measurement} são utilizadas para circuitos com mais qubits.
+QMMDs permitem a realização de simulação quântica forte. Isso significa que é possível extrair a probabilidade de cada resultado após a execução do circuito. Essa operação inevitavelmente possui custo exponencial, pois n qubits geram $2^n$ possíveis resultados, por isso estratégias de simulação fraca como a apresentada na \cref{sub:measurement} são utilizadas para circuitos com mais qubits. [QUOTE: strong simulation]
 
 Caso o circuito possua uma quantia moderada de qubits, é possível realizar um procedimento semelhante à busca descrita na \cref{sub:measurement}. A diferença é que, ao invés de escolher arestas aleatoriamente, cada escolha leva ao valor que representa um resultado possível, logo basta visitar todos os caminhos possíveis.
 
