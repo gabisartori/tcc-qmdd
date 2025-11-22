@@ -1,12 +1,12 @@
 \chapter{QMDD}\label{chap:qmdd}
 
-{\itshape Quantum Multiple-Valued Decision Diagram} é uma estrutura de dados composta de um grafo dirigido acíclico cujos vértices são rotulados para representar um dos qubits do circuito. Por meio dessas informações, é possível percorrer o grafo de forma a reconstruir completamente a matriz que ele representa. Assim, o QMDD se mostra uma forma sem perdas de compactar matrizes. Além disso, é possível manipular QMDDs e realizar operações como adição e multiplicação entre eles sem precisar reconstruir suas matrizes, fazendo com que essas operações também tirem vantagem da capacidade de compressão oferecida pelo QMDD. [QUOTE: QMDD1]
+{\itshape Quantum Multiple-Valued Decision Diagram} é uma estrutura de dados composta de um grafo dirigido acíclico cujos vértices são rotulados para representar um dos qubits do circuito. Por meio dessas informações, é possível percorrer o grafo de forma a reconstruir completamente a matriz que ele representa. Assim, o QMDD se mostra uma forma sem perdas de compactar matrizes. Além disso, é possível manipular QMDDs e realizar operações como adição e multiplicação entre eles sem precisar reconstruir suas matrizes, fazendo com que essas operações também tirem vantagem da capacidade de compressão oferecida pelo QMDD. \cite{miller2006qmdd}
 
 Para que o diagrama não cresça exponencialmente em relação ao número de qubits no circuito, são necessárias outras restrições cujos algoritmos devem se ater a não violar. % TODO: As regras estão a seguir:
 
 \begin{enumerate}
   \item Existe um único vértice que não possui arestas saintes. Esse vértice é chamado de vértice terminal.
-  \item Todos os vértices que não são o vértice terminal possuem um rótulo indicando qual qubit o vértice representa e um conjunto de $r^2$ arestas saintes. No caso de QMDDs para circuitos quânticos, $r=2$, logo cada vértice possui 4 arestas.
+  \item Todos os vértices que não são o vértice terminal possuem um rótulo indicando qual qubit o vértice representa e um conjunto de $r^2$ arestas saintes. \cite{fujita1997multi} No caso de QMDDs para circuitos quânticos, $r=2$, logo cada vértice possui 4 arestas.
   \item Existe uma única aresta sem vértice de origem. Essa é a aresta pela qual se iniciam todas as buscas pelo grafo e aponta para o vértice chamado de inicial.
   \item Todas as arestas do grafo são ponderadas por um valor complexo.
   \item Os rótulos dos vértices são ordenáveis, de forma que os rótulos de todo caminho formado do vértice inicial ao terminal estejam ordenados. Ou seja, em uma busca pelo gráfico, sempre se encontrará os vértices de cada qubit na mesma ordem. Além disso, essa ordem diz que o qubit menos significativo do circuito é o mais próximo do vértice terminal, enquanto o mais significativo é o próprio vértice inicial.
@@ -34,7 +34,7 @@ Ao atingir o vértice terminal, basta multiplicar os pesos de todas as arestas p
 
 \section{Grafos}\label{sec:graph}
 
-Visto que QMDDs dependem integralmente de grafos, esta seção busca introduzir os conceitos necessários para compreender as definições do QMDD e as restrições necessárias para que um grafo seja válido para um QMDD. [QUOTE: livro do santiago sobre grafos]
+Visto que QMDDs dependem integralmente de grafos, esta seção busca introduzir os conceitos necessários para compreender as definições do QMDD e as restrições necessárias para que um grafo seja válido para um QMDD \cite{jungnickel}
 
 Grafo é o nome dado para estruturas de dados organizadas em elementos e ligações entre esses elementos. Cada elemento do grafo é chamado de vértice e as ligações entre os elementos são chamadas de arestas. Um cenário no qual grafos são úteis, por exemplo, é a representação entre diferentes pontos de ônibus de uma cidade e a existência de uma rota que ligue 2 pontos. Nesse caso, cada ponto de ônibus é um vértice e sempre que exista uma linha de ônibus levando de um ponto A para um ponto B, vai existir uma aresta ligando os vértices A e B. Arestas podem ser representadas como uma tupla com o vértice de saída e o vértice destino da aresta.
 
@@ -56,7 +56,7 @@ O grafo da \cref{fig:graph2nodes} é composto do conjunto de vértices \{A, B\} 
 
 
 \subsection{Caminhos}
-A existência de uma aresta saindo de A e levando a B significa que existe um caminho de A para B. Nem todos os vértices do precisam estar diretamente ligados por uma aresta, é possível que exista um caminho indireto entre dois vértices. Por exemplo, no grafo~\cref{fig:graph3node}, existe um caminho de A para B e um de B para C, isso significa que, indiretamente, também existe um caminho de A para C.
+A existência de uma aresta saindo de A e levando a B significa que existe um caminho de A para B. Nem todos os vértices do precisam estar diretamente ligados por uma aresta, é possível que exista um caminho indireto entre dois vértices. Por exemplo, no grafo~\cref{fig:graph3node}, existe um caminho de A para B e um de B para C, isso significa que, indiretamente, também existe um caminho de A para C \cite{jungnickel}.
 
 \begin{figure}[h]
   \centering
@@ -97,7 +97,7 @@ No exemplo dos pontos de ônibus, o valor de uma aresta poderia representar o te
 \subsection{Grafos Dirigidos e Ciclos}
 Note que a possibilidade de ir do ponto A para o ponto B não implica na existência de um caminho de B para A. Por isso a ordem da tupla é importante para as arestas. Dessa forma, grafos podem ou não ser dirigidos, ou seja, é possível impor a restrição de que toda aresta representa a existência de ambos os caminhos, tornando a ordem da tupla irrelevante. Caso o grafo não seja dirigido, toda aresta resulta na existência de um ciclo, ou seja, existe um caminho de um vértice para ele mesmo. No caso da aresta não dirigida (A, B), existe um caminho de A para B e existe um caminho de B para A, logo existe um caminho de A para A.
 
-Por outro lado, no caso de grafos dirigidos, a existência de um ciclo passa a ser apenas uma possibilidade facilmente identificada. No caso dos QMDDs, essa restrição é sempre respeitada pela forma como os algoritmos de construção e manipulação são definidos. Porém, dado um grafo arbitrário, é possivel verificar se existe um ciclo por meio de uma busca a partir de cada vértice, verificando se existe um caminho que leve de volta ao mesmo vértice. %TODO: citar busca em profundidade
+Por outro lado, no caso de grafos dirigidos, a existência de um ciclo passa a ser apenas uma possibilidade facilmente identificada. No caso dos QMDDs, essa restrição é sempre respeitada pela forma como os algoritmos de construção e manipulação são definidos. Porém, dado um grafo arbitrário, é possivel verificar se existe um ciclo por meio de uma busca a partir de cada vértice, verificando se existe um caminho que leve de volta ao mesmo vértice \cite{jungnickel}.
 
 O presente grafo na \cref{fig:acyclicgraph} é acíclico, visto que não existe caminho de nenhum vértice para si mesmo, já o grafo na \cref{fig:cyclicgraph}, existe um caminho de A para A, passando pelos vértices B e C, logo esse grafo é cíclico.
 
@@ -248,7 +248,7 @@ Garantir que os vértices estão normalizados é um esforço adicional para cada
 
 A normalização de um vértice se dá por meio da aresta que aponta para esse vértice. Caso o vértice seja redundante, a aresta que aponta para ele tem seu alvo substituído para o alvo das arestas do vértice, já, caso o vértice não seja redundante, a aresta original é mantida.
 
-Após a aplicação de cada algoritmo, é necessário normalizar novamente cada vértice de acordo com \cref{alg:normalization}. [QUOTE: QMDD1]
+Após a aplicação de cada algoritmo, é necessário normalizar novamente cada vértice de acordo com \cref{alg:normalization}. \cite{miller2006qmdd}
 
 \begin{algorithm}[H]
   \caption{Normalização de Vértice da Aresta}
@@ -278,7 +278,7 @@ A multiplicação de QMDDs faz uso de uma subrotina de adição, que será apres
 
 \subsubsection{Adição}
 
-A adição de dois diagramas é feita de forma recursiva, arestas que apontam para o vértice terminal têm seus valores somados, e arestas que apontam para vértices não terminais vão apontar para o resultado da soma das arestas de seus vértices alvos. [QUOTE: QMDD1]
+A adição de dois diagramas é feita de forma recursiva, arestas que apontam para o vértice terminal têm seus valores somados, e arestas que apontam para vértices não terminais vão apontar para o resultado da soma das arestas de seus vértices alvos. \cite{miller2006qmdd}
 
 \begin{algorithm}[H]
   \caption{Adição de Arestas}
@@ -310,7 +310,7 @@ A adição de dois diagramas é feita de forma recursiva, arestas que apontam pa
 
 \subsubsection{Algoritmo}
 
-Dada a adição de duas matrizes, a multiplicação pode ser entendida como a soma das matrizes produzidas pelas convoluções das matrizes a serem somadas, logo basta multiplicar os pesos das arestas dos pares de vértices correspondentes, criando um QMDD para cada combinação de arestas e, então, somando-os. [QUOTE: QMDD2]
+Dada a adição de duas matrizes, a multiplicação pode ser entendida como a soma das matrizes produzidas pelas convoluções das matrizes a serem somadas, logo basta multiplicar os pesos das arestas dos pares de vértices correspondentes, criando um QMDD para cada combinação de arestas e, então, somando-os. \cite{kydros2025tutorial}
 
 \begin{algorithm}[H]
   \caption{Multiplicação de Arestas}
@@ -353,7 +353,7 @@ A construção de um QMDD a partir de uma porta quântica pode ser feita de duas
 
 A construção de uma porta arbitrária se dá pelo produto tensorial entre matrizes identidade e a matriz que representa a porta arbitrária, de forma a produzir uma única matriz que opere sobre todos os qubits, mantendo todos exceto o qubit alvo da porta inalterados e aplicando o efeito da porta sobre o qubit desejado. Para isso, basta utilizar o algoritmo de produto tensorial definido na \cref{subsub:kronecker}. Assim, para aplicar uma porta U no i-ésimo qubit de um circuito com k qubits, basta realizar o produto tensorial $I^{\otimes i-1} \otimes U \otimes I^{\otimes k-i}$. 
 
-Já a construção de portas controlodas possui duas etapas: uma para os qubits de controle mais significativos que o qubit alvo e uma para os menos significativos. Essas duas etapas são descritas na \cref{subsub:controledgate} [QUOTE QMDD1, QMDD2]
+Já a construção de portas controlodas possui duas etapas: uma para os qubits de controle mais significativos que o qubit alvo e uma para os menos significativos. Essas duas etapas são descritas na \cref{subsub:controledgate} \cite{miller2006qmdd, kydros2025tutorial}
 
 \subsubsection{Produto Tensorial}\label{subsub:kronecker}
 
@@ -439,13 +439,13 @@ A operação de medição sobre o estado também pode ser representada por meio 
   \end{bmatrix}
 \end{equation}
 
-Além disso, para extrair um resultado que obedeça à distribuição de probabilidade ao final da execução do algoritmo, é possível percorrer o grafo do vértice inicial ao final escolhendo as arestas aleatoriamente de acordo com seus pesos. Para isso, é preciso considerar apenas duas das quatro arestas dos vértices, sendo as arestas 1 e 3 responsáveis pelo resultado caso o qubit do vértice tenha sido inicializado em \ket{0} e as arestas 2 e 4 para \ket{1}. [QUOTE: QMDD2]
+Além disso, para extrair um resultado que obedeça à distribuição de probabilidade ao final da execução do algoritmo, é possível percorrer o grafo do vértice inicial ao final escolhendo as arestas aleatoriamente de acordo com seus pesos. Para isso, é preciso considerar apenas duas das quatro arestas dos vértices, sendo as arestas 1 e 3 responsáveis pelo resultado caso o qubit do vértice tenha sido inicializado em \ket{0} e as arestas 2 e 4 para \ket{1}. \cite{kydros2025tutorial}
 
-Esse método de obtenção de um único resultado aleatório de acordo com a distribuição probabilística do estado é chamada de simulação fraca. [QUOTE: weak simulation]
+Esse método de obtenção de um único resultado aleatório de acordo com a distribuição probabilística do estado é chamada de simulação fraca \cite{wang2015weak}.
 
 \section{Extração de Resultados}
 
-QMMDs permitem a realização de simulação quântica forte. Isso significa que é possível extrair a probabilidade de cada resultado após a execução do circuito. Essa operação inevitavelmente possui custo exponencial, pois n qubits geram $2^n$ possíveis resultados, por isso estratégias de simulação fraca como a apresentada na \cref{sub:measurement} são utilizadas para circuitos com mais qubits. [QUOTE: strong simulation]
+QMMDs permitem a realização de simulação quântica forte. Isso significa que é possível extrair a probabilidade de cada resultado após a execução do circuito. Essa operação inevitavelmente possui custo exponencial, pois n qubits geram $2^n$ possíveis resultados, por isso estratégias de simulação fraca como a apresentada na \cref{sub:measurement} são utilizadas para circuitos com mais qubits \cite{wang2015weak}.
 
 Caso o circuito possua uma quantia moderada de qubits, é possível realizar um procedimento semelhante à busca descrita na \cref{sub:measurement}. A diferença é que, ao invés de escolher arestas aleatoriamente, cada escolha leva ao valor que representa um resultado possível, logo basta visitar todos os caminhos possíveis.
 

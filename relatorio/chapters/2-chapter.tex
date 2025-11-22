@@ -1,6 +1,6 @@
 \chapter{Computação Quântica}\label{cap:compq}
 
-A computação quântica é um paradigma para elaboração de algoritmos que se baseia nos fenômenos da mecânica quântica, como a superposição e o entrelaçamento de estados. Existem diferentes modelos de computação quântica como a computação adiabática [QUOTE: computação adiabática] e a computação circuital. Este trabalho as propriedades quânticas de um sistema serão representadas por meio da computação circuital. Assim, todo sistema é representado por um circuito, que é composto de bits e portas lógicas (chamados de qubits e portas quânticas). Esse modelo representa sistemas quânticos por meio de espaços vetoriais de números complexos, nos quais cada dimensão representa um dos possíveis resultados a serem obtidos ao final da execução de um algoritmo. [QUOTE: Computação circuital]
+A computação quântica é um paradigma para elaboração de algoritmos que se baseia nos fenômenos da mecânica quântica, como a superposição e o entrelaçamento de estados. Existem diferentes modelos de computação quântica como a computação adiabática \cite{guarienti2016computaccao} e a computação circuital. Este trabalho as propriedades quânticas de um sistema serão representadas por meio da computação circuital. Assim, todo sistema é representado por um circuito, que é composto de bits e portas lógicas (chamados de qubits e portas quânticas). Esse modelo representa sistemas quânticos por meio de espaços vetoriais de números complexos, nos quais cada dimensão representa um dos possíveis resultados a serem obtidos ao final da execução de um algoritmo \cite{deutsch1989quantum}.
 
 \section{Qubits}
 
@@ -36,7 +36,7 @@ sendo $\alpha$ e $\beta$ valores complexos tais que $|\alpha|^2 + |\beta|^2 = 1$
 
 \subsection{Medição e Colapso da Superposição}\label{sub:result}
 
-A superposição de estados do qubit não é uma informação que possa ser extraída de um circuito quântico. Ao tentar observar o estado de um qubit em superposição, ele colapsa em \ket{0} ou \ket{1}. Esse colapso é aleatório, mas a probabilidade de cada resultado pode ser alterada: um qubit no estado $\ket{\psi} = \alpha \cdot \ket{0}+\beta \cdot \ket{1}$ possui $|\alpha|^2$ de chance de colapsar para \ket{0} e $|\beta|^2$ de chance de colapsar em \ket{1}. Por isso, um vetor $\begin{bmatrix} \alpha \\ \beta \end{bmatrix}$ só será um estado válido se a soma do quadrado dos módulos de $\alpha$ e $\beta$ resultarem em 1, ou seja, 100\% de chance que o qubit colapse em 0 ou em 1. [QUOTE: superposição]
+A superposição de estados do qubit não é uma informação que possa ser extraída de um circuito quântico. Ao tentar observar o estado de um qubit em superposição, ele colapsa em \ket{0} ou \ket{1}. Esse colapso é aleatório, mas a probabilidade de cada resultado pode ser alterada: um qubit no estado $\ket{\psi} = \alpha \cdot \ket{0}+\beta \cdot \ket{1}$ possui $|\alpha|^2$ de chance de colapsar para \ket{0} e $|\beta|^2$ de chance de colapsar em \ket{1}. Por isso, um vetor $\begin{bmatrix} \alpha \\ \beta \end{bmatrix}$ só será um estado válido se a soma do quadrado dos módulos de $\alpha$ e $\beta$ resultarem em 1, ou seja, 100\% de chance que o qubit colapse em 0 ou em 1 \cite{griffiths1995introduction}.
 
 \subsection{Fase}
 Como a probabilidade de determinado resultado é dada pelo quadrado do módulo do valor que representa esse resultado no vetor do qubit, multiplicar esse valor por qualquer valor complexo de módulo 1 não alterará a medição imediata de um estado. Porém ainda é possível que a evolução temporal do estado seja alterada. A \cref{sec:gates} oferece um exemplo desse caso.
@@ -51,7 +51,7 @@ Como a fase global não afeta o qubit, é possível representar um qubit $\begin
 
 Essa forma de transformar $\mathbb{C}^2$ em um espaço tridimensional ao descartar a fase global pode ser visualizada por meio da Esfera de Bloch. Ao longo da latitude da esfera encontra-se a proporção entre \ket{0} e \ket{1} e ao longo da longitude encontra-se a fase relativa, atribuída como um valor de módulo 1 multiplicando a proporção de \ket{1}.
 
-Na \cref{fig:bloch}, o polo norte da esfera representa um qubit completamente em \ket{0} enquanto o polo sul representa um qubit em \ket{1}. Ao longo do equador, estão todos os estados nos quais o qubit tenha a mesma chance de colapsar para \ket{0} ou \ket{1} ao ser medido, diferindo apenas pela fase, indicada pelo ângulo da longitude do ponto. Dessa forma, todos os estados sobre o equador da esfera seguem o formato $\frac{1}{\sqrt{2}}\cdot(\ket{0} + e^{i\theta}\cdot\ket{1})$ sendo $\theta$ o ângulo longitudinal da posição na esfera. [QUOTE: esfera de bloch] % TODO: I think I said "longitude" 20 thousand times in that once sentence.
+Na \cref{fig:bloch}, o polo norte da esfera representa um qubit completamente em \ket{0} enquanto o polo sul representa um qubit em \ket{1}. Ao longo do equador, estão todos os estados nos quais o qubit tenha a mesma chance de colapsar para \ket{0} ou \ket{1} ao ser medido, diferindo apenas pela fase, indicada pelo ângulo da longitude do ponto. Dessa forma, todos os estados sobre o equador da esfera seguem o formato $\frac{1}{\sqrt{2}}\cdot(\ket{0} + e^{i\theta}\cdot\ket{1})$ sendo $\theta$ o ângulo longitudinal da posição na esfera \cite{glendinning2005bloch}.
 
 % TODO: This image was taken from wikipedia https://en.wikipedia.org/wiki/Bloch_sphere
 \begin{figure}[h]
@@ -66,11 +66,11 @@ Os kets $\ket{+}, \ket{+i}, \ket{-} e \ket{-i}$, presentes no equador da esfera,
 
 \section{Portas Lógicas}\label{sec:gates}
 
-Visto que um qubit pode ser representado por meio de um vetor, naturalmente operações sobre qubits podem ser representadas por meio de matrizes. De forma a respeitar o espaço de estados válidos para um qubit, é importante que a matriz que codifica a transformação possua determinante de valor 1. Isso é importante pois, uma matriz unitária, não altera a norma dos vetores aos quais ela é aplicada. Para a representação do qubit, isso significa que a soma das probabilidades de ambos os resultados possíveis não será alterada. [QUOTE: portas quânticas as matrizes]
+Visto que um qubit pode ser representado por meio de um vetor, naturalmente operações sobre qubits podem ser representadas por meio de matrizes. De forma a respeitar o espaço de estados válidos para um qubit, é importante que a matriz que codifica a transformação possua determinante de valor 1. Isso é importante pois, uma matriz unitária, não altera a norma dos vetores aos quais ela é aplicada. Para a representação do qubit, isso significa que a soma das probabilidades de ambos os resultados possíveis não será alterada \cite{deutsch1989quantum}.
 
-Além disso, por possuirem determinante diferente de 0, matrizes unitárias são sempre reversíveis. Isso faz com que todo circuito quântico seja reversível, já que todos os seus componentes também são. Dessa forma, computadores quânticos se apresentam mais eficientes energeticamente, já que uma das principais formas de dissipação de energia que ocorre em computadores clássicos se dá pela destruição de informação que acontece em portas lógicas não reversíveis. Por exemplo, a porta lógica AND, que recebe 2 bits como entrada mas retorna apenas 1 de saída. Assim, diferentes entradas são forçadas a compartilhar a mesma saída, tornando impossível inferir qual a entrada da porta tendo como base apenas o resultado. [QUOTE: Reversibilidade e eficiência energética]
+Além disso, por possuirem determinante diferente de 0, matrizes unitárias são sempre reversíveis. Isso faz com que todo circuito quântico seja reversível, já que todos os seus componentes também são. Dessa forma, computadores quânticos se apresentam mais eficientes energeticamente, já que uma das principais formas de dissipação de energia que ocorre em computadores clássicos se dá pela destruição de informação que acontece em portas lógicas não reversíveis. Por exemplo, a porta lógica AND, que recebe 2 bits como entrada mas retorna apenas 1 de saída. Assim, diferentes entradas são forçadas a compartilhar a mesma saída, tornando impossível inferir qual a entrada da porta tendo como base apenas o resultado \cite{efficientreversiblegates}.
 
-Um exemplo de matriz próximo da computação clássica é a matriz de Pauli X. [QUOTE: Portas de pauli]
+Um exemplo de matriz próximo da computação clássica é a matriz de Pauli X \cite{deutsch1989quantum}.
 
 \begin{equation}
   X = \begin{bmatrix}
@@ -148,7 +148,7 @@ A matriz identidade, representada pela letra I. Essa matriz não altera o estado
   \end{bmatrix}
 \end{equation}
 
-Matrizes de Pauli: são 3 matrizes que descrevem as transformações análogas às rotações nos eixos X, Y e Z da esfera de bloch. Por isso são representadas pelas letras X, Y e Z. [QUOTE: Portas de pauli]
+Matrizes de Pauli: são 3 matrizes que descrevem as transformações análogas às rotações nos eixos X, Y e Z da esfera de bloch. Por isso são representadas pelas letras X, Y e Z \cite{deutsch1989quantum}.
 
 \begin{equation}
   X = \begin{bmatrix}
@@ -184,7 +184,7 @@ Matriz de Hadamard, coloca o qubit em superposição. Representada pela letra H.
 
 Para combinar múltiplos qubits em um único sistema, é preciso criar um novo espaço vetorial que represente todas as combinações dos qubits que o compõem. Para isso, a operação do produto tensorial, apresentada na \cref{sub:kronecker}, pode ser utilizada para fazer o produto do espaço vetorial de 2 qubits separados, criando um espaço vetorial que presente 2 qubits. Essa operação pode ser aplicada sucessivamente para todos os qubits do circuito.
 
-Na notação bra-ket [QUOTE: Braket notation], múltiplos qubits podem ser representados por meio de um ket com o valor de todos os qubits. Por exemplo $\ket{0} \otimes \ket{0} = \ket{00}$. Então, um sistema com 2 qubits pode se encontrar numa superposição de 4 estados diferentes: \ket{00}, \ket{01}, \ket{10} e \ket{11}. Assim, nota-se que o número de possíveis estados cresce exponencialmente em relação ao número de qubits no circuito, visto que cada novo qubit duplica o número de possibilidades.
+Na notação bra-ket \cite{Dirac_1939}, múltiplos qubits podem ser representados por meio de um ket com o valor de todos os qubits. Por exemplo $\ket{0} \otimes \ket{0} = \ket{00}$. Então, um sistema com 2 qubits pode se encontrar numa superposição de 4 estados diferentes: \ket{00}, \ket{01}, \ket{10} e \ket{11}. Assim, nota-se que o número de possíveis estados cresce exponencialmente em relação ao número de qubits no circuito, visto que cada novo qubit duplica o número de possibilidades.
 
 Além disso, com a presença de múltiplos qubits no circuito, surge a possibilidade de que portas quânticas envolvam mais de um qubit. As portas de múltiplos qubits mais importantes são as portas controladas (outras portas normalmente podem ser decompostas em combinações de portas de um único qubit ou portas controladas). As portas controladas são portas que atuam sobre um qubit alvo, tendo como controle um grupo de vários outros qubits, tendo efeito sobre o qubit alvo apenas no caso em que todos os qubit de controle estejam ativos. Por exemplo, considere o estado $\ket{\psi} = \frac{1}{\sqrt{2}} \cdot (\ket{00} + \ket{10})$. Aplicando uma porta X controlada (também conhecida como CNOT) no segundo qubit menos significativo do circuito tendo o mais significativo como qubit de controle, a porta irá agir apenas no caso \ket{10}, transformando-o em \ket{11}.
 
@@ -309,7 +309,7 @@ Para facilitar a descrição e visualização de algoritmos quânticos, a notaç
 
 \section{Representação do Circuito por Meio de Matrizes}\label{sec:matrixrep}
 
-Como explicado na \cref{sub:kronecker}, todo circuito quântico pode ser representado como um vetor inicial que descreve a superposição de todos os qubits do circuito e as várias matrizes que representam cada uma das portas quânticas utilizadas no circuito. Após a conversão de todas as portas em matrizes, pode-se multiplicar todas elas para formar uma única matriz que represente o circuito inteiro. Também é possível simular a execução passo a passo, aplicando uma matriz de cada vez, de acordo com a ordem estabelecida pelo circuito, sobre o vetor de superposição do sistema. [QUOTE: circuit notation]
+Como explicado na \cref{sub:kronecker}, todo circuito quântico pode ser representado como um vetor inicial que descreve a superposição de todos os qubits do circuito e as várias matrizes que representam cada uma das portas quânticas utilizadas no circuito. Após a conversão de todas as portas em matrizes, pode-se multiplicar todas elas para formar uma única matriz que represente o circuito inteiro. Também é possível simular a execução passo a passo, aplicando uma matriz de cada vez, de acordo com a ordem estabelecida pelo circuito, sobre o vetor de superposição do sistema \cite{deutsch1989quantum}.
 
 Por exemplo, no circuito da \cref{fig:circuit3qubit}, a aplicação da porta X sobre o segundo qubit mais siginificativo pode ser representada por meio da matrix $I \otimes X \otimes I$, sendo I a matriz identidade. Ou seja, o primeiro e o último qubits não serão alterados, enquanto o segundo será negado.
 \begin{figure}[h]
