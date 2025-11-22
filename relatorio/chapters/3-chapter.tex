@@ -19,6 +19,19 @@ Como estabelecido na \cref{sec:matrixrep}, para que um circuito quântico possa 
 
 Além disso, também será feita uma breve introdução ao conceito de grafos, e como eles oferecem formas eficazes de percorrer dados por meio de caminhos, uma funcionalidade essencial para a manipulação e recuperação das informações contidas em QMDDs.
 
+\section{Como Ler um QMDD}\label{sec:qmddvis}
+
+A representação gráfica de um QMDD permite a visualização de como um determinado valor da matriz codificada pode ser extraído por meio de um caminho entre o vértice raiz e o vértice terminal. A TODO representa a matriz H. QMDDs que representam uma porta sobre um único qubit podem facilmente ser construídos, precisando apenas de um vértice inicial e um terminal, sendo as 4 arestas do vértice inicial os 4 valores presentes em cada posição da matriz. Note que ainda é necessário aplicar o algoritmo de normalização apresentado em \cref{alg:normalize} para garantir a consistência caso esse QMDD participe de uma operação com outro QMDD.
+
+Já para matrizes que representam portas sobre múltiplos qubits, a ligação direta entre arestas e posições da matriz deixa de existir. Por exemplo, a matriz $X \otimes H$ pode ser representada com apenas 8 arestas, apesar de ser uma matriz com 16 posições, como demonstrado na TODO.
+
+% TODO: Figura do QMDD
+
+% TODO: Reescrever esse fuckass parágrafo
+Para reconstruir a matriz representada por esse diagrama, basta seguir o caminho da aresta inicial ao vértice final. Cada vértice é rotula um qubit e suas arestas representam uma das 4 possíveis escolha para ler o qubit: começou em 0 e está em 0; começou em 1 e está em 0; começou em 0 e está em 1 ou começou em 1 e está em 1. Como os qubits normalmente são inicializados em \ket{0}, pode-se construir o caminho considerando apenas a primeira e a terceira aresta do vértice. Caso o qubit do vértice esteja em \ket{0} no estado a ser lido, segue a primeira aresta e caso esteja em \ket{1} segue a terceira.
+
+Ao atingir o vértice terminal, basta multiplicar os pesos de todas as arestas presentes no caminho tomado para recuperar o valor representado pela matriz original.
+
 \section{Grafos}\label{sec:graph}
 
 Visto que QMDDs dependem integralmente de grafos, esta seção busca introduzir os conceitos necessários para compreender as definições do QMDD e as restrições necessárias para que um grafo seja válido para um QMDD.
@@ -259,7 +272,7 @@ Já a construção de portas controlodas possui duas etapas: uma para os qubits 
 
 O produto tensorial consiste basicamente do encadeamento dos grafos de cada diagrama. $A \otimes B$ significa que as arestas terminais de A serão conectadas ao vértice inicial de B. Note que, por não criar novos vértices, o resultado do produto tensorial não consome mais memória que os dois valores de entrada do produto. Isso representa um ganho exponencial em relação à representação matricial do produto tensorial, cujo tamanho do resultado é o produto dos tamanhos das entradas.
 
-\begin{algorithm}
+\begin{algorithm}[H]
   \caption{Produto Tensorial Entre Arestas}
   \label{alg:kronecker}
   \KwIn{Aresta $e_0$, Aresta $e_1$}
@@ -285,34 +298,36 @@ O produto tensorial consiste basicamente do encadeamento dos grafos de cada diag
 
 \subsubsection{Construção de Portas Controladas}\label{subsub:controlgate}
 
-Como dito na \cref{sec:gateconstruct}, a construção de portas controlodas se divide em duas partes: qubits de controle menos significativos que o alvo e qubits mais significativos. A construção do QMDD por meio desse método ocorre do vértice terminal ao vértice inicial, qubit a qubit. Assim, para cada qubit controlado, é construído um QMDD que represente o comportamento de controle e para cada qubit que não faz parte da aplicação da porta, é construído um QMDD que represente a matriz identidade. Note que, no caso em que não há qubits de controle, este algoritmo funciona identicamente ao algoritmo para construção de QMDDs de portas únicas, já que todos os qubits além 
+Como dito na \cref{sec:gateconstruct}, a construção de portas controlodas se divide em duas partes: qubits de controle menos significativos que o alvo e qubits mais significativos. A construção do QMDD por meio desse método ocorre do vértice terminal ao vértice inicial, considerando apenas o qubit de controle e o qubit alvo. Para cada qubit de controle, é construído um QMDD que representa o comportamento de apenas propagar a transformação sobre o qubit alvo pelas arestas que representam o caso em que o qubit está ativo.
 
-\begin{algorithm}
+Note que, no caso em que não há qubits de controle, este algoritmo funciona identicamente ao algoritmo para construção de QMDDs de portas únicas, já que todos os qubits além 
+
+\begin{algorithm}[H]
   \caption{Construção de Portas Controlodas}
   \label{alg:controlgateconstruct}
-  \KwIn{Número de qubits do circuito $k$; Índice do qubit alvo $t$; Conjunto de índices dos qubits de controle $C$; Matriz da porta $m$}
+  \KwIn{Índice do qubit alvo $t$; Conjunto de índices dos qubits de controle $C$; Matriz da porta $m$}
   \KwOut{Aresta}
 
-  $v_qt \gets Vertice(t, {(v_t, m00),(v_t, m01),(v_t, m10),(v_t, m11)})$
-  $x \gets \emptyset $
+  $r \gets \{Aresta(v_t, m00), Aresta(v_t, m01), Aresta(v_t, m10), Aresta(v_t, m11)\}$
+  $x \gets {Aresta(0, v_t), Aresta(0, v_t), Aresta(0, v_t), Aresta(0, v_t)} $
 
-  % \For{$i \gets 0$ \KwTo $k-1$}{
-  %   \If{$i < t-1$}{
-  %     \If{$i \belongs C$}{
-
-  %     } \Else {
-
-  %     }
-  %   } \ElseIf{$i = t-1$}{
-      
-  %   } \Else {
-  %     \If{$i \belongs C$}{
-
-  %     }  \Else {
-
-  %     }     
-  %   }
-  % }
+  \For{$c \in C \land c < t$}{
+    \For{$i \gets \{0, 1\}$}{
+      \For{$j \gets \{0, 1\}$}{
+        $k \gets 2*i + j$ \;
+        $x_3 \gets r_k$ \;
+        $x_0 \gets Aresta(1, v_t) if i = j, else Aresta(0, v_t)$ \;
+        $r_k \gets normalize(Aresta(1, Vertice(c, x)))$
+      }
+    }
+  }
+  $e \gets normalize(Aresta(1, Vertice(t, r)))$
+  \For{$c \in C \land c > t$}{
+    $x_3 \gets e$ \;
+    $x_0 \gets Aresta(1, T)$ \;
+    $e \gets normalize(Aresta(1, Vertice(c, x)))$
+  }
+  \Return $e$
 \end{algorithm}
 
 \subsection{Medição}\label{sub:measurement}

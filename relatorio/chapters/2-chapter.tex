@@ -131,6 +131,51 @@ Ao aplicar essa porta em \ket{0}, o qubit é levado para uma superposição na q
   \end{bmatrix}
 \end{equation}
 
+\subsection{Portas Quânticas Relevantes}
+
+Algumas portas quânticas serão utilizadas como exemplos arbitrários ao longo deste trabalho. Além disso, a matriz identidade é essencial para a definição e funcionamento da representação de circuitos quânticos por meio de matrizes. Esta seção lista e descreve o funcionamento dessas matrizes.
+
+A matriz identidade, representada pela letra I. Essa matriz não altera o estado do qubit.
+
+\begin{equation}
+  I = \begin{bmatrix}
+    1 & 0 \\
+    0 & 1
+  \end{bmatrix}
+\end{equation}
+
+Matrizes de Pauli: são 3 matrizes que descrevem as transformações análogas às rotações nos eixos X, Y e Z da esfera de bloch. Por isso são representadas pelas letras X, Y e Z.
+
+\begin{equation}
+  X = \begin{bmatrix}
+    0 & 1 \\
+    1 & 0
+  \end{bmatrix}
+\end{equation}
+
+\begin{equation}
+  Y = \begin{bmatrix}
+    0 & -i \\
+    i & 0
+  \end{bmatrix}
+\end{equation}
+
+\begin{equation}
+  Z = \begin{bmatrix}
+    1 & 0 \\
+    0 & -1
+  \end{bmatrix}
+\end{equation}
+
+Matriz de Hadamard, coloca o qubit em superposição. Representada pela letra H.
+
+\begin{equation}
+  H = \frac{1}{\sqrt{2}} \cdot \begin{bmatrix}
+    1 & 1 \\
+    1 & -1
+  \end{bmatrix}
+\end{equation}
+
 \section{Circuitos com Múltiplos Qubits}
 
 Para combinar múltiplos qubits em um único sistema, é preciso criar um novo espaço vetorial que represente todas as combinações dos qubits que o compõem. Para isso, a operação do produto tensorial, apresentada na \cref{sub:kronecker}, pode ser utilizada para fazer o produto do espaço vetorial de 2 qubits separados, criando um espaço vetorial que presente 2 qubits. Essa operação pode ser aplicada sucessivamente para todos os qubits do circuito.
