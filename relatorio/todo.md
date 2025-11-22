@@ -1,6 +1,6 @@
 - [ ] Exemplso de QMDDs
-- [ ] Algoritmos
-  - [ ] Construção de Portas Controladas
+- [-] Algoritmos
+  - [-] Construção de Portas Controladas
 - [ ] Adicionar referências
 - [ ] Traduzir palavras usadas por cref
 - [ ] Trocar imagem da esfera de bloch (aumentar qualidade)
