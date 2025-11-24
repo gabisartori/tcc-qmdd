@@ -92,7 +92,7 @@ Já para matrizes que representam portas sobre múltiplos qubits, a ligação di
 
 Para reconstruir a matriz representada por esse diagrama, basta seguir o caminho da aresta inicial ao vértice final. Cada vértice é rotula um qubit e suas arestas representam uma das 4 possíveis escolha para ler o qubit: começou em 0 e está em 0; começou em 1 e está em 0; começou em 0 e está em 1 ou começou em 1 e está em 1. Como os qubits normalmente são inicializados em \ket{0}, pode-se construir o caminho considerando apenas a primeira e a terceira aresta do vértice. Caso o qubit do vértice esteja em \ket{0} no estado a ser lido, segue a primeira aresta e caso esteja em \ket{1} segue a terceira.
 
-Uma forma mais algorítmica para recuperar um determinado valor da matriz é construir o caminho a partir dos índices do valor na matriz. Por exemplo, para obter o valor $M_{31}$ (valor na quarta linha e segunda coluna da matriz), é preciso escrever o índice em binário utilizando o número de bits igual ao número de qubits indicado pelo diagrama, no caso (3, 1) vira (11, 01). Então, para escolher a aresta do i-ésimo vértice, monta-se o par linha, coluna do i-ésimo bit mais significativo do índice. Ou seja, no qubit 0, a aresta escolhida será a terceira (índice 2, ou 10 em binário) e a aresta do qubit 1 será a quarta (índice 3, ou 11 em binário).
+Uma forma mais algorítmica para recuperar um determinado valor da matriz é construir o caminho a partir dos índices do valor na matriz. Por exemplo, para obter o valor $M_{31}$ (valor na quarta linha e segunda coluna da matriz), é preciso escrever o índice em binário utilizando o número de bits igual ao número de qubits indicado pelo diagrama, no caso (3, 1) vira (11, 01). Então, para escolher a aresta do i-ésimo vértice, monta-se o par linha, coluna do i-ésimo bit mais significativo do índice. Ou seja, no qubit 0, a aresta escolhida será a terceira (índice 2_{10}, ou 10_2) e a aresta do qubit 1 será a quarta (índice 3_{10}, ou 11_2).
 
 Ao atingir o vértice terminal, basta multiplicar os pesos de todas as arestas presentes no caminho tomado para recuperar o valor representado pela matriz original.
 
@@ -327,7 +327,7 @@ Após a aplicação de cada algoritmo, é necessário normalizar novamente cada 
   \KwOut{Aresta}
 
   \If{$E_0(e) = E_1(e) = E_2(e) = E_3(e)$}{
-    \Return $e_0$
+    \Return $E_0(e)$
   }
   \Else{
     $w \gets w(E_0(e))$ \;
@@ -450,7 +450,7 @@ O produto tensorial consiste basicamente do encadeamento dos grafos de cada diag
   \For{$i \gets 0$ \KwTo $3$}{
     $E_i(v_n) \gets tensorial(E_i(e_0), e_1)$
   }
-  \Return $normalize(Aresta(1, v_n))$
+  \Return $normalize(Aresta(w(e_0), v_n))$
 \end{algorithm}
 
 \subsubsection{Construção de Portas Controladas}\label{subsub:controlgate}
