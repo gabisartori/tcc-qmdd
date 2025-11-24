@@ -2,7 +2,7 @@
 
 {\itshape Quantum Multiple-Valued Decision Diagram} é uma estrutura de dados composta de um grafo dirigido acíclico cujos vértices são rotulados para representar um dos qubits do circuito. Por meio dessas informações, é possível percorrer o grafo de forma a reconstruir completamente a matriz que ele representa. Assim, o QMDD se mostra uma forma sem perdas de compactar matrizes. Além disso, é possível manipular QMDDs e realizar operações como adição e multiplicação entre eles sem precisar reconstruir suas matrizes, fazendo com que essas operações também tirem vantagem da capacidade de compressão oferecida pelo QMDD. \cite{miller2006qmdd}
 
-Para que o diagrama não cresça exponencialmente em relação ao número de qubits no circuito, são necessárias outras restrições cujos algoritmos devem se ater a não violar. % TODO: As regras estão a seguir:
+Para que o diagrama não cresça exponencialmente em relação ao número de qubits no circuito, os algoritmos também devem se ater a preservar as seguintes restrições para o grafo do QMDD:
 
 \begin{enumerate}
   \item Existe um único vértice que não possui arestas saintes. Esse vértice é chamado de vértice terminal.
@@ -49,7 +49,8 @@ A representação gráfica de um QMDD permite a visualização de como um determ
   \caption{QMDD representando a porta de Hadamard.}
   \label{fig:hqmdd}
 \end{figure}
-Já para matrizes que representam portas sobre múltiplos qubits, a ligação direta entre arestas e posições da matriz deixa de existir. Por exemplo, a matriz $X \otimes H$ pode ser representada com apenas 8 arestas, apesar de ser uma matriz com 16 posições, como demonstrado na TODO.
+
+Já para matrizes que representam portas sobre múltiplos qubits, a ligação direta entre arestas e posições da matriz deixa de existir. Por exemplo, a matriz $X \otimes H$ pode ser representada com apenas 8 arestas, apesar de ser uma matriz com 16 posições, como demonstrado na \cref{fig:xhqmdd}.
 
 \begin{figure}[h]
   \centering
@@ -89,7 +90,6 @@ Já para matrizes que representam portas sobre múltiplos qubits, a ligação di
   \label{fig:xhqmdd}
 \end{figure}
 
-% TODO: Reescrever esse fuckass parágrafo
 Para reconstruir a matriz representada por esse diagrama, basta seguir o caminho da aresta inicial ao vértice final. Cada vértice é rotula um qubit e suas arestas representam uma das 4 possíveis escolha para ler o qubit: começou em 0 e está em 0; começou em 1 e está em 0; começou em 0 e está em 1 ou começou em 1 e está em 1. Como os qubits normalmente são inicializados em \ket{0}, pode-se construir o caminho considerando apenas a primeira e a terceira aresta do vértice. Caso o qubit do vértice esteja em \ket{0} no estado a ser lido, segue a primeira aresta e caso esteja em \ket{1} segue a terceira.
 
 Uma forma mais algorítmica para recuperar um determinado valor da matriz é construir o caminho a partir dos índices do valor na matriz. Por exemplo, para obter o valor $M_{31}$ (valor na quarta linha e segunda coluna da matriz), é preciso escrever o índice em binário utilizando o número de bits igual ao número de qubits indicado pelo diagrama, no caso (3, 1) vira (11, 01). Então, para escolher a aresta do i-ésimo vértice, monta-se o par linha, coluna do i-ésimo bit mais significativo do índice. Ou seja, no qubit 0, a aresta escolhida será a terceira (índice 2, ou 10 em binário) e a aresta do qubit 1 será a quarta (índice 3, ou 11 em binário).

@@ -16,7 +16,7 @@
 % ---
 % http://ficha.bu.ufsc.br/
 \begin{fichacatalografica}
-	\includepdf{beforetext/Ficha_Catalografica.pdf}
+  \includepdf{beforetext/Ficha_Catalografica.pdf}
 \end{fichacatalografica}
 % ---
 
@@ -24,38 +24,35 @@
 % Inserir folha de aprovação
 % ---
 \begin{folhadeaprovacao}
-	\OnehalfSpacing
-	\centering
-	\imprimirautor\\%
-	\vspace*{10pt}		
-	\textbf{\imprimirtitulo}%
-	\ifnotempty{\imprimirsubtitulo}{:~\imprimirsubtitulo}\\%
-	%		\vspace*{31.5pt}%3\baselineskip
-	\vspace*{\baselineskip}
-	%\begin{minipage}{\textwidth}
-	% ~do~\imprimirprograma~do~\imprimircentro~da~\imprimirinstituicao~para~a~obtenção~do~título~de~\imprimirformacao.
-	Este~\imprimirtipotrabalho~foi julgado adequado para obtenção do Título de “\imprimirformacao” e aprovado em sua forma final pelo~\imprimirprograma. \\
-		\vspace*{\baselineskip}
-	\imprimirlocal, \imprimirdata. \\
-	\vspace*{2\baselineskip}
-	\assinatura{\OnehalfSpacing\imprimircoordenador \\ \imprimircoordenadorRotulo~do Curso}
-	\vspace*{2\baselineskip}
-	\textbf{Banca Examinadora:} \\
-	\vspace*{\baselineskip}
-	\assinatura{\OnehalfSpacing\imprimirorientador \\ \imprimirorientadorRotulo}
-	%\end{minipage}%
-	\vspace*{\baselineskip}
-	\assinatura{Me. Eduardo Willwock Lussi,\\
-	Avaliador \\
-	Universidade Federal de Santa Catarina}
+  \OnehalfSpacing
+  \centering
+  \imprimirautor\\%
+  \vspace*{10pt}    
+  \textbf{\imprimirtitulo}%
+  \ifnotempty{\imprimirsubtitulo}{:~\imprimirsubtitulo}\\%
+  %    \vspace*{31.5pt}%3\baselineskip
+  \vspace*{\baselineskip}
+  %\begin{minipage}{\textwidth}
+  % ~do~\imprimirprograma~do~\imprimircentro~da~\imprimirinstituicao~para~a~obtenção~do~título~de~\imprimirformacao.
+  Este~\imprimirtipotrabalho~foi julgado adequado para obtenção do Título de “\imprimirformacao” e aprovado em sua forma final pelo~\imprimirprograma. \\
+    \vspace*{\baselineskip}
+  \imprimirlocal, \imprimirdata. \\
+  \vspace*{2\baselineskip}
+  \assinatura{\OnehalfSpacing\imprimircoordenador \\ \imprimircoordenadorRotulo~do Curso}
+  \vspace*{2\baselineskip}
+  \textbf{Banca Examinadora:} \\
+  \vspace*{\baselineskip}
+  \assinatura{\OnehalfSpacing\imprimirorientador \\ \imprimirorientadorRotulo}
+  %\end{minipage}%
+  \vspace*{\baselineskip}
+  \assinatura{Me. Eduardo Willwock Lussi,\\
+  Avaliador \\
+  Universidade Federal de Santa Catarina}
 
-	\vspace*{\baselineskip}
-	% TODO: Descobrir o sobrenome do Obama
-	\assinatura{Ma. Letícia Bertuzzi\\
-	Avaliadora \\
-	Universidade Federal de Santa Catarina}
-
-
+  \vspace*{\baselineskip}
+  \assinatura{Ma. Letícia Bertuzzi\\
+  Avaliadora \\
+  Universidade Federal de Santa Catarina}
 \end{folhadeaprovacao}
 % ---
 
@@ -63,11 +60,11 @@
 % Dedicatória
 % ---
 %\begin{dedicatoria}
-%	\vspace*{\fill}
-%	\noindent
-%	\begin{adjustwidth*}{}{5.5cm}     
-%		Este trabalho é dedicado aos meus colegas de classe e aos meus queridos pais.
-%	\end{adjustwidth*}
+%  \vspace*{\fill}
+%  \noindent
+%  \begin{adjustwidth*}{}{5.5cm}     
+%    Este trabalho é dedicado aos meus colegas de classe e aos meus queridos pais.
+%  \end{adjustwidth*}
 %\end{dedicatoria}
 % ---
 
@@ -75,9 +72,9 @@
 % Agradecimentos
 %
 %\begin{agradecimentos}
-%	Inserir os agradecimentos aos colaboradores à execução do trabalho. 
-%	
-%	Xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx. 
+%  Inserir os agradecimentos aos colaboradores à execução do trabalho. 
+%  
+%  Xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx. 
 %\end{agradecimentos}
 % ---
 
@@ -85,15 +82,15 @@
 % Epígrafe
 % ---
 %\begin{epigrafe}
-%	\vspace*{\fill}
-%	\begin{flushright}
-%		\textit{``Texto da Epígrafe.\\
-%			Citação relativa ao tema do trabalho.\\
-%			É opcional. A epígrafe pode também aparecer\\
-%			na abertura de cada seção ou capítulo.\\
-%			Deve ser elaborada de acordo com a NBR 10520.''\\
-%			(Autor da epígrafe, ano)}
-%	\end{flushright}
+%  \vspace*{\fill}
+%  \begin{flushright}
+%    \textit{``Texto da Epígrafe.\\
+%      Citação relativa ao tema do trabalho.\\
+%      É opcional. A epígrafe pode também aparecer\\
+%      na abertura de cada seção ou capítulo.\\
+%      Deve ser elaborada de acordo com a NBR 10520.''\\
+%      (Autor da epígrafe, ano)}
+%  \end{flushright}
 %\end{epigrafe}
 % ---
 
@@ -104,21 +101,21 @@
 % resumo em português
 \setlength{\absparsep}{18pt} % ajusta o espaçamento dos parágrafos do resumo
 \begin{resumo}
-	Atualmente, o desenvolvimento de algoritmos quânticos é limitado pela falta de formas eficazes e acessíveis de executá-los na prática. Hardware quântico moderno ainda apresenta baixa capacidade de processamento e seu uso é caro. Dessa forma, é adequada a simulação do algoritmo em hardware clássico para viabilizar processo. Para isso, existe o Ket, uma plataforma para elaboração de algoritmos quânticos que permite que o usuário simule localmente seus programas.
+  Atualmente, o desenvolvimento de algoritmos quânticos é limitado pela falta de formas eficazes e acessíveis de executá-los na prática. Hardware quântico moderno ainda apresenta baixa capacidade de processamento e seu uso é caro. Dessa forma, é adequada a simulação do algoritmo em hardware clássico para viabilizar processo. Para isso, existe o Ket, uma plataforma para elaboração de algoritmos quânticos que permite que o usuário simule localmente seus programas.
 
-	Por sua vez, a simulação clássica também traz desafios: o consumo de memória cresce exponencialmente em relação ao número de qubits do circuito a ser simulado, tornando-a inviável para circuitos maiores. O objetivo deste trabalho é implementar um novo método de simulação e integrá-lo ao Ket. Esse método se baseia na técnica de simulação de circuitos por meio da decomposição em matrizes que representam cada porta lógica do circuito. Para contornar o crescimento exponencial das matrizes, este trabalho utiliza o QMDD ({\itshape Quantum Multiple-valued Decision Diagram}), uma estrutura de dados capaz de representar e manipular matrizes em espaço menor que exponencial. Isso é possível ao explorar a repetição de padrões nos valores da matriz.
+  Por sua vez, a simulação clássica também traz desafios: o consumo de memória cresce exponencialmente em relação ao número de qubits do circuito a ser simulado, tornando-a inviável para circuitos maiores. O objetivo deste trabalho é implementar um novo método de simulação e integrá-lo ao Ket. Esse método se baseia na técnica de simulação de circuitos por meio da decomposição em matrizes que representam cada porta lógica do circuito. Para contornar o crescimento exponencial das matrizes, este trabalho utiliza o QMDD ({\itshape Quantum Multiple-valued Decision Diagram}), uma estrutura de dados capaz de representar e manipular matrizes em espaço menor que exponencial. Isso é possível ao explorar a repetição de padrões nos valores da matriz.
 
-	\textbf{Palavras-chave}: Computação Quântica. Simulação Quântica. Diagrama de Decisão. Ket.
+  \textbf{Palavras-chave}: Computação Quântica. Simulação Quântica. Diagrama de Decisão. Ket.
 \end{resumo}
 
 % resumo em inglês
 \begin{resumo}[Abstract]
   \begin{otherlanguage*}{english}
-		Currently, the development of quantum algorithms is limited by the lack of efficient means to execute them. Modern quantum hardware still presents low capacity and its usage is expensive. Therefore, it is adequate to simulate these algorithms via classic hardware in order to make this process viable. Hence there is Ket, a platform of quantum development, which allows its user to simulate locally their quantum programs.
+    Currently, the development of quantum algorithms is limited by the lack of efficient means to execute them. Modern quantum hardware still presents low capacity and its usage is expensive. Therefore, it is adequate to simulate these algorithms via classic hardware in order to make this process viable. Hence there is Ket, a platform of quantum development, which allows its user to simulate locally their quantum programs.
 
-		Similarly, classic simulation of quantum algorithms also has impediments: memory usage grows exponentially in relation to the number of qubits in the circuit, rendering it infeasible for larger circuits. This work's goal is to implement a new simulation method and integrate it to Ket. This method is based on the	simulation technique of decomposing the circuit in matrices that represent each of the circuit's logic gates. In order to mitigate the exponential growth in the size of said matrices, this work will make use of QMDD (Quantum Multiple-valued Decision Diagram), a data structure capable of representing and manipulating matrices in less than exponential space. This is achieved by exploiting repeating patterns in the matrix.
+    Similarly, classic simulation of quantum algorithms also has impediments: memory usage grows exponentially in relation to the number of qubits in the circuit, rendering it infeasible for larger circuits. This work's goal is to implement a new simulation method and integrate it to Ket. This method is based on the  simulation technique of decomposing the circuit in matrices that represent each of the circuit's logic gates. In order to mitigate the exponential growth in the size of said matrices, this work will make use of QMDD (Quantum Multiple-valued Decision Diagram), a data structure capable of representing and manipulating matrices in less than exponential space. This is achieved by exploiting repeating patterns in the matrix.
 
-		\textbf{Keywords}: Quantum Computing. Quantum Simulation. Decision Diagram. Ket.
+    \textbf{Keywords}: Quantum Computing. Quantum Simulation. Decision Diagram. Ket.
   \end{otherlanguage*}
 \end{resumo}
 
@@ -142,49 +139,49 @@
 %% ---
 
 {%hidelinks
-	\hypersetup{hidelinks}
-	% ---
-	% inserir lista de ilustrações
-	% ---
-	\pdfbookmark[0]{\listfigurename}{lof}
-	\listoffigures*
-	\cleardoublepage
-	% ---
-	
-	% ---
-	% inserir lista de quadros
-	% ---
-	% \pdfbookmark[0]{\listofquadrosname}{loq}
-	% \listofquadros*
-	% \cleardoublepage
-	% ---
-	
-	% ---
-	% inserir lista de tabelas
-	% ---
-	% \pdfbookmark[0]{\listtablename}{lot}
-	% \listoftables*
-	% \cleardoublepage
-	% ---
-	
-	% ---
-	% inserir lista de abreviaturas e siglas (devem ser declarados no preambulo)
-	% ---
-	\imprimirlistadesiglas
-	% ---
-	
-	% ---
-	% inserir lista de símbolos (devem ser declarados no preambulo)
-	% ---
-	\imprimirlistadesimbolos
-	% ---
-	
-	% ---
-	% inserir o sumario
-	% ---
-	\pdfbookmark[0]{\contentsname}{toc}
-	\tableofcontents*
-	\cleardoublepage
-	
+  \hypersetup{hidelinks}
+  % ---
+  % inserir lista de ilustrações
+  % ---
+  \pdfbookmark[0]{\listfigurename}{lof}
+  \listoffigures*
+  \cleardoublepage
+  % ---
+  
+  % ---
+  % inserir lista de quadros
+  % ---
+  % \pdfbookmark[0]{\listofquadrosname}{loq}
+  % \listofquadros*
+  % \cleardoublepage
+  % ---
+  
+  % ---
+  % inserir lista de tabelas
+  % ---
+  % \pdfbookmark[0]{\listtablename}{lot}
+  % \listoftables*
+  % \cleardoublepage
+  % ---
+  
+  % ---
+  % inserir lista de abreviaturas e siglas (devem ser declarados no preambulo)
+  % ---
+  \imprimirlistadesiglas
+  % ---
+  
+  % ---
+  % inserir lista de símbolos (devem ser declarados no preambulo)
+  % ---
+  \imprimirlistadesimbolos
+  % ---
+  
+  % ---
+  % inserir o sumario
+  % ---
+  \pdfbookmark[0]{\contentsname}{toc}
+  \tableofcontents*
+  \cleardoublepage
+  
 }%hidelinks
 % ---
