@@ -21,16 +21,86 @@ Além disso, também será feita uma breve introdução ao conceito de grafos, e
 
 \section{Como Ler um QMDD}\label{sec:qmddvis}
 
-A representação gráfica de um QMDD permite a visualização de como um determinado valor da matriz codificada pode ser extraído por meio de um caminho entre o vértice raiz e o vértice terminal. A TODO representa a matriz H. QMDDs que representam uma porta sobre um único qubit podem facilmente ser construídos, precisando apenas de um vértice inicial e um terminal, sendo as 4 arestas do vértice inicial os 4 valores presentes em cada posição da matriz. Note que ainda é necessário aplicar o algoritmo de normalização apresentado em \cref{alg:normalize} para garantir a consistência caso esse QMDD participe de uma operação com outro QMDD.
+A representação gráfica de um QMDD permite a visualização de como um determinado valor da matriz codificada pode ser extraído por meio de um caminho entre o vértice raiz e o vértice terminal. A \cref{fig:hqmdd} representa a matriz H. QMDDs que representam uma porta sobre um único qubit podem facilmente ser construídos, precisando apenas de um vértice inicial e um terminal, sendo as 4 arestas do vértice inicial os 4 valores presentes em cada posição da matriz. Note que o diagrama foi normalizado de acordo com o algoritmo de normalização apresentado em \cref{alg:normalization}, fazendo com que $\frac{1}{\sqrt{2}}$, o fator em comum a todas as arestas, seja fatorado e colocado na aresta raiz do diagrama.
 
+\begin{figure}[h]
+  \centering
+  \begin{tikzpicture}[
+    node distance=1.5cm,
+    root/.style={circle,draw,minimum size=8mm},
+    leaf/.style={rectangle,draw,minimum size=6mm},
+    baseline={(current bounding box.center)}
+  ]
+    % terminal node
+    \node[leaf] (t) at (0,0) {$1$};
+
+    % nodes
+    \node[root] (v) at (0,2) {q0};
+
+    % incoming edge of weight 1
+    \node[above=of v] (src) {};
+    \draw[->] (src) -- node[right] {$\frac{1}{\sqrt{2}}$} (v);
+
+    \draw[->] (v) edge[bend left=30]  node[right]  {$1$} (t);
+    \draw[->] (v) edge[bend right=30] node[right] {$1$} (t);
+    \draw[->] (v) edge[bend left=90]  node[right]  {$-1$} (t);
+    \draw[->] (v) edge[bend right=90] node[right] {$1$} (t);
+  \end{tikzpicture}
+  \caption{QMDD representando a porta de Hadamard.}
+  \label{fig:hqmdd}
+\end{figure}
 Já para matrizes que representam portas sobre múltiplos qubits, a ligação direta entre arestas e posições da matriz deixa de existir. Por exemplo, a matriz $X \otimes H$ pode ser representada com apenas 8 arestas, apesar de ser uma matriz com 16 posições, como demonstrado na TODO.
 
-% TODO: Figura do QMDD
+\begin{figure}[h]
+  \centering
+  \begin{tikzpicture}[
+    node distance=1.5cm,
+    root/.style={circle,draw,minimum size=8mm},
+    leaf/.style={rectangle,draw,minimum size=6mm},
+    baseline={(current bounding box.center)}
+  ]
+
+    % terminal node
+    \node[leaf] (t) at (0,0) {$1$};
+
+    % nodes
+    \node[root] (v) at (0,4) {q1};
+    \node[root] (B) at (0,2) {q0};
+
+
+    % incoming edge of weight 1
+    \node[above=of v] (src) {};
+    \draw[->] (src) -- node[right] {$\frac{1}{\sqrt{2}}$} (v);
+
+    % four outgoing edges, one for each matrix entry (1,0,0,1)
+    \draw[->] (v) edge[bend left=90]  node[right]  {$0$} (B);
+    \draw[->] (v) edge[bend left=30]  node[right]  {$1$} (B);
+    \draw[->] (v) edge[bend right=30] node[right] {$1$} (B);
+    \draw[->] (v) edge[bend right=90] node[right] {$0$} (B);
+
+    \draw[->] (B) edge[bend left=30]  node[right]  {$1$} (t);
+    \draw[->] (B) edge[bend right=30] node[right] {$1$} (t);
+    \draw[->] (B) edge[bend left=90]  node[right]  {$-1$} (t);
+    \draw[->] (B) edge[bend right=90] node[right] {$1$} (t);
+
+
+  \end{tikzpicture}
+  \caption{QMDD representando uma porta X aplicada no primeiro qubit e uma porta H no segundo qubit de um circuito}
+  \label{fig:xhqmdd}
+\end{figure}
 
 % TODO: Reescrever esse fuckass parágrafo
 Para reconstruir a matriz representada por esse diagrama, basta seguir o caminho da aresta inicial ao vértice final. Cada vértice é rotula um qubit e suas arestas representam uma das 4 possíveis escolha para ler o qubit: começou em 0 e está em 0; começou em 1 e está em 0; começou em 0 e está em 1 ou começou em 1 e está em 1. Como os qubits normalmente são inicializados em \ket{0}, pode-se construir o caminho considerando apenas a primeira e a terceira aresta do vértice. Caso o qubit do vértice esteja em \ket{0} no estado a ser lido, segue a primeira aresta e caso esteja em \ket{1} segue a terceira.
 
+Uma forma mais algorítmica para recuperar um determinado valor da matriz é construir o caminho a partir dos índices do valor na matriz. Por exemplo, para obter o valor $M_{31}$ (valor na quarta linha e segunda coluna da matriz), é preciso escrever o índice em binário utilizando o número de bits igual ao número de qubits indicado pelo diagrama, no caso (3, 1) vira (11, 01). Então, para escolher a aresta do i-ésimo vértice, monta-se o par linha, coluna do i-ésimo bit mais significativo do índice. Ou seja, no qubit 0, a aresta escolhida será a terceira (índice 2, ou 10 em binário) e a aresta do qubit 1 será a quarta (índice 3, ou 11 em binário).
+
 Ao atingir o vértice terminal, basta multiplicar os pesos de todas as arestas presentes no caminho tomado para recuperar o valor representado pela matriz original.
+
+\begin{equation}
+  M_{31} = \frac{1}{\sqrt{2}} \cdot 1 \cdot -1 = -\frac{1}{\sqrt{2}}
+\end{equation}
+
+Note que, na \cref{fig:xhqmdd}, as arestas de peso 0 levam ao vértice q1 para facilitar a visualização do grafo. Uma otimização importante é que toda aresta de peso 0 pode levar diretamente ao vértice terminal, já que a presença de um 0 no caminho faz com que o resultado seja 0 independentemente de quais outros valores estiverem presentes.
 
 \section{Grafos}\label{sec:graph}
 
@@ -182,10 +252,10 @@ Garantir que os vértices estão normalizados é um esforço adicional para cada
     \draw[->] (src) -- node[right] {$1$} (v);
 
     % four outgoing edges, one for each matrix entry (1,0,0,1)
-    \draw[->] (v) edge[bend left=90]  node[right]  {$1$} (t); % (0,0)
-    \draw[->] (v) edge[bend left=30]  node[right]  {$0$} (t); % (0,1)
-    \draw[->] (v) edge[bend right=30] node[right] {$0$} (t); % (1,0)
-    \draw[->] (v) edge[bend right=90] node[right] {$1$} (t); % (1,1)
+    \draw[->] (v) edge[bend left=90]  node[right]  {$1$} (t);
+    \draw[->] (v) edge[bend left=30]  node[right]  {$0$} (t);
+    \draw[->] (v) edge[bend right=30] node[right] {$0$} (t);
+    \draw[->] (v) edge[bend right=90] node[right] {$1$} (t);
 
   \end{tikzpicture}
   \;+\;
