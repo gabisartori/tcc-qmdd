@@ -90,9 +90,9 @@ Já para matrizes que representam portas sobre múltiplos qubits, a ligação di
   \label{fig:xhqmdd}
 \end{figure}
 
-Para reconstruir a matriz representada por esse diagrama, basta seguir o caminho da aresta inicial ao vértice final. Cada vértice é rotula um qubit e suas arestas representam uma das 4 possíveis escolha para ler o qubit: começou em 0 e está em 0; começou em 1 e está em 0; começou em 0 e está em 1 ou começou em 1 e está em 1. Como os qubits normalmente são inicializados em \ket{0}, pode-se construir o caminho considerando apenas a primeira e a terceira aresta do vértice. Caso o qubit do vértice esteja em \ket{0} no estado a ser lido, segue a primeira aresta e caso esteja em \ket{1} segue a terceira.
+Para reconstruir a matriz representada por esse diagrama, basta seguir o caminho da aresta inicial ao vértice final. Cada vértice é rotula um qubit e suas arestas representam uma das 4 possíveis escolha para ler o qubit: começou em 0 e está em 0; começou em 0 e está em 1; começou em 1 e está em 0 ou começou em 1 e está em 1. Como os qubits normalmente são inicializados em \ket{0}, pode-se construir o caminho considerando apenas a primeira e a segunda aresta do vértice. Caso o qubit do vértice esteja em \ket{0} no estado a ser lido, segue a primeira aresta e caso esteja em \ket{1} segue a segue.
 
-Uma forma mais algorítmica para recuperar um determinado valor da matriz é construir o caminho a partir dos índices do valor na matriz. Por exemplo, para obter o valor $M_{31}$ (valor na quarta linha e segunda coluna da matriz), é preciso escrever o índice em binário utilizando o número de bits igual ao número de qubits indicado pelo diagrama, no caso (3, 1) vira (11, 01). Então, para escolher a aresta do i-ésimo vértice, monta-se o par linha, coluna do i-ésimo bit mais significativo do índice. Ou seja, no qubit 0, a aresta escolhida será a terceira (índice 2_{10}, ou 10_2) e a aresta do qubit 1 será a quarta (índice 3_{10}, ou 11_2).
+Uma forma mais algorítmica para recuperar um determinado valor da matriz é construir o caminho a partir dos índices do valor na matriz. Por exemplo, para obter o valor $M_{31}$ (valor na quarta linha e segunda coluna da matriz), é preciso escrever o índice em binário utilizando o número de bits igual ao número de qubits indicado pelo diagrama, no caso (3, 1) vira (11, 01). Então, para escolher a aresta do i-ésimo vértice, monta-se o par linha, coluna do i-ésimo bit mais significativo do índice. Ou seja, no qubit 0, a aresta escolhida será terceira (índice $2_{10}$, ou $10_2$) e a aresta do qubit 1 será a quarta (índice $3_{10}$, ou $11_2$).
 
 Ao atingir o vértice terminal, basta multiplicar os pesos de todas as arestas presentes no caminho tomado para recuperar o valor representado pela matriz original.
 
@@ -423,7 +423,7 @@ A construção de um QMDD a partir de uma porta quântica pode ser feita de duas
 
 A construção de uma porta arbitrária se dá pelo produto tensorial entre matrizes identidade e a matriz que representa a porta arbitrária, de forma a produzir uma única matriz que opere sobre todos os qubits, mantendo todos exceto o qubit alvo da porta inalterados e aplicando o efeito da porta sobre o qubit desejado. Para isso, basta utilizar o algoritmo de produto tensorial definido na \cref{subsub:kronecker}. Assim, para aplicar uma porta U no i-ésimo qubit de um circuito com k qubits, basta realizar o produto tensorial $I^{\otimes i-1} \otimes U \otimes I^{\otimes k-i}$. 
 
-Já a construção de portas controlodas possui duas etapas: uma para os qubits de controle mais significativos que o qubit alvo e uma para os menos significativos. Essas duas etapas são descritas na \cref{subsub:controledgate} \cite{miller2006qmdd, kydros2025tutorial}
+Já a construção de portas controlodas possui duas etapas: uma para os qubits de controle mais significativos que o qubit alvo e uma para os menos significativos. Essas duas etapas são descritas na \cref{subsub:controlgate} \cite{miller2006qmdd, kydros2025tutorial}
 
 \subsubsection{Produto Tensorial}\label{subsub:kronecker}
 

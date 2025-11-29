@@ -1,6 +1,6 @@
 \chapter{Computação Quântica}\label{cap:compq}
 
-A computação quântica é um paradigma para elaboração de algoritmos que se baseia nos fenômenos da mecânica quântica, como a superposição e o entrelaçamento de estados. Existem diferentes modelos de computação quântica como a computação adiabática \cite{guarienti2016computaccao} e a computação circuital. Este trabalho as propriedades quânticas de um sistema serão representadas por meio da computação circuital. Assim, todo sistema é representado por um circuito, que é composto de bits e portas lógicas (chamados de qubits e portas quânticas). Esse modelo representa sistemas quânticos por meio de espaços vetoriais de números complexos, nos quais cada dimensão representa um dos possíveis resultados a serem obtidos ao final da execução de um algoritmo \cite{deutsch1989quantum}.
+A computação quântica é um paradigma para elaboração de algoritmos que se baseia nos fenômenos da mecânica quântica, como a superposição e o entrelaçamento de estados. Existem diferentes modelos de computação quântica como a computação adiabática \cite{guarienti2016computaccao} e a computação circuital. Neste trabalho, as propriedades quânticas de um sistema serão representadas por meio da computação circuital. Assim, todo sistema é representado por um circuito, que é composto de bits e portas lógicas (chamados de qubits e portas quânticas). Esse modelo representa sistemas quânticos por meio de espaços vetoriais de números complexos, nos quais cada dimensão representa um dos possíveis resultados a serem obtidos ao final da execução de um algoritmo \cite{deutsch1989quantum}.
 
 \section{Qubits}
 
@@ -43,7 +43,7 @@ Como a probabilidade de determinado resultado é dada pelo quadrado do módulo d
 
 Esse fator complexo recebe o nome de fase e pode ser divido em fase global e fase relativa. A fase global é quando todos os estados da superposição possuem um múltiplo em comum e não altera nem a medição nem a evolução temporal do qubit. Isso se dá pelo fato que todas as transformações da evolução temporal são lineares, então esse múltiplo em comum pode ser apenas fatorado.
 
-Já a fase relativa é o nome dado para quando nem todos os estados da superposição possuem múltiplos diferentes, por exemplo no caso $\frac{1}{\sqrt{2}}\cdot(\ket{0} + (-1)\cdot \ket{1})$, \ket{0} é multiplicado por 1 e \ket{1} é multiplicado por -1. Nesse caso, não há nenhuma simplificação a ser feita. 
+Já a fase relativa é o nome dado para quando nem todos os estados da superposição possuem o mesmo múltiplo. Por exemplo no caso $\frac{1}{\sqrt{2}}\cdot(\ket{0} + (-1)\cdot \ket{1})$, \ket{0} é multiplicado por 1 e \ket{1} é multiplicado por -1 então diz-se que existe uma fase relativa de valor -1 sobre o qubit.
 
 \subsubsection{Esfera de Bloch}
 
@@ -65,7 +65,7 @@ Os kets $\ket{+}, \ket{+i}, \ket{-} e \ket{-i}$, presentes no equador da esfera,
 
 \section{Portas Lógicas}\label{sec:gates}
 
-Visto que um qubit pode ser representado por meio de um vetor, naturalmente operações sobre qubits podem ser representadas por meio de matrizes. De forma a respeitar o espaço de estados válidos para um qubit, é importante que a matriz que codifica a transformação possua determinante de valor 1. Isso é importante pois, uma matriz unitária, não altera a norma dos vetores aos quais ela é aplicada. Para a representação do qubit, isso significa que a soma das probabilidades de ambos os resultados possíveis não será alterada \cite{deutsch1989quantum}.
+Visto que um qubit pode ser representado por meio de um vetor, operações sobre qubits podem ser representadas por meio de matrizes. De forma a respeitar o espaço de estados válidos para um qubit, é importante que a matriz que codifica a transformação possua determinante de valor 1. Isso é importante pois uma matriz unitária não altera a norma dos vetores aos quais ela é aplicada. Para a representação do qubit, isso significa que a soma das probabilidades de ambos os resultados possíveis não será alterada \cite{deutsch1989quantum}.
 
 Além disso, por possuirem determinante diferente de 0, matrizes unitárias são sempre reversíveis. Isso faz com que todo circuito quântico seja reversível, já que todos os seus componentes também são. Dessa forma, computadores quânticos se apresentam mais eficientes energeticamente, já que uma das principais formas de dissipação de energia que ocorre em computadores clássicos se dá pela destruição de informação que acontece em portas lógicas não reversíveis. Por exemplo, a porta lógica AND, que recebe 2 bits como entrada mas retorna apenas 1 de saída. Assim, diferentes entradas são forçadas a compartilhar a mesma saída, tornando impossível inferir qual a entrada da porta tendo como base apenas o resultado \cite{efficientreversiblegates}.
 
