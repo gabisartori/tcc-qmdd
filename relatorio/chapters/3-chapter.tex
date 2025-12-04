@@ -210,7 +210,9 @@ Assim, o grafo da \cref{fig:graph3nodeweighted} pode ser representado como o con
 
 \section{Algoritmos}
 
-As operações entre QMDDs podem ser traduzidas para operações sobre suas arestas iniciais. Dessa forma, a definição recursiva para operação entre arestas é suficiente. Ao fim, essas operações retornam uma aresta que aponta para o nodo inicial do diagrama resultante da operação realizada.
+A seguir, serão definidas operações entre arestas de QMDDs. Dessa forma, a operação entre dois QMDDs é realizada por meio da operação entre suas duas arestas iniciais.
+
+Cada operação é definida recursivamente, finalizando ao encontrar arestas terminais. Assim, cada operação retorna um novo QMDD, começando a construção pelo vértice terminal e adicionando os novos vértices e arestas sucessivamente até completar a construção da aresta inicial.
 
 \subsection{Funções Fundamentais}\label{sub:fundamentals}
 
@@ -231,94 +233,105 @@ Além disso, note que, para representar as matrizes utilizadas por circuitos qu�
 
 \subsection{Normalização e Eliminação de Redundância}
 
-Garantir que os vértices estão normalizados é um esforço adicional para cada um dos algoritmos, visto que, por exemplo, a soma de dois vértices normalizados pode resultar em um vértice não normalizado. Imagine dois vértices, um com arestas de peso 1, 0, 0 e 1 e outro vértice com arestas de peso 0, 1, 1 e 0, todas apontadas para o mesmo vértice. Apesar de estarem normalizados, a soma dos dois vértices resultará em um vértice com arestas de peso 1, 1, 1 e 1, todas apontando para o mesmo vértice. Esse vértice por sua vez é reduntante, já que todas as arestas possuem mesmo peso e apontam para o mesmo vértice. Logo, é necessário normalizá-lo antes de retornar o resultado da soma.
+Normalizar um vértice é essencial para possibilitar a detecção de redundância presente em um QMDD, visto que a presença de um múltiplo em comum a todas as arestas de um mesmo vértice pode ser fatorado e adicionado à aresta que aponta para esse vértice. Dessa forma, a equivalência entre diferentes vértices pode ser encontrada apenas comparando o alvo e peso de suas arestas.
 
-\[
-  \begin{tikzpicture}[
-    node distance=1.5cm,
-    root/.style={circle,draw,minimum size=8mm},
-    leaf/.style={rectangle,draw,minimum size=6mm},
-    baseline={(current bounding box.center)}
-  ]
+O processo de normalizar um vértice também envolve a remoção de vértices reduntantes. Ou seja, vértices cujas arestas sejam todas iguais entre si podem ser substituídos por um caminho direto para o alvo de suas arestas. Assim, o algoritmo de normalização deve retornar uma aresta que aponta ou para o vértice original (caso o vértice não seja redundante) ou para o próximo vértice (caso o original seja reduntante). Por isso, é importante que os algoritmos sejam definidos sobre as arestas e não sobre os vértices. Assim, para normalizar um vértice, o algoritmo deve ser aplicado sobre a aresta que aponta para esse vértice.
 
-    % terminal node
-    \node[leaf] (t) at (0,0) {$1$};
+Além disso, como as outras operações constroem seu resultado do vértice final ao inicial, o fato que o algoritmo de normalização retorna a aresta que aponta para o vértice faz com que o efeito da normalização seja propagado do vértice final ao inicial. 
 
-    % QMDD internal node
-    \node[root] (v) at (0,2) {};
+% TODO: Mover este exemplo para o algoritmo de adição
 
-    % incoming edge of weight 1
-    \node[above=of v] (src) {};
-    \draw[->] (src) -- node[right] {$1$} (v);
+% Garantir que os vértices estão normalizados é um esforço adicional para cada um dos algoritmos, visto que, por exemplo, a soma de dois vértices normalizados pode resultar em um vértice não normalizado. Imagine dois vértices, um com arestas de peso 1, 0, 0 e 1 e outro vértice com arestas de peso 0, 1, 1 e 0, todas apontadas para o mesmo vértice. Apesar de estarem normalizados, a soma dos dois vértices resultará em um vértice com arestas de peso 1, 1, 1 e 1, todas apontando para o mesmo vértice. Esse vértice por sua vez é reduntante, já que todas as arestas possuem mesmo peso e apontam para o mesmo vértice. Logo, é necessário normalizá-lo antes de retornar o resultado da soma.
 
-    % four outgoing edges, one for each matrix entry (1,0,0,1)
-    \draw[->] (v) edge[bend left=90]  node[right]  {$1$} (t);
-    \draw[->] (v) edge[bend left=30]  node[right]  {$0$} (t);
-    \draw[->] (v) edge[bend right=30] node[right] {$0$} (t);
-    \draw[->] (v) edge[bend right=90] node[right] {$1$} (t);
 
-  \end{tikzpicture}
-  \;+\;
-  \begin{tikzpicture}[
-    node distance=1.5cm,
-    root/.style={circle,draw,minimum size=8mm},
-    leaf/.style={rectangle,draw,minimum size=6mm},
-    baseline={(current bounding box.center)}
-  ]
+% \[
+%   \begin{tikzpicture}[
+%     node distance=1.5cm,
+%     root/.style={circle,draw,minimum size=8mm},
+%     leaf/.style={rectangle,draw,minimum size=6mm},
+%     baseline={(current bounding box.center)}
+%   ]
 
-    \node[leaf] (t) at (0,0) {$1$};
-    \node[root] (v) at (0,2) {};
+%     % terminal node
+%     \node[leaf] (t) at (0,0) {$1$};
 
-    \node[above=of v] (src) {};
-    \draw[->] (src) -- node[right] {$1$} (v);
+%     % QMDD internal node
+%     \node[root] (v) at (0,2) {};
 
-    \draw[->] (v) edge[bend left=90]  node[right]  {$0$} (t);
-    \draw[->] (v) edge[bend left=30]  node[right]  {$1$} (t);
-    \draw[->] (v) edge[bend right=30] node[right] {$1$} (t);
-    \draw[->] (v) edge[bend right=90] node[right] {$0$} (t);
+%     % incoming edge of weight 1
+%     \node[above=of v] (src) {};
+%     \draw[->] (src) -- node[right] {$1$} (v);
 
-  \end{tikzpicture}
-  \;=\;
-  \begin{tikzpicture}[
-    node distance=1.5cm,
-    root/.style={circle,draw,minimum size=8mm},
-    leaf/.style={rectangle,draw,minimum size=6mm},
-    baseline={(current bounding box.center)}
-  ]
+%     % four outgoing edges, one for each matrix entry (1,0,0,1)
+%     \draw[->] (v) edge[bend left=90]  node[right]  {$1$} (t);
+%     \draw[->] (v) edge[bend left=30]  node[right]  {$0$} (t);
+%     \draw[->] (v) edge[bend right=30] node[right] {$0$} (t);
+%     \draw[->] (v) edge[bend right=90] node[right] {$1$} (t);
 
-    \node[leaf] (t) at (0,0) {$1$};
-    \node[root] (v) at (0,2) {};
+%   \end{tikzpicture}
+%   \;+\;
+%   \begin{tikzpicture}[
+%     node distance=1.5cm,
+%     root/.style={circle,draw,minimum size=8mm},
+%     leaf/.style={rectangle,draw,minimum size=6mm},
+%     baseline={(current bounding box.center)}
+%   ]
 
-    \node[above=of v] (src) {};
-    \draw[->] (src) -- node[right] {$1$} (v);
+%     \node[leaf] (t) at (0,0) {$1$};
+%     \node[root] (v) at (0,2) {};
 
-    \draw[->] (v) edge[bend left=90]  node[right]  {$1$} (t); % (0,0)
-    \draw[->] (v) edge[bend left=30]  node[right]  {$1$} (t); % (0,1)
-    \draw[->] (v) edge[bend right=30] node[right] {$1$} (t); % (1,0)
-    \draw[->] (v) edge[bend right=90] node[right] {$1$} (t); % (1,1)
+%     \node[above=of v] (src) {};
+%     \draw[->] (src) -- node[right] {$1$} (v);
 
-  \end{tikzpicture}
-  \quad\Longrightarrow\quad
-  \begin{tikzpicture}[
-    node distance=1.5cm,
-    root/.style={circle,draw,minimum size=8mm},
-    leaf/.style={rectangle,draw,minimum size=6mm},
-    baseline={(current bounding box.center)}
-  ]
+%     \draw[->] (v) edge[bend left=90]  node[right]  {$0$} (t);
+%     \draw[->] (v) edge[bend left=30]  node[right]  {$1$} (t);
+%     \draw[->] (v) edge[bend right=30] node[right] {$1$} (t);
+%     \draw[->] (v) edge[bend right=90] node[right] {$0$} (t);
 
-    % terminal node
-    \node[leaf] (t) at (0,0) {$1$};
+%   \end{tikzpicture}
+%   \;=\;
+%   \begin{tikzpicture}[
+%     node distance=1.5cm,
+%     root/.style={circle,draw,minimum size=8mm},
+%     leaf/.style={rectangle,draw,minimum size=6mm},
+%     baseline={(current bounding box.center)}
+%   ]
 
-    % incoming edge of weight 1
-    \node[above=of t] (src) {};
-    \draw[->] (src) -- node[right] {$1$} (t);
+%     \node[leaf] (t) at (0,0) {$1$};
+%     \node[root] (v) at (0,2) {};
 
-  \end{tikzpicture}
-\]
+%     \node[above=of v] (src) {};
+%     \draw[->] (src) -- node[right] {$1$} (v);
 
-A normalização de um vértice se dá por meio da aresta que aponta para esse vértice. Caso o vértice seja redundante, a aresta que aponta para ele tem seu alvo substituído para o alvo das arestas do vértice, já, caso o vértice não seja redundante, a aresta original é mantida.
+%     \draw[->] (v) edge[bend left=90]  node[right]  {$1$} (t); % (0,0)
+%     \draw[->] (v) edge[bend left=30]  node[right]  {$1$} (t); % (0,1)
+%     \draw[->] (v) edge[bend right=30] node[right] {$1$} (t); % (1,0)
+%     \draw[->] (v) edge[bend right=90] node[right] {$1$} (t); % (1,1)
 
-Após a aplicação de cada algoritmo, é necessário normalizar novamente cada vértice de acordo com \cref{alg:normalization}. \cite{miller2006qmdd}
+%   \end{tikzpicture}
+%   \quad\Longrightarrow\quad
+%   \begin{tikzpicture}[
+%     node distance=1.5cm,
+%     root/.style={circle,draw,minimum size=8mm},
+%     leaf/.style={rectangle,draw,minimum size=6mm},
+%     baseline={(current bounding box.center)}
+%   ]
+
+%     % terminal node
+%     \node[leaf] (t) at (0,0) {$1$};
+
+%     % incoming edge of weight 1
+%     \node[above=of t] (src) {};
+%     \draw[->] (src) -- node[right] {$1$} (t);
+
+%   \end{tikzpicture}
+% \]
+
+O algoritmo em si se divide em duas etapas: primeiro verifica-se se o vértice é redundante e, se não for, normaliza-se os pesos de suas arestas.
+
+Para identificar a redundância do vértice, basta comparar todas as suas arestas. Se todas forem iguais (mesmo peso e mesmo vértice alvo), o vértice pode ser descartado, então basta retornar uma aresta com o peso e alvo das arestas do vértice.
+
+Caso o vértice não seja redundante, o peso de todas as suas arestas será dividido pelo peso da primeira aresta com peso diferente de 0. Isso faz com que todo vértice tenha sua primeira aresta não nula com peso 1. Então, basta retornar uma nova aresta, apontando para o mesmo vértice e com peso sendo o peso original multiplicado pelo fator em comum às arestas do vértice \cite{miller2006qmdd}.
 
 \begin{algorithm}[H]
   \caption{Normalização de Vértice da Aresta}
@@ -330,6 +343,7 @@ Após a aplicação de cada algoritmo, é necessário normalizar novamente cada 
     \Return $E_0(e)$
   }
   \Else{
+  % TODO: Isso não tá ignorando as arestas nulas.
     $w \gets w(E_0(e))$ \;
     \For{$i \gets 0$ \KwTo $3$}{
       $w(E_i(e)) \gets w(E_i(e))/w$
@@ -342,13 +356,18 @@ Após a aplicação de cada algoritmo, é necessário normalizar novamente cada 
 
 \end{algorithm}
 
-\subsection{Multiplicação}
+A seguir, são oferecidos dois exemplos de normalização de vértices. No primeiro, o vértice é reduntante pois todas suas arestas são iguais, logo é descartado. Já no segundo, a aresta nula é ignorada enquanto as demais tem seus pesos dividos pelo peso da primeira aresta não nula.
 
-A multiplicação de QMDDs faz uso de uma subrotina de adição, que será apresentada antes do algoritmo em si.
+% TODO: vértice 1 1 1 1 -> ø; vértice 0 2 1 1 -> 0 1 0.5 0.5
 
-\subsubsection{Adição}
+\subsection{Adição}
 
-A adição de dois diagramas é feita de forma recursiva, arestas que apontam para o vértice terminal têm seus valores somados, e arestas que apontam para vértices não terminais vão apontar para o resultado da soma das arestas de seus vértices alvos. \cite{miller2006qmdd}
+Apesar de não ser uma operação diretamente necessária para simulação de circuitos, a adição de matrizes é um passo essencial para a multiplicação de matrizes, que, por sua vez, é necessária para a simulação.
+
+% TODO: Reescrever a última frase
+Para realizar a adição de duas arestas, cria-se um novo vértice, o qual armazenará o resultado da soma das duas arestas e, então, uma nova aresta é retornada, apontando para o vértice criado. As arestas desse vértice serão as somas, par a par, das arestas dos vértices a serem somados, multiplicadas pelos pesos das arestas de entrada. Ou seja, a primeira aresta do novo vértice será a soma da primeira aresta do primeiro vértice com a primeira aresta do segundo vértice.
+
+Caso pelo menos uma das arestas seja terminal, a construção da soma pode começar, visto que, como a aresta terminal não terá um vértice com arestas para serem somadas, basta somar o peso da aresta terminal ao peso da outra aresta. A seguir, na descrição do algoritmo, esse passo é otimizado, de forma a evitar o cálculo desnecessário caso uma das arestas tenha peso 0. Assim, se uma das arestas tiver peso 0, basta retornar o valor da outra aresta, evitando o recálculo do valor da nova aresta \cite{miller2006qmdd}.
 
 \begin{algorithm}[H]
   \caption{Adição de Arestas}
@@ -370,17 +389,22 @@ A adição de dois diagramas é feita de forma recursiva, arestas que apontam pa
   }
   $v_n \gets Vertice(x(e_0), \emptyset)$ \;
   \For{$i \gets 0$ \KwTo $3$}{
-    $p \gets Aresta(w(e_0)*w(E_i(e_0)), v(e_0))$ \;
-    $q \gets Aresta(w(e_1)*w(E_i(e_1)), v(e_1))$ \;
+    $p \gets Aresta(w(e_0)*w(E_i(e_0)), v(E_i(e_0)))$ \;
+    $q \gets Aresta(w(e_1)*w(E_i(e_1)), v(E_i(e_1)))$ \;
     $E_i(v_n) \gets p + q$
   }
   \Return $normalize(Aresta(1, v_n))$
 
 \end{algorithm}
 
-\subsubsection{Algoritmo}
+\subsection{Multiplicação} \cite{kydros2025tutorial}
 
-Dada a adição de duas matrizes, a multiplicação pode ser entendida como a soma das matrizes produzidas pelas convoluções das matrizes a serem somadas, logo basta multiplicar os pesos das arestas dos pares de vértices correspondentes, criando um QMDD para cada combinação de arestas e, então, somando-os. \cite{kydros2025tutorial}
+O algoritmo de multiplicação de QMDDs segue a mesma lógica da multiplicação de matrizes. São construídas n matrizes cujos valores são a multiplicação da i-ésima posição da linha da primeira e a i-ésima posição da coluna da segunda. Essas matrizes são então somadas para obter o resultado da multiplicação.
+
+% TODO: GRAWWWAAAAAAAAA
+Na multiplicação de QMDDs, cada par de vértices cria um novo vértice cujas arestas são a soma dos n pares linha-coluna de suas arestas. Note que, como o vértice armazena suas arestas linearmente, deve-se interpretar que a primeira e segunda aresta compõem a primeira coluna da matriz, enquanto a terceira e quarta compõem a segunda coluna.
+
+Ao atingir uma aresta final, basta multiplicar o peso dessa aresta pelo peso da outra e retorná-la. Assim como foi feito na adição, os casos em que o peso da aresta final é 0 ou 1 podem ser otimizados. No caso da aresta de peso 0, basta retornar a aresta de peso 0. Já no caso da aresta de peso 1, basta retornar a outra aresta.
 
 \begin{algorithm}[H]
   \caption{Multiplicação de Arestas}
@@ -429,6 +453,10 @@ Já a construção de portas controlodas possui duas etapas: uma para os qubits 
 
 O produto tensorial consiste basicamente do encadeamento dos grafos de cada diagrama. $A \otimes B$ significa que as arestas terminais de A serão conectadas ao vértice inicial de B. Note que, por não criar novos vértices, o resultado do produto tensorial não consome mais memória que os dois valores de entrada do produto. Isso representa um ganho exponencial em relação à representação matricial do produto tensorial, cujo tamanho do resultado é o produto dos tamanhos das entradas.
 
+Diferentemente das operações previamente mencionadas, o produto tensorial não avança sobre as duas arestas. Em vez disso, a segunda aresta da operação é levada adiante, de forma que apenas a primeira será alterada. Isso porque a parte mais relevante do produto tensorial acontece entre a aresta inicial do segundo QMDD e todas as arestas finais do primeiro QMDD. Assim, para realizar o produto tensorial, basta percorrer o primeiro QMDD até encontrar suas arestas terminais. Em cada aresta será aplicado o passo de ligar a aresta terminal do primeiro QMDD ao vértice inicial do segundo e a multiplicação dos pesos da aresta final com a aresta inicial.
+
+Além disso, a forma como a navegação do primeiro QMDD é feita faz com que o fator da aresta inicial do segundo QMDD seja propagado até chegar na aresta inicial do primeiro QMDD, por meio do processo sucessivo de normalização das arestas.
+
 \begin{algorithm}[H]
   \caption{Produto Tensorial Entre Arestas}
   \label{alg:kronecker}
@@ -455,9 +483,7 @@ O produto tensorial consiste basicamente do encadeamento dos grafos de cada diag
 
 \subsubsection{Construção de Portas Controladas}\label{subsub:controlgate}
 
-Como dito na \cref{sec:gateconstruct}, a construção de portas controlodas se divide em duas partes: qubits de controle menos significativos que o alvo e qubits mais significativos. A construção do QMDD por meio desse método ocorre do vértice terminal ao vértice inicial, considerando apenas o qubit de controle e o qubit alvo. Para cada qubit de controle, é construído um QMDD que representa o comportamento de apenas propagar a transformação sobre o qubit alvo pelas arestas que representam o caso em que o qubit está ativo.
-
-Note que, no caso em que não há qubits de controle, este algoritmo funciona identicamente ao algoritmo para construção de QMDDs de portas únicas, já que todos os qubits além 
+Como dito na \cref{sec:gateconstruct}, a construção de portas controlodas se divide em duas partes: qubits de controle menos significativos que o alvo e qubits mais significativos. A construção do QMDD por meio desse método ocorre do vértice terminal ao vértice inicial, considerando apenas os qubits de controle e o qubit alvo. Para cada qubit de controle, é construído um QMDD que representa o comportamento de apenas propagar a transformação sobre o qubit alvo pelas arestas que representam o caso em que o qubit está ativo.
 
 \begin{algorithm}[H]
   \caption{Construção de Portas Controlodas}
