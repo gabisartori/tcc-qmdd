@@ -22,8 +22,7 @@ Este trabalho consiste na implementação de uma dessas técnicas: o uso de diag
 \end{equation}
 
 
-% TODO: Fazer uma chamada para esse parágrafo, mencionando que a possibilidade de representar matrizes de forma concisa permite a execução de circuitos de maneira mais eficiente que a existente no ket.
-Assim, será feita uma implementação dos algoritmos necessários para simulação de um circuito quântico, envolvendo a conversão de cada porta em um QMDD que representa a matriz equivalente à porta, o produto entre dois QMDDs e a medição sobre determinado QMDD. Essa implementação então será integrada à plataforma Ket \cite{evandro}, uma interface feita para facilitar a descrição de algoritmos quânticos. Então, por meio do módulo de simulação por QMDD, o usuário poderá simular de forma eficiente algoritmos que não exijam matrizes de baixa redundância.
+Visto que o QMDD permite a repsentação de matrizes arbitrariamente grandes de forma concisa, será feita uma implementação dos algoritmos necessários para simulação de um circuito quântico, envolvendo a conversão de cada porta em um QMDD que representa a matriz equivalente à porta, o produto entre dois QMDDs e a medição sobre determinado QMDD. Essa implementação então será integrada à plataforma Ket \cite{evandro}, uma interface feita para facilitar a descrição de algoritmos quânticos. Então, por meio do módulo de simulação por QMDD, o usuário poderá simular de forma eficiente algoritmos que não exijam matrizes de baixa redundância.
 
 Além disso, não é intuitivamente claro quais circuitos levarão a uma matriz com alta ou baixa redundância. Então, este trabalho buscará comparar o desempenho de diferentes circuitos de forma a analisar se existem aspectos em comum entre os circuitos que apresentaram ganho significativo.
 
@@ -45,13 +44,19 @@ Implementar um novo método de simulação para o Ket, que poderá ser escolhido
   \item Identificar em quais cenários o simulador produzido apresenta vantagem em relação aos métodos de simulação já disponíveis na plataforma.
 \end{enumerate}
 
-% TODO: Estrutura do texto
 \section {Estrutura do Documento}
+
+No \cref{chap:compq} são introduzidos os conceitos fundamentais da computação quântica e suas diferentes formas de representações. Ao longo dessa introdução, serão pontuados os aspectos relavantes para definição dos requisitos que o QMDD deve atender e, também, os motivos pelos quais a simulação quântica não é trivial. Em seguida, são estabelecidas as funcionalidades necessárias para que uma determinada ferramenta seja suficiente para realizar a simulação de um circuito quântico. Além disso, será fornecido um circuito quântico que será utilizado ao longo do trabalho para servir de exemplo para os algoritmos a serem apresentados.
+
+Então, no \cref{chap:qmdd}, foi feita uma breve introdução ao funcionamento de grafos de forma a facilitar o entendimento da estrutura do QMDD, que se baseia em grafos dirigidos. Então, serão apresentadas todas as características de um QMDD, assim como a descrição formal dos algoritmos necessários para implementar as funcionalidades previamente descritas como necessárias para a simulação de um circuito quântico.
+
+Finalmente, o \cref{chapter:tcc2} tratará do planejamento das atividades para a segunda parte deste trabalho. Essa etapa consistirá da implementação dos algoritmos apresentados e da realização de experimentos utilizando o QMDD. O objetivo dos experiementos é garantir que a implementação produz resultados corretos, além de permitir a análise de desempenho desse método para simulação de circuitos quânticos. 
 
 \section{Trabalhos Correlatos}
 
-% TODO: Mencionar o trabalho 
-Existem dois artigos que descrevem o funcionamento do QMDD e oferecem implementações do algoritmos como exemplos e também para exibir o consumo de memória para circuitos pequenos. Nenhuma implementação foi em Rust e também há poucas conclusões sobre os tipos de circuitos nos quais o QMDD apresenta vantagem ou não.
+O uso de Diagramas de Decisão para representação de circuitos quânticos foi inicialmente proposto por \cite{miller2006qmdd}. Neste artigo, é apresentado o uso de uma estrutura baseada em diagramas de decisão para a representação concisa de matrizes que apresentam alta taxa de redundância em seus valores. Além disso, são apresentados os algoritmos necessários para manipular essas matrizes da forma necessária para realização da simulação de circuitos quânticos.
+
+Dada a utilidade do QMDD na execução de funções quânticas, \cite{kydros2025tutorial} apresenta um manual de implementação dessa estrutura. Nesse manual, os algoritmos são definidos formalmente por meio de pseudocódigo e acompanhados das estruturas necessárias para garantir que a implementação seja eficiente. Por exemplo, a definição do uso de tabelas hash para identificação de arestas já existentes. 
 
 \section{Metodologia}
 

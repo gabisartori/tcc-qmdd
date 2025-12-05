@@ -38,9 +38,9 @@ sendo $\alpha$ e $\beta$ valores complexos tais que $|\alpha|^2 + |\beta|^2 = 1$
 
 \subsection{Medição e Colapso da Superposição}\label{sub:result}
 
-% TODO: Mencionar que a operação de medida retorna um valor.
-% Provavelmente vou ter que reescrever esse parágrafo em 2, um falando do processo de medida e outro falando do colapso.
-A superposição de estados do qubit não é uma informação que possa ser extraída de um circuito quântico. Ao tentar observar o estado de um qubit em superposição, ele colapsa em \ket{0} ou \ket{1}. Esse colapso é aleatório, mas a probabilidade de cada resultado pode ser alterada: um qubit no estado $\ket{\psi} = \alpha \cdot \ket{0}+\beta \cdot \ket{1}$ possui $|\alpha|^2$ de chance de colapsar para \ket{0} e $|\beta|^2$ de chance de colapsar em \ket{1}. Por isso, um vetor $\begin{bmatrix} \alpha \\ \beta \end{bmatrix}$ só será um estado quântico válido se a soma do quadrado dos módulos de $\alpha$ e $\beta$ resultarem em 1, ou seja, 100\% de chance que o qubit colapse em 0 ou em 1 \cite{griffiths1995introduction}.
+Para se obter qualquer informação sobre o estado de um circuito quântico, é necessário realizar uma operação de medida. Quando realizada sobre um estado em superposição, essa operação retorna um valor aleatório 0 ou 1 para cada qubit medido. A probabilidade de cada possível resultado é definida pelos coeficientes no qubit. A medição de um qubit $\ket{\psi} = \alpha \cdot \ket{0}+\beta \cdot \ket{1}$ possui $|\alpha|^2$ de chance de retornar 0 e $|\beta|^2$ de chance de retornar 1. Por isso, um vetor $\begin{bmatrix} \alpha \\ \beta \end{bmatrix}$ só será um estado quântico válido se a soma do quadrado dos módulos de $\alpha$ e $\beta$ resultarem em 1, ou seja, 100\% de chance que a medida retorne 0 ou 1.
+
+Esse processo de medida, porém, é destrutivo. Isso significa que, apesar que um qubit inicialmente possua 50\% de chance de ser medido em 0 e 50\% de chance de ser medido 1, caso a primeira medição retorne 0, todas as medições subsequentes do mesmo qubit também retornarão 0, o mesmo é válido para caso o resultado da primeira medição fosse 1. Refere-se a esse fenômeno como colapso da superposição {griffiths1995introduction}.
 
 \subsection{Fase}
 Como a probabilidade de determinado resultado é dada pelo quadrado do módulo do valor que representa esse resultado no vetor do qubit, multiplicar esse valor por qualquer valor complexo de módulo 1 não alterará a medição imediata de um estado. Porém ainda é possível que a evolução temporal do estado seja alterada. A \cref{sec:gates} oferece um exemplo desse caso.
@@ -71,8 +71,8 @@ Os kets $\ket{+}, \ket{+i}, \ket{-} e \ket{-i}$, presentes no equador da esfera,
 
 Visto que um qubit pode ser representado por meio de um vetor, operações sobre qubits podem ser representadas por meio de matrizes. De forma a respeitar o espaço de estados válidos para um qubit, é importante que a matriz que codifica a transformação possua determinante de valor 1. Isso é importante pois uma matriz unitária não altera a norma dos vetores aos quais ela é aplicada. Para a representação do qubit, isso significa que a soma das probabilidades de ambos os resultados possíveis não será alterada \cite{nielsen2010quantum}.
 
-% TODO: apagar esse parágrafo ig?
-Além disso, por possuirem determinante diferente de 0, matrizes unitárias são sempre reversíveis. Isso faz com que todo circuito quântico seja reversível, já que todos os seus componentes também são. Dessa forma, computadores quânticos se apresentam mais eficientes energeticamente, já que uma das principais formas de dissipação de energia que ocorre em computadores clássicos se dá pela destruição de informação que acontece em portas lógicas não reversíveis. Por exemplo, a porta lógica AND, que recebe 2 bits como entrada mas retorna apenas 1 de saída. Assim, diferentes entradas são forçadas a compartilhar a mesma saída, tornando impossível inferir qual a entrada da porta tendo como base apenas o resultado \cite{efficientreversiblegates}.
+% TODO DONE: apagar esse parágrafo ig?
+% Além disso, por possuirem determinante diferente de 0, matrizes unitárias são sempre reversíveis. Isso faz com que todo circuito quântico seja reversível, já que todos os seus componentes também são. Dessa forma, computadores quânticos se apresentam mais eficientes energeticamente, já que uma das principais formas de dissipação de energia que ocorre em computadores clássicos se dá pela destruição de informação que acontece em portas lógicas não reversíveis. Por exemplo, a porta lógica AND, que recebe 2 bits como entrada mas retorna apenas 1 de saída. Assim, diferentes entradas são forçadas a compartilhar a mesma saída, tornando impossível inferir qual a entrada da porta tendo como base apenas o resultado \cite{efficientreversiblegates}.
 
 Um exemplo de matriz próximo da computação clássica é a matriz de Pauli X \cite{nielsen2010quantum}.
 
@@ -201,8 +201,7 @@ Matriz de Hadamard, coloca o qubit em superposição. Representada pela letra H.
   \end{bmatrix}
 \end{equation}
 
-% TODO: apresentar porta CNOT
-Além disso, é possível que portas atuem sobre múltiplos qubits. Um exemplo é a porta CNOT, que age sobre 2 qubits, um é o controle e o outro é o alvo. 
+As portas mencionadas até então formam um conjunto não universal da computação quântica, ou seja, nem todo algoritmo quântico pode ser descrito utilizando apenas combinações dessas portas. Para que qualquer algoritmo quântico possa ser descrito por meio de portas quânticas, é preciso que exista pelo menos uma porta que atue sobre mais de um qubit. Uma possível porta a ser adicionada ao conjunto apresentado até então de forma a torná-lo universal é a porta CNOT. Essa porta atua sobre 2 qubits, um alvo e um controle. Sobre o qubit alvo, a porta CNOT age como uma porta X, \ket{0} vira \ket{1} e vice-versa, porém apenas se o qubit controle estiver ativo. A matriz que representa essa porta é apresentada na \cref{eq:cnot}. 
 
 \begin{equation}
   CNOT = \begin{bmatrix}
@@ -214,7 +213,7 @@ Além disso, é possível que portas atuem sobre múltiplos qubits. Um exemplo �
   \label{eq:cnot}
 \end{equation}
 
-Note que, por atuar sobre mais de um qubit, a matriz dessa operação tem formato 4x4 e não 2x2. A seção a seguir apresenta o método para representar e manipular circuitos com múltiplos qubits.
+Note que, por atuar sobre dois qubits, a matriz dessa operação tem formato 4x4 e não 2x2. A seção a seguir apresenta o método para representar e manipular circuitos com múltiplos qubits.
 
 \section{Circuitos com Múltiplos Qubits}
 
@@ -222,8 +221,7 @@ Para combinar múltiplos qubits em um único sistema, é preciso criar um novo e
 
 Na notação bra-ket \cite{Dirac_1939}, múltiplos qubits podem ser representados por meio de um ket com o valor de todos os qubits. Por exemplo $\ket{0} \otimes \ket{0} = \ket{00}$. Então, um sistema com 2 qubits pode se encontrar numa superposição de 4 estados diferentes: \ket{00}, \ket{01}, \ket{10} e \ket{11}. Assim, nota-se que o número de possíveis estados cresce exponencialmente em relação ao número de qubits no circuito, visto que cada novo qubit duplica o número de possibilidades.
 
-% TODO: Reescrever esse parágrado considerando que a CNOT já foi introduzida 
-Dada a presença de múltiplos qubits no circuito, surgem, então, portas quânticas envolvam mais de um qubit. As portas de múltiplos qubits mais importantes são as portas controladas (outras portas normalmente podem ser decompostas em combinações de portas de um único qubit ou portas controladas). As portas controladas são portas que atuam sobre um qubit alvo, tendo como controle um grupo de vários outros qubits, fazendo efeito sobre o qubit alvo apenas no caso em que todos os qubit de controle estejam ativos. Por exemplo, considere o estado $\ket{\psi} = \frac{1}{\sqrt{2}} \cdot (\ket{00} + \ket{10})$. Aplicando uma porta X controlada (também conhecida como CNOT) no segundo qubit do circuito tendo o primeiro como controle, a porta irá agir apenas no caso \ket{10}, transformando-o em \ket{11}.
+Dada a presença de múltiplos qubits no circuito, surgem, então, portas quânticas envolvam mais de um qubit. As portas de múltiplos qubits mais importantes são as portas controladas (outras portas normalmente podem ser decompostas em combinações de portas de um único qubit ou portas controladas). As portas controladas são portas que atuam sobre um qubit alvo, tendo como controle um grupo de vários outros qubits, fazendo efeito sobre o qubit alvo apenas no caso em que todos os qubit de controle estejam ativos. Por exemplo, considere o estado $\ket{\psi} = \frac{1}{\sqrt{2}} \cdot (\ket{00} + \ket{10})$. Aplicando uma porta X controlada (também conhecida como CNOT, apresentada na \cref{eq:cnot}) no segundo qubit do circuito tendo o primeiro como controle, a porta irá agir apenas no caso \ket{10}, transformando-o em \ket{11}.
 
 \begin{equation}
   CNOT \cdot \frac{1}{\sqrt{2}} \cdot (\ket{00} + \ket{10}) = \frac{1}{\sqrt{2}} \cdot (\ket{00} + \ket{11})
@@ -231,7 +229,7 @@ Dada a presença de múltiplos qubits no circuito, surgem, então, portas quânt
 
 O comportamento dessa porta pode ser descrito por meio da matriz apresentada na \cref{eq:cnot}
 
-Note que a matriz possui dimensão 4x4, para se adequar ao formato do vetor que representa um circuito de 2 qubits (uma dimensão para cada combinação de estados). Assim como os vetores que representam a superposição dos estados, as matrizes que representam as portas do circuito crescem exponencialmente de acordo com o número de qubits envolvidos na porta.
+Essa matriz possui dimensão 4x4 para se adequar ao formato do vetor que representa um circuito de 2 qubits (uma posição para cada combinação de estados). Assim como os vetores que representam a superposição dos estados, as matrizes que representam as portas do circuito crescem exponencialmente de acordo com o número de qubits envolvidos na porta.
 
 \subsection{Produto Tensorial}\label{sub:kronecker}
 
