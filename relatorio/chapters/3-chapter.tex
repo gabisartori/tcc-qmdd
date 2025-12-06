@@ -1,23 +1,120 @@
 \chapter{QMDD}\label{chap:qmdd}
 
-{\itshape Quantum Multiple-Valued Decision Diagram} é uma estrutura de dados composta de um grafo dirigido acíclico cujos vértices são rotulados para representar um dos qubits do circuito. Por meio dessas informações, é possível percorrer o grafo de forma a reconstruir completamente a matriz que ele representa. Assim, o QMDD se mostra uma forma sem perdas de compactar matrizes. Além disso, é possível manipular QMDDs e realizar operações como adição e multiplicação entre eles sem precisar reconstruir suas matrizes, fazendo com que essas operações também tirem vantagem da capacidade de compressão oferecida pelo QMDD. \cite{miller2006qmdd}
+{\itshape Quantum Multiple-Valued Decision Diagram} é uma estrutura de dados composta de um grafo dirigido acíclico cujos vértices são rotulados a partir de um dos qubits do circuito. Por meio dessas informações, é possível percorrer o grafo de forma a reconstruir completamente a matriz que ele representa. Assim, o QMDD se mostra uma forma sem perdas de compactar matrizes. Além disso, é possível manipular QMDDs e realizar operações como adição e multiplicação entre eles sem precisar reconstruir suas matrizes, fazendo com que essas operações também tirem vantagem da capacidade de compressão oferecida pela estrutura. \cite{miller2006qmdd}
 
-Para que o diagrama não cresça exponencialmente em relação ao número de qubits no circuito, os algoritmos também devem se ater a preservar as seguintes restrições para o grafo do QMDD:
-
-\begin{enumerate}
-  \item Existe um único vértice que não possui arestas saintes. Esse vértice é chamado de vértice terminal.
-  \item Todos os vértices que não são o vértice terminal possuem um rótulo indicando qual qubit o vértice representa e um conjunto de $r^2$ arestas saintes. \cite{fujita1997multi} No caso de QMDDs para circuitos quânticos, $r=2$, logo cada vértice possui 4 arestas.
-  \item Existe uma única aresta sem vértice de origem. Essa é a aresta pela qual se iniciam todas as buscas pelo grafo e aponta para o vértice chamado de inicial.
-  \item Todas as arestas do grafo são ponderadas por um valor complexo.
-  \item Os rótulos dos vértices são ordenáveis, de forma que os rótulos de todo caminho formado do vértice inicial ao terminal estejam ordenados. Ou seja, em uma busca pelo gráfico, sempre se encontrará os vértices de cada qubit na mesma ordem. Além disso, essa ordem diz que o qubit menos significativo do circuito é o mais próximo do vértice terminal, enquanto o mais significativo é o próprio vértice inicial.
-  \item Nenhum vértice não terminal é redundante. Ou seja, nenhum vértice possui todas as suas arestas com mesmo peso e apontando para um mesmo vértice. Caso todas as arestas tenham peso 0, o vértice ainda é considerado redundante mesmo que os vértices destino sejam diferentes. Isso porque a presença de um 0 no caminho entre o vértice inicial e final anula inteiramente o valor do caminho, fazendo com que qualquer aresta com peso 0 possa levar imediatamente ao vértice terminal sem alterar o valor do QMDD.
-  \item Todo nodo não terminal é sempre normalizado, de forma que a primeira aresta de valor não nulo tem sempre valor 1. Note que deve sempre existir pelo menos uma aresta não nula, pois se todas as arestas tiverem peso 0, o vértice seria redundante.
-  \item Todos os vértices são únicos. Ou seja, não existe um par de vértices com mesmo rótulo e todas as arestas iguais.
-\end{enumerate}
+É importante ressaltar que a compressão oferecida pelo QMDD é limitada pela presença da redundância da matriz representada. A forma como o QMDD funciona é representando de forma concisa o produto tensorial entre múltiplas matrizes, como se fosse apenas a representação linear de quais matrizes fazem parte do produto, sem armazenar todo o resultado. Porém, essa representação não é suficiente para incluir portas controladas, que precisam de múltiplos vértices para representar os diferentes cenários que a porta envolve. Por isso, circuitos com alta taxa de entrelaçamento normalmente geram matrizes com baixa taxa de redundância, fazendo com que o QMDD perca sua eficiência na hora de comprimí-la \cite{kydros2025tutorial}. Dessa forma, o tamanho de um QMDD é variado em relação ao número de qubits, podendo ser constante, caso todos os qubits se encontrem na exata mesma distribuição, ou exponencial, caso muitos qubits estejam entrelaçados entre si.
 
 Como estabelecido na \cref{sec:matrixrep}, para que um circuito quântico possa ser convertido em matrizes para ser simulado, são necessárias 3 operações fundamentais: construção da matriz a partir da porta; multiplicação de matrizes; medição. Nesta seção, serão apresentados os algoritmos necessários para realização dessas operações, em conjunto das subrotinas necessárias para os algoritmos. Por exemplo, a multiplicação de QMDDs faz uso da subrotina de adição de QMDDs.
 
 Além disso, também será feita uma breve introdução ao conceito de grafos, e como eles oferecem formas eficazes de percorrer dados por meio de caminhos, uma funcionalidade essencial para a manipulação e recuperação das informações contidas em QMDDs.
+
+\section{Grafos}\label{sec:graph}
+
+Visto que QMDDs dependem integralmente de grafos, esta seção busca introduzir os conceitos necessários para compreender as definições do QMDD e as restrições necessárias para que um grafo seja válido para um QMDD \cite{jungnickel}
+
+Grafo é o nome dado para estruturas de dados organizadas em elementos e ligações entre esses elementos. Cada elemento do grafo é chamado de vértice e as ligações entre os elementos são chamadas de arestas. Um cenário no qual grafos são úteis, por exemplo, é a representação entre diferentes pontos de ônibus de uma cidade e a existência de uma rota que ligue 2 pontos. Nesse caso, cada ponto de ônibus é um vértice e sempre que exista uma linha de ônibus levando de um ponto A para um ponto B, vai existir uma aresta ligando os vértices A e B. Arestas podem ser representadas como uma tupla com o vértice de saída e o vértice destino da aresta.
+
+O grafo da \cref{fig:graph2nodes} é composto do conjunto de vértices \{A, B\} e do conjunto de arestas \{(A, B)\}.
+
+\begin{figure}[h]
+  \centering
+  \begin{tikzpicture}[>=stealth, node distance=2cm]
+
+  \node (A) [circle, draw] {A};
+  \node (B) [circle, draw, right of=A] {B};
+
+  \draw[->] (A) -- (B);
+
+  \end{tikzpicture}
+  \caption{Grafo com 2 vértices}
+  \label{fig:graph2nodes}
+\end{figure}
+
+
+\subsection{Caminhos}
+A existência de uma aresta saindo de A e levando a B significa que existe um caminho de A para B. Nem todos os vértices do precisam estar diretamente ligados por uma aresta, é possível que exista um caminho indireto entre dois vértices. Por exemplo, no grafo da imagem \cref{fig:graph3node}, existe um caminho de A para B e um de B para C, isso significa que, indiretamente, também existe um caminho de A para C \cite{jungnickel}.
+
+\begin{figure}[h]
+  \centering
+  \begin{tikzpicture}[>=stealth, node distance=2cm]
+
+  \node (A) [circle, draw] {A};
+  \node (B) [circle, draw, right of=A] {B};
+  \node (C) [circle, draw, right of=B] {C};
+
+  \draw[->] (A) -- (B);
+  \draw[->] (B) -- (C);
+
+  \end{tikzpicture}
+  \caption{Grafo com 3 vértices}
+  \label{fig:graph3node}
+\end{figure}
+
+\subsection{Arestas Ponderadas}
+Além de armazenar apenas a informação de que se existe ou não um caminho entre dois vértices, uma aresta também pode armazenar um valor para esse caminho. Normalmente esse valor é entendido como o custo da aresta, porém, nos QMDDs, esse valor é interpretado como um dos valores que compõem a matriz representada.
+
+No exemplo dos pontos de ônibus, o valor de uma aresta poderia representar o tempo que leva para chegar de um lugar a outro. Isso se torna útil em junção com o conceito de caminho indireto: se o caminho de A para C é na verdade o caminho de A para B seguido do caminho de B para C, sabe-se que o custo para chegar em C a partir de A será a soma dos custos para ir de A a B e de B a C. Por exemplo, se a aresta (A, B) tem valor 10 minutos e a aresta (B, C) tem valor 20 minutos, sabe-se que é possível sair de A e chegar em C em 30 minutos.
+
+\begin{figure}[h]
+  \centering
+  \begin{tikzpicture}[>=stealth, node distance=2cm]
+
+  \node (A) [circle, draw] {A};
+  \node (B) [circle, draw, right of=A] {B};
+  \node (C) [circle, draw, right of=B] {C};
+
+  \draw[->] (A) -- (B) node[midway, above] {10};
+  \draw[->] (B) -- (C) node[midway, above] {20};
+
+  \end{tikzpicture}
+  \caption{Grafo com arestas ponderadas}
+  \label{fig:graph3nodeweighted}
+\end{figure}
+
+
+\subsection{Grafos Dirigidos e Ciclos}
+Note que a possibilidade de ir do ponto A para o ponto B não implica na existência de um caminho de B para A. Por isso a ordem da tupla é importante para as arestas. Dessa forma, grafos podem ou não ser dirigidos, ou seja, é possível impor a restrição de que toda aresta representa a existência de ambos os caminhos, tornando a ordem da tupla irrelevante. Caso o grafo não seja dirigido, toda aresta resulta na existência de um ciclo, ou seja, existe um caminho de um vértice para ele mesmo. No caso da aresta não dirigida (A, B), existe um caminho de A para B e existe um caminho de B para A, logo existe um caminho de A para A.
+
+Por outro lado, no caso de grafos dirigidos, a existência de um ciclo passa a ser apenas uma possibilidade facilmente identificada. No caso dos QMDDs, essa restrição é sempre respeitada pela forma como os algoritmos de construção e manipulação são definidos. Porém, dado um grafo arbitrário, é possivel verificar se existe um ciclo por meio de uma busca a partir de cada vértice, verificando se existe um caminho que leve de volta ao mesmo vértice \cite{jungnickel}.
+
+O presente grafo na \cref{fig:acyclicgraph} é acíclico, visto que não existe caminho de nenhum vértice para si mesmo, já o grafo na \cref{fig:cyclicgraph}, existe um caminho de A para A, passando pelos vértices B e C, logo esse grafo é cíclico.
+
+\begin{figure}[h]
+  \centering
+  \begin{minipage}{0.45\textwidth}
+    \centering
+    \begin{tikzpicture}[>=stealth, every node/.style={circle,draw,minimum size=7mm}]
+      \node (A) at (90:2)  {A};
+      \node (B) at (210:2) {B};
+      \node (C) at (330:2) {C};
+      \draw[->] (A) -- (B);
+      \draw[->] (B) -- (C);
+      \draw[->] (A) -- (C);
+    \end{tikzpicture}
+    \caption{Grafo acíclico}
+    \label{fig:acyclicgraph}
+  \end{minipage}
+  \qquad
+  \begin{minipage}{0.45\textwidth}
+    \centering
+    \begin{tikzpicture}[>=stealth, every node/.style={circle,draw,minimum size=7mm}]
+      \node (A) at (90:2)  {A};
+      \node (B) at (210:2) {B};
+      \node (C) at (330:2) {C};
+      \draw[->] (A) -- (B);
+      \draw[->] (B) -- (C);
+      \draw[->] (C) -- (A);
+    \end{tikzpicture}
+    \caption{Grafo cíclico}
+    \label{fig:cyclicgraph}
+  \end{minipage}
+\end{figure}
+
+\subsection{Representação de Vértices e Arestas}
+
+No começo desta seção, vértices foram apresentadas como sendo elementos arbitrários de um conjunto e arestas como sendo tuplas dos vértices conectados e, opcionalmente, um peso. Para a descrição dos algoritmos do QMDD, uma notação diferente será utilizada. Nela, cada aresta possui apenas um valor e um vértice destino, enquanto cada vértice será uma tupla com seu rótulo e um conjunto de arestas.
+
+Assim, o grafo da \cref{fig:graph3nodeweighted} pode ser representado como o conjunto de vértices $\{(A, \{(10, B)\}), (B, \{(20, C)\}), (C, \{\})\}$
 
 \section{Como Ler um QMDD}\label{sec:qmddvis}
 
@@ -90,7 +187,7 @@ Já para matrizes que representam portas sobre múltiplos qubits, a ligação di
   \label{fig:xhqmdd}
 \end{figure}
 
-Para reconstruir a matriz representada por esse diagrama, basta seguir o caminho da aresta inicial ao vértice final. Cada vértice é rotula um qubit e suas arestas representam uma das 4 possíveis escolha para ler o qubit: começou em 0 e está em 0; começou em 0 e está em 1; começou em 1 e está em 0 ou começou em 1 e está em 1. Como os qubits normalmente são inicializados em \ket{0}, pode-se construir o caminho considerando apenas a primeira e a segunda aresta do vértice. Caso o qubit do vértice esteja em \ket{0} no estado a ser lido, segue a primeira aresta e caso esteja em \ket{1} segue a segue.
+Para reconstruir a matriz representada por esse diagrama, basta seguir o caminho da aresta inicial ao vértice final. Cada vértice é rotulado por um qubit e suas arestas representam uma das 4 possíveis escolha para ler o qubit: começou em 0 e está em 0; começou em 0 e está em 1; começou em 1 e está em 0 ou começou em 1 e está em 1. Como os qubits normalmente são inicializados em \ket{0}, pode-se construir o caminho considerando apenas a primeira e a segunda aresta do vértice. Caso o qubit do vértice esteja em \ket{0} no estado a ser lido, segue a primeira aresta e caso esteja em \ket{1} segue a segue.
 
 Uma forma mais algorítmica para recuperar um determinado valor da matriz é construir o caminho a partir dos índices do valor na matriz. Por exemplo, para obter o valor $M_{31}$ (valor na quarta linha e segunda coluna da matriz), é preciso escrever o índice em binário utilizando o número de bits igual ao número de qubits indicado pelo diagrama, no caso (3, 1) vira (11, 01). Então, para escolher a aresta do i-ésimo vértice, monta-se o par linha, coluna do i-ésimo bit mais significativo do índice. Ou seja, no qubit 0, a aresta escolhida será terceira (índice $2_{10}$, ou $10_2$) e a aresta do qubit 1 será a quarta (índice $3_{10}$, ou $11_2$).
 
@@ -100,119 +197,29 @@ Ao atingir o vértice terminal, basta multiplicar os pesos de todas as arestas p
   M_{31} = \frac{1}{\sqrt{2}} \cdot 1 \cdot -1 = -\frac{1}{\sqrt{2}}
 \end{equation}
 
-Note que, na \cref{fig:xhqmdd}, as arestas de peso 0 levam ao vértice q1 para facilitar a visualização do grafo. Uma otimização importante é que toda aresta de peso 0 pode levar diretamente ao vértice terminal, já que a presença de um 0 no caminho faz com que o resultado seja 0 independentemente de quais outros valores estiverem presentes.
+Note que, na \cref{fig:xhqmdd}, as arestas de $q1$ com peso 0 levam ao vértice $q0$ para facilitar a visualização do grafo. Uma otimização importante é que toda aresta de peso 0 pode levar diretamente ao vértice terminal, já que a presença de um 0 no caminho faz com que o resultado seja 0 independentemente de quais outros valores estiverem presentes.
 
-\section{Grafos}\label{sec:graph}
+Outras restrições para que o grafo do QMDD seja construído de forma otimizada são:
 
-Visto que QMDDs dependem integralmente de grafos, esta seção busca introduzir os conceitos necessários para compreender as definições do QMDD e as restrições necessárias para que um grafo seja válido para um QMDD \cite{jungnickel}
+\begin{enumerate}
+  \item Existe um único vértice que não possui arestas saintes. Esse vértice é chamado de vértice terminal.
+  \item Todos os vértices que não são o vértice terminal possuem um rótulo indicando qual qubit o vértice representa e um conjunto de $r^2$ arestas saintes. \cite{fujita1997multi} No caso de QMDDs para circuitos quânticos, $r=2$, logo cada vértice possui 4 arestas.
+  \item Existe uma única aresta sem vértice de origem. Essa é a aresta pela qual se iniciam todas as buscas pelo grafo e aponta para o vértice chamado de inicial.
+  \item Todas as arestas do grafo são ponderadas por um valor complexo.
+  \item Os rótulos dos vértices são ordenáveis, de forma que os rótulos de todo caminho formado do vértice inicial ao terminal estejam ordenados. Ou seja, em uma busca pelo gráfico, sempre se encontrará os vértices de cada qubit na mesma ordem. Além disso, essa ordem diz que o qubit menos significativo do circuito é o mais próximo do vértice terminal, enquanto o mais significativo é o próprio vértice inicial.
+  \item Nenhum vértice não terminal é redundante. Ou seja, nenhum vértice possui todas as suas arestas com mesmo peso e apontando para um mesmo vértice. Caso todas as arestas tenham peso 0, o vértice ainda é considerado redundante mesmo que os vértices destino sejam diferentes. Isso porque a presença de um 0 no caminho entre o vértice inicial e final anula inteiramente o valor do caminho, fazendo com que qualquer aresta com peso 0 possa levar imediatamente ao vértice terminal sem alterar o valor do QMDD.
+  \item Todo nodo não terminal é sempre normalizado, de forma que a primeira aresta de valor não nulo tem sempre valor 1. Note que deve sempre existir pelo menos uma aresta não nula, pois se todas as arestas tiverem peso 0, o vértice seria redundante.
+  \item Todos os vértices são únicos. Ou seja, não existe um par de vértices com mesmo rótulo e todas as arestas iguais.
+\end{enumerate}
 
-Grafo é o nome dado para estruturas de dados organizadas em elementos e ligações entre esses elementos. Cada elemento do grafo é chamado de vértice e as ligações entre os elementos são chamadas de arestas. Um cenário no qual grafos são úteis, por exemplo, é a representação entre diferentes pontos de ônibus de uma cidade e a existência de uma rota que ligue 2 pontos. Nesse caso, cada ponto de ônibus é um vértice e sempre que exista uma linha de ônibus levando de um ponto A para um ponto B, vai existir uma aresta ligando os vértices A e B. Arestas podem ser representadas como uma tupla com o vértice de saída e o vértice destino da aresta.
-
-O grafo da \cref{fig:graph2nodes} é composto do conjunto de vértices \{A, B\} e do conjunto de arestas \{(A, B)\}.
-
-\begin{figure}[h]
-  \centering
-  \begin{tikzpicture}[>=stealth, node distance=2cm]
-
-  \node (A) [circle, draw] {A};
-  \node (B) [circle, draw, right of=A] {B};
-
-  \draw[->] (A) -- (B);
-
-  \end{tikzpicture}
-  \caption{Grafo com 2 vértices}
-  \label{fig:graph2nodes}
-\end{figure}
-
-
-\subsection{Caminhos}
-A existência de uma aresta saindo de A e levando a B significa que existe um caminho de A para B. Nem todos os vértices do precisam estar diretamente ligados por uma aresta, é possível que exista um caminho indireto entre dois vértices. Por exemplo, no grafo da imagem \cref{fig:graph3node}, existe um caminho de A para B e um de B para C, isso significa que, indiretamente, também existe um caminho de A para C \cite{jungnickel}.
-
-\begin{figure}[h]
-  \centering
-  \begin{tikzpicture}[>=stealth, node distance=2cm]
-
-  \node (A) [circle, draw] {A};
-  \node (B) [circle, draw, right of=A] {B};
-  \node (C) [circle, draw, right of=B] {C};
-
-  \draw[->] (A) -- (B);
-  \draw[->] (B) -- (C);
-
-  \end{tikzpicture}
-  \label{fig:graph3node}
-\end{figure}
-
-\subsection{Arestas Ponderadas}
-Além de armazenar apenas a informação de que se existe ou não um caminho entre dois vértices, uma aresta também pode armazenar um valor para esse caminho. Normalmente esse valor é entendido como o custo da aresta, porém, nos QMDDs, esse valor é interpretado como um dos valores que compõem a matriz representada.
-
-No exemplo dos pontos de ônibus, o valor de uma aresta poderia representar o tempo que leva para chegar de um lugar a outro. Isso se torna útil em junção com o conceito de caminho indireto: se o caminho de A para C é na verdade o caminho de A para B seguido do caminho de B para C, sabe-se que o custo para chegar em C a partir de A será a soma dos custos para ir de A a B e de B a C. Por exemplo, se a aresta (A, B) tem valor 10 minutos e a aresta (B, C) tem valor 20 minutos, sabe-se que é possível sair de A e chegar em C em 30 minutos.
-
-\begin{figure}[h]
-  \centering
-  \begin{tikzpicture}[>=stealth, node distance=2cm]
-
-  \node (A) [circle, draw] {A};
-  \node (B) [circle, draw, right of=A] {B};
-  \node (C) [circle, draw, right of=B] {C};
-
-  \draw[->] (A) -- (B) node[midway, above] {10};
-  \draw[->] (B) -- (C) node[midway, above] {20};
-
-  \end{tikzpicture}
-  \label{fig:graph3nodeweighted}
-\end{figure}
-
-
-\subsection{Grafos Dirigidos e Ciclos}
-Note que a possibilidade de ir do ponto A para o ponto B não implica na existência de um caminho de B para A. Por isso a ordem da tupla é importante para as arestas. Dessa forma, grafos podem ou não ser dirigidos, ou seja, é possível impor a restrição de que toda aresta representa a existência de ambos os caminhos, tornando a ordem da tupla irrelevante. Caso o grafo não seja dirigido, toda aresta resulta na existência de um ciclo, ou seja, existe um caminho de um vértice para ele mesmo. No caso da aresta não dirigida (A, B), existe um caminho de A para B e existe um caminho de B para A, logo existe um caminho de A para A.
-
-Por outro lado, no caso de grafos dirigidos, a existência de um ciclo passa a ser apenas uma possibilidade facilmente identificada. No caso dos QMDDs, essa restrição é sempre respeitada pela forma como os algoritmos de construção e manipulação são definidos. Porém, dado um grafo arbitrário, é possivel verificar se existe um ciclo por meio de uma busca a partir de cada vértice, verificando se existe um caminho que leve de volta ao mesmo vértice \cite{jungnickel}.
-
-O presente grafo na \cref{fig:acyclicgraph} é acíclico, visto que não existe caminho de nenhum vértice para si mesmo, já o grafo na \cref{fig:cyclicgraph}, existe um caminho de A para A, passando pelos vértices B e C, logo esse grafo é cíclico.
-
-\begin{figure}[h]
-  \centering
-  \begin{minipage}{0.45\textwidth}
-    \centering
-    \begin{tikzpicture}[>=stealth, every node/.style={circle,draw,minimum size=7mm}]
-      \node (A) at (90:2)  {A};
-      \node (B) at (210:2) {B};
-      \node (C) at (330:2) {C};
-      \draw[->] (A) -- (B);
-      \draw[->] (B) -- (C);
-      \draw[->] (A) -- (C);
-    \end{tikzpicture}
-    \caption{Grafo acíclico}
-    \label{fig:acyclicgraph}
-  \end{minipage}
-  \qquad
-  \begin{minipage}{0.45\textwidth}
-    \centering
-    \begin{tikzpicture}[>=stealth, every node/.style={circle,draw,minimum size=7mm}]
-      \node (A) at (90:2)  {A};
-      \node (B) at (210:2) {B};
-      \node (C) at (330:2) {C};
-      \draw[->] (A) -- (B);
-      \draw[->] (B) -- (C);
-      \draw[->] (C) -- (A);
-    \end{tikzpicture}
-    \caption{Grafo cíclico}
-    \label{fig:cyclicgraph}
-  \end{minipage}
-\end{figure}
-
-\subsection{Representação de Vértices e Arestas}
-
-No começo desta seção, vértices foram apresentadas como sendo elementos arbitrários de um conjunto e arestas como sendo tuplas dos vértices conectados e, opcionalmente, um peso. Para a descrição dos algoritmos do QMDD, uma notação diferente será utilizada. Nela, cada aresta possui apenas um valor e um vértice destino, enquanto cada vértice será uma tupla com seu rótulo e um conjunto de arestas.
-
-Assim, o grafo da \cref{fig:graph3nodeweighted} pode ser representado como o conjunto de vértices $\{(A, \{(10, B)\}), (B, \{(20, C)\}), (C, \{\})\}$
 
 \section{Algoritmos}
 
 A seguir, serão definidas operações entre arestas de QMDDs. Dessa forma, a operação entre dois QMDDs é realizada por meio da operação entre suas duas arestas iniciais.
 
-Cada operação é definida recursivamente, finalizando ao encontrar arestas terminais. Assim, cada operação retorna um novo QMDD, começando a construção pelo vértice terminal e adicionando os novos vértices e arestas sucessivamente até completar a construção da aresta inicial.
+A maior parte das operações são construídas de forma recursiva. Isso significa que o algoritmo é divido em dois passos: o inicial e o recursivo. O passo inicial representa um cenário trivial, no qual a solução pode ser facilmente encontrada, já o passo recursivo pode ser entendido como uma combinação de múltiplos passos iniciais, nele é preciso definir como os passos iniciais serão construídos e como seus resultados serão utilizados para gerar o resultado do passo recursivo.
+
+Para o QMDD, o passo inicial é quando se atinge uma aresta terminal, fazendo com que a operação normalmente se resuma a aplicar a mesma operação sobre o peso das arestas. Já o passo recursivo acontece sobre arestas não terminais, que dependem do resultado da operação entre as arestas dos vértices que as arestas de entrada apontam. 
 
 \subsection{Funções Fundamentais}\label{sub:fundamentals}
 
@@ -239,99 +246,13 @@ O processo de normalizar um vértice também envolve a remoção de vértices re
 
 Além disso, como as outras operações constroem seu resultado do vértice final ao inicial, o fato que o algoritmo de normalização retorna a aresta que aponta para o vértice faz com que o efeito da normalização seja propagado do vértice final ao inicial. 
 
-% TODO: Mover este exemplo para o algoritmo de adição
-
-% Garantir que os vértices estão normalizados é um esforço adicional para cada um dos algoritmos, visto que, por exemplo, a soma de dois vértices normalizados pode resultar em um vértice não normalizado. Imagine dois vértices, um com arestas de peso 1, 0, 0 e 1 e outro vértice com arestas de peso 0, 1, 1 e 0, todas apontadas para o mesmo vértice. Apesar de estarem normalizados, a soma dos dois vértices resultará em um vértice com arestas de peso 1, 1, 1 e 1, todas apontando para o mesmo vértice. Esse vértice por sua vez é reduntante, já que todas as arestas possuem mesmo peso e apontam para o mesmo vértice. Logo, é necessário normalizá-lo antes de retornar o resultado da soma.
-
-
-% \[
-%   \begin{tikzpicture}[
-%     node distance=1.5cm,
-%     root/.style={circle,draw,minimum size=8mm},
-%     leaf/.style={rectangle,draw,minimum size=6mm},
-%     baseline={(current bounding box.center)}
-%   ]
-
-%     % terminal node
-%     \node[leaf] (t) at (0,0) {$1$};
-
-%     % QMDD internal node
-%     \node[root] (v) at (0,2) {};
-
-%     % incoming edge of weight 1
-%     \node[above=of v] (src) {};
-%     \draw[->] (src) -- node[right] {$1$} (v);
-
-%     % four outgoing edges, one for each matrix entry (1,0,0,1)
-%     \draw[->] (v) edge[bend left=90]  node[right]  {$1$} (t);
-%     \draw[->] (v) edge[bend left=30]  node[right]  {$0$} (t);
-%     \draw[->] (v) edge[bend right=30] node[right] {$0$} (t);
-%     \draw[->] (v) edge[bend right=90] node[right] {$1$} (t);
-
-%   \end{tikzpicture}
-%   \;+\;
-%   \begin{tikzpicture}[
-%     node distance=1.5cm,
-%     root/.style={circle,draw,minimum size=8mm},
-%     leaf/.style={rectangle,draw,minimum size=6mm},
-%     baseline={(current bounding box.center)}
-%   ]
-
-%     \node[leaf] (t) at (0,0) {$1$};
-%     \node[root] (v) at (0,2) {};
-
-%     \node[above=of v] (src) {};
-%     \draw[->] (src) -- node[right] {$1$} (v);
-
-%     \draw[->] (v) edge[bend left=90]  node[right]  {$0$} (t);
-%     \draw[->] (v) edge[bend left=30]  node[right]  {$1$} (t);
-%     \draw[->] (v) edge[bend right=30] node[right] {$1$} (t);
-%     \draw[->] (v) edge[bend right=90] node[right] {$0$} (t);
-
-%   \end{tikzpicture}
-%   \;=\;
-%   \begin{tikzpicture}[
-%     node distance=1.5cm,
-%     root/.style={circle,draw,minimum size=8mm},
-%     leaf/.style={rectangle,draw,minimum size=6mm},
-%     baseline={(current bounding box.center)}
-%   ]
-
-%     \node[leaf] (t) at (0,0) {$1$};
-%     \node[root] (v) at (0,2) {};
-
-%     \node[above=of v] (src) {};
-%     \draw[->] (src) -- node[right] {$1$} (v);
-
-%     \draw[->] (v) edge[bend left=90]  node[right]  {$1$} (t); % (0,0)
-%     \draw[->] (v) edge[bend left=30]  node[right]  {$1$} (t); % (0,1)
-%     \draw[->] (v) edge[bend right=30] node[right] {$1$} (t); % (1,0)
-%     \draw[->] (v) edge[bend right=90] node[right] {$1$} (t); % (1,1)
-
-%   \end{tikzpicture}
-%   \quad\Longrightarrow\quad
-%   \begin{tikzpicture}[
-%     node distance=1.5cm,
-%     root/.style={circle,draw,minimum size=8mm},
-%     leaf/.style={rectangle,draw,minimum size=6mm},
-%     baseline={(current bounding box.center)}
-%   ]
-
-%     % terminal node
-%     \node[leaf] (t) at (0,0) {$1$};
-
-%     % incoming edge of weight 1
-%     \node[above=of t] (src) {};
-%     \draw[->] (src) -- node[right] {$1$} (t);
-
-%   \end{tikzpicture}
-% \]
-
 O algoritmo em si se divide em duas etapas: primeiro verifica-se se o vértice é redundante e, se não for, normaliza-se os pesos de suas arestas.
 
-Para identificar a redundância do vértice, basta comparar todas as suas arestas. Se todas forem iguais (mesmo peso e mesmo vértice alvo), o vértice pode ser descartado, então basta retornar uma aresta com o peso e alvo das arestas do vértice.
+As linhas 1 e 2 do \cref{alg:normalization} identificam a redundância do vértice, basta comparar todas as suas arestas. Se todas forem iguais (mesmo peso e mesmo vértice alvo), o vértice pode ser descartado, então basta retornar uma aresta com o alvo das arestas do vértice e o peso sendo o produto de uma dessas arestas com o da de entrada.
 
-Caso o vértice não seja redundante, o peso de todas as suas arestas será dividido pelo peso da primeira aresta com peso diferente de 0. Isso faz com que todo vértice tenha sua primeira aresta não nula com peso 1. Então, basta retornar uma nova aresta, apontando para o mesmo vértice e com peso sendo o peso original multiplicado pelo fator em comum às arestas do vértice \cite{miller2006qmdd}.
+Caso o vértice não seja redundante, o peso de todas as suas arestas será dividido pelo peso da primeira aresta com peso diferente de 0. As linhas 3 a 13 do \cref{alg:normalization} realizam essa tarefa. As linhas 5 e 6 ignoram arestas nulas, as linhas 3, 7 e 8 identificam o peso da primeira aresta não nula. E nas linhas 11 e 12 os pesos das arestas são normalizados, as arestas do vértice têm seus pesos divididos pelo valor identificado como peso da primeira aresta não nula, enquanto a aresta de entrada do algoritmo tem seu peso multiplicado por esse valor.  
+
+Isso faz com que todo vértice tenha sua primeira aresta não nula com peso 1. Então, basta retornar uma nova aresta, apontando para o mesmo vértice e com peso sendo o peso original multiplicado pelo fator em comum às arestas do vértice \cite{miller2006qmdd}.
 
 \begin{algorithm}[H]
   \caption{Normalização de Vértice da Aresta}
@@ -340,14 +261,22 @@ Caso o vértice não seja redundante, o peso de todas as suas arestas será divi
   \KwOut{Aresta}
 
   \If{$E_0(e) = E_1(e) = E_2(e) = E_3(e)$}{
-    \Return $E_0(e)$
+    \Return $Aresta(w(e)*w(E_0(e)), v(E_0(e))$)
   }
-  \Else{
-  % TODO: Isso não tá ignorando as arestas nulas.
-    $w \gets w(E_0(e))$ \;
-    \For{$i \gets 0$ \KwTo $3$}{
-      $w(E_i(e)) \gets w(E_i(e))/w$
+  $w \gets 0$ \;
+  \For{$i \gets 0$ \KwTo $3$}{
+    \If{$w(E_i(e)) = 0$}{
+      % TODO: Replace this with \KwContinue
+      \Return
     }
+    \If{$w = 0 $}{
+      $w \gets w(E_i(e))$
+    }
+    \If{$w \neq 0 $}{
+      $w(E_i) \gets w(E_i(e) / w $)
+    }
+  
+  $w(E_i(e)) \gets w(E_i(e))/w$
   }
 
   $w(e) \gets w * w(e) $
@@ -356,18 +285,106 @@ Caso o vértice não seja redundante, o peso de todas as suas arestas será divi
 
 \end{algorithm}
 
-A seguir, são oferecidos dois exemplos de normalização de vértices. No primeiro, o vértice é reduntante pois todas suas arestas são iguais, logo é descartado. Já no segundo, a aresta nula é ignorada enquanto as demais tem seus pesos dividos pelo peso da primeira aresta não nula.
+A seguir, são oferecidos dois exemplos de normalização de vértices. Na cref{fig:redundantNormalization}, o vértice é reduntante pois todas suas arestas são iguais, logo é descartado e o fator comum a todas as arestas é passado para a aresta de entrada. Já na \cref{fig:exampleNormalization}, a primeira aresta é ignorada por ter peso 0, enquanto as demais tem seus pesos dividos pelo peso da primeira aresta não nula, que é 2. Por fim, o peso da aresta de entrada é multiplicado por 2.
 
-% TODO: vértice 1 1 1 1 -> ø; vértice 0 2 1 1 -> 0 1 0.5 0.5
+\begin{figure}[H]
+  \centering
+  \begin{tikzpicture}[
+    node distance=1.5cm,
+    root/.style={circle,draw,minimum size=8mm},
+    leaf/.style={rectangle,draw,minimum size=6mm},
+    baseline={(current bounding box.center)}
+  ]
+
+    \node[leaf] (t) at (0,0) {$1$};
+    \node[root] (v) at (0,2) {};
+
+    \node[above=of v] (src) {};
+    \draw[->] (src) -- node[right] {$1$} (v);
+
+    \draw[->] (v) edge[bend right=90] node[right] {$\frac{1}{2}$} (t); % (1,1)
+    \draw[->] (v) edge[bend right=30] node[right] {$\frac{1}{2}$} (t); % (1,0)
+    \draw[->] (v) edge[bend left=30]  node[right]  {$\frac{1}{2}$} (t); % (0,1)
+    \draw[->] (v) edge[bend left=90]  node[right]  {$\frac{1}{2}$} (t); % (0,0)
+
+  \end{tikzpicture}
+  $\quad\Longrightarrow\quad$
+  \begin{tikzpicture}[
+    node distance=1.5cm,
+    root/.style={circle,draw,minimum size=8mm},
+    leaf/.style={rectangle,draw,minimum size=6mm},
+    baseline={(current bounding box.center)}
+  ]
+
+    % terminal node
+    \node[leaf] (t) at (0,0) {$1$};
+
+    % incoming edge of weight 1
+    \node[above=of t] (src) {};
+    \draw[->] (src) -- node[right] {$\frac{1}{2}$} (t);
+
+  \end{tikzpicture}
+  \caption{Normalização de um vértice reduntante}
+  \label{fig:redundantNormalization}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \begin{tikzpicture}[
+    node distance=1.5cm,
+    root/.style={circle,draw,minimum size=8mm},
+    leaf/.style={rectangle,draw,minimum size=6mm},
+    baseline={(current bounding box.center)}
+  ]
+
+    \node[leaf] (t) at (0,0) {$1$};
+    \node[root] (v) at (0,2) {};
+
+    \node[above=of v] (src) {};
+    \draw[->] (src) -- node[right] {$1$} (v);
+
+    \draw[->] (v) edge[bend right=90] node[right] {$0$} (t); % (1,1)
+    \draw[->] (v) edge[bend right=30] node[right] {$2$} (t); % (1,0)
+    \draw[->] (v) edge[bend left=30]  node[right]  {$1$} (t); % (0,1)
+    \draw[->] (v) edge[bend left=90]  node[right]  {$1$} (t); % (0,0)
+
+  \end{tikzpicture}
+  $\quad\Longrightarrow\quad$
+  \begin{tikzpicture}[
+    node distance=1.5cm,
+    root/.style={circle,draw,minimum size=8mm},
+    leaf/.style={rectangle,draw,minimum size=6mm},
+    baseline={(current bounding box.center)}
+  ]
+
+    \node[leaf] (t) at (0,0) {$1$};
+    \node[root] (v) at (0,2) {};
+
+    \node[above=of v] (src) {};
+    \draw[->] (src) -- node[right] {$2$} (v);
+
+    \draw[->] (v) edge[bend right=90] node[right] {$0$} (t); % (1,1)
+    \draw[->] (v) edge[bend right=30] node[right] {$1$} (t); % (1,0)
+    \draw[->] (v) edge[bend left=30]  node[right]  {$\frac{1}{2}$} (t); % (0,1)
+    \draw[->] (v) edge[bend left=90]  node[right]  {$\frac{1}{2}$} (t); % (0,0)
+
+  \end{tikzpicture}
+
+  \caption{Normalização de um vértice não reduntante}
+  \label{fig:exampleNormalization}
+\end{figure}
+
 
 \subsection{Adição}
 
 Apesar de não ser uma operação diretamente necessária para simulação de circuitos, a adição de matrizes é um passo essencial para a multiplicação de matrizes, que, por sua vez, é necessária para a simulação.
 
 % TODO: Reescrever a última frase
-Para realizar a adição de duas arestas, cria-se um novo vértice, o qual armazenará o resultado da soma das duas arestas e, então, uma nova aresta é retornada, apontando para o vértice criado. As arestas desse vértice serão as somas, par a par, das arestas dos vértices a serem somados, multiplicadas pelos pesos das arestas de entrada. Ou seja, a primeira aresta do novo vértice será a soma da primeira aresta do primeiro vértice com a primeira aresta do segundo vértice.
+Caso pelo menos uma das arestas a serem somadas seja uma aresta terminal, basta somar o peso da aresta terminal ao peso da outra aresta. As linhas 1 a 8 do \cref{alg:addition} realizam essa parte do algoritmo. Nas linhas 1 e 2, verifica-se se pelo menos uma das duas arestas a serem somadas é terminal, e a identifica como $e_0$. Então as linhas 3 a 8 retornam uma nova aresta cujo peso é a soma dos pesos das duas arestas e o alvo é o alvo da aresta não terminal (se somente uma for terminal, caso ambas sejam terminais o alvo é o vértice terminal).
 
-Caso pelo menos uma das arestas seja terminal, a construção da soma pode começar, visto que, como a aresta terminal não terá um vértice com arestas para serem somadas, basta somar o peso da aresta terminal ao peso da outra aresta. A seguir, na descrição do algoritmo, esse passo é otimizado, de forma a evitar o cálculo desnecessário caso uma das arestas tenha peso 0. Assim, se uma das arestas tiver peso 0, basta retornar o valor da outra aresta, evitando o recálculo do valor da nova aresta \cite{miller2006qmdd}.
+Caso nenhuma aresta seja terminal, isso significa que as duas arestas apontam para algum vértice que, por sua vez, possui outras 4 arestas. O resultado da soma das duas arestas deve ser um vértice cujas vértices sejam as somas dos 4 pares de arestas que os vértices possuem. Isso é feito nas linhas 9 a 13 do \cref{alg:addition}. A linha 9 cria um vértice sem arestas e o laço de repetição das linhas 11 a 13 cria cada uma das arestas desse vértice \cite{miller2006qmdd}.
+
+Para os próximos algoritmos, é importante que, sempre que um vértice novo seja criado, ele seja normalizado. Isso pois a operação entre dois vértices normalizados não retorna garantidamente um vértice normalizado. Na \cref{fig:exampleAddition} é oferecido um exemplo de adição no qual isso acontece.
 
 \begin{algorithm}[H]
   \caption{Adição de Arestas}
@@ -397,14 +414,100 @@ Caso pelo menos uma das arestas seja terminal, a construção da soma pode come�
 
 \end{algorithm}
 
+Na \cref{fig:exampleAddition}, são somados 2 QMDDs, o primeiro representa a matriz $\begin{bmatrix}1 & 0 \\ 0 & 1\end{bmatrix}$ enquanto o segundo representa a matriz $\begin{bmatrix}0 & 1 \\ 1 & 0\end{bmatrix}$. As arestas de entrada da operação são as arestas iniciais de cada QMDD. Como elas não são terminais, é preciso somar as arestas dos vértices aos quais elas apontam. Assim, a primeira aresta de $q0$ é somada com a primeira aresta de $q1$ e assim sucessivamente.O resultado dessa soma é $\begin{bmatrix}1 & 1 \\ 1 & 1\end{bmatrix}$ e o vértice resultante é reduntante, logo é descartado na etapa de normalização.
+
+\[
+  \begin{tikzpicture}[
+    node distance=1.5cm,
+    root/.style={circle,draw,minimum size=8mm},
+    leaf/.style={rectangle,draw,minimum size=6mm},
+    baseline={(current bounding box.center)}
+  ]
+
+    % terminal node
+    \node[leaf] (t) at (0,0) {1};
+
+    % QMDD internal node
+    \node[root] (v) at (0,2) {};
+
+    % incoming edge of weight 1
+    \node[above=of v] (src) {};
+    \draw[->] (src) -- node[right] {1} (v);
+
+    % TODO: Use better colors
+    % four outgoing edges, one for each matrix entry (1,0,0,1)
+    \draw[->, draw=red] (v) edge[bend left=90]  node[right]  {1} (t);
+    \draw[->, draw=blue] (v) edge[bend left=30]  node[right]  {0} (t);
+    \draw[->, draw=green] (v) edge[bend right=30] node[right] {0} (t);
+    \draw[->, draw=orange] (v) edge[bend right=90] node[right] {1} (t);
+
+  \end{tikzpicture}
+  \;+\;
+  \begin{tikzpicture}[
+    node distance=1.5cm,
+    root/.style={circle,draw,minimum size=8mm},
+    leaf/.style={rectangle,draw,minimum size=6mm},
+    baseline={(current bounding box.center)}
+  ]
+
+    \node[leaf] (t) at (0,0) {1};
+    \node[root] (v) at (0,2) {};
+
+    \node[above=of v] (src) {};
+    \draw[->] (src) -- node[right] {1} (v);
+
+    \draw[->, draw=red] (v) edge[bend left=90]  node[right]  {0} (t);
+    \draw[->, draw=blue] (v) edge[bend left=30]  node[right]  {1} (t);
+    \draw[->, draw=green] (v) edge[bend right=30] node[right] {1} (t);
+    \draw[->, draw=orange] (v) edge[bend right=90] node[right] {0} (t);
+
+  \end{tikzpicture}
+  \;=\;
+  \begin{tikzpicture}[
+    node distance=1.5cm,
+    root/.style={circle,draw,minimum size=8mm},
+    leaf/.style={rectangle,draw,minimum size=6mm},
+    baseline={(current bounding box.center)}
+  ]
+
+    \node[leaf] (t) at (0,0) {1};
+    \node[root] (v) at (0,2) {};
+
+    \node[above=of v] (src) {};
+    \draw[->] (src) -- node[right] {$1$} (v);
+
+    \draw[->, draw=red] (v) edge[bend left=90]  node[right]  {1} (t); % (0,0)
+    \draw[->, draw=blue] (v) edge[bend left=30]  node[right]  {1} (t); % (0,1)
+    \draw[->, draw=green] (v) edge[bend right=30] node[right] {1} (t); % (1,0)
+    \draw[->, draw=orange] (v) edge[bend right=90] node[right] {1} (t); % (1,1)
+
+  \end{tikzpicture}
+  \quad\Longrightarrow\quad
+  \begin{tikzpicture}[
+    node distance=1.5cm,
+    root/.style={circle,draw,minimum size=8mm},
+    leaf/.style={rectangle,draw,minimum size=6mm},
+    baseline={(current bounding box.center)}
+  ]
+
+    % terminal node
+    \node[leaf] (t) at (0,0) {$1$};
+
+    % incoming edge of weight 1
+    \node[above=of t] (src) {};
+    \draw[->] (src) -- node[right] {$1$} (t);
+
+  \end{tikzpicture}
+\]
+
 \subsection{Multiplicação} \cite{kydros2025tutorial}
 
 O algoritmo de multiplicação de QMDDs segue a mesma lógica da multiplicação de matrizes. São construídas n matrizes cujos valores são a multiplicação da i-ésima posição da linha da primeira e a i-ésima posição da coluna da segunda. Essas matrizes são então somadas para obter o resultado da multiplicação.
 
-% TODO: GRAWWWAAAAAAAAA
-Na multiplicação de QMDDs, cada par de vértices cria um novo vértice cujas arestas são a soma dos n pares linha-coluna de suas arestas. Note que, como o vértice armazena suas arestas linearmente, deve-se interpretar que a primeira e segunda aresta compõem a primeira coluna da matriz, enquanto a terceira e quarta compõem a segunda coluna.
+Assim como na adição, o passo inicial do algoritmo é quando pelo menos uma das arestas é uma aresta final. As linhas 1 a 8 do \cref{alg:multiplication} seguem a mesma lógica que a adição para verificar se pelo menos uma das arestas é termianl. A diferença é que, agora, em vez de somados, os pesos das arestas são multiplicados. A lógica para escolha de alvo é a mesma da adição.
 
-Ao atingir uma aresta final, basta multiplicar o peso dessa aresta pelo peso da outra e retorná-la. Assim como foi feito na adição, os casos em que o peso da aresta final é 0 ou 1 podem ser otimizados. No caso da aresta de peso 0, basta retornar a aresta de peso 0. Já no caso da aresta de peso 1, basta retornar a outra aresta.
+% TODO: eu tenho quase ctz que a ordem de linha-coluna ta invertida
+Caso nenhuma aresta seja terminal, é necessário construir um novo vértice para acumular o resultado da multiplicação das duas arestas. Para cada posição dos pares linha-coluna das arestas do vértice cujas arestas de entrada apontam, é construída uma nova aresta para armazenar o produto do par. O valor da nova aresta é então somado na posição respectiva do novo vértice. No \cref{alg:multiplication}, as linhas 10 e 11 servem para navegar pelos índices das arestas de cada vértice. A linha 12 cria uma aresta representando a linha $i$, coluna $j$ da matriz resultante, enquanto as linhas 13 a 16 fazem a soma dos produtos cada um dos pares ao longo da linha $i$ da primeira matriz com a coluna $j$ da segunda. A construção das duas arestas, nas linhas 14 e 15, envolve multiplicar o peso da aresta de entrada pelo peso da aresta que será utilizada para aplicar o passo recursivo.
 
 \begin{algorithm}[H]
   \caption{Multiplicação de Arestas}
@@ -424,7 +527,7 @@ Ao atingir uma aresta final, basta multiplicar o peso dessa aresta pelo peso da 
     }
     \Return $Aresta(w(e_0)*w(e_1), v(e_1))$
   }
-  $v_n \gets Vertice(x(e_0), \emptyset)$
+  $v_n \gets Vertice(x(e_0), \emptyset)$ \;
   \For{$i \gets 0$ \KwTo $1$}{
     \For{$j \gets 0$ \KwTo $1$}{
       $E_{2*i+j}(v_n) \gets Aresta(0, v_t)$ \;
@@ -440,6 +543,7 @@ Ao atingir uma aresta final, basta multiplicar o peso dessa aresta pelo peso da 
 
 \end{algorithm}
 
+% TODO: Exemplo de multiplicação
 
 \subsection{Construção a Partir de Portas}\label{sec:gateconstruct}
 
@@ -535,7 +639,7 @@ A operação de medição sobre o estado também pode ser representada por meio 
   \end{bmatrix}
 \end{equation}
 
-Além disso, para extrair um resultado que obedeça à distribuição de probabilidade ao final da execução do algoritmo, é possível percorrer o grafo do vértice inicial ao final escolhendo as arestas aleatoriamente de acordo com seus pesos. Para isso, é preciso considerar apenas duas das quatro arestas dos vértices, sendo as arestas 1 e 3 responsáveis pelo resultado caso o qubit do vértice tenha sido inicializado em \ket{0} e as arestas 2 e 4 para \ket{1}. \cite{kydros2025tutorial}
+Além disso, para extrair um resultado que obedeça à distribuição de probabilidade ao final da execução do algoritmo, é possível percorrer o grafo do vértice inicial ao final escolhendo as arestas aleatoriamente de acordo com seus pesos. Para isso, é preciso considerar apenas duas das quatro arestas dos vértices, sendo as arestas 1 e 2 responsáveis pelo resultado caso o qubit do vértice tenha sido inicializado em \ket{0} e as arestas 3 e 4 para \ket{1}. \cite{kydros2025tutorial}
 
 Esse método de obtenção de um único resultado aleatório de acordo com a distribuição probabilística do estado é chamada de simulação fraca \cite{wang2015weak}.
 
