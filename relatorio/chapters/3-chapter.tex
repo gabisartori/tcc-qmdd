@@ -414,9 +414,10 @@ Para os próximos algoritmos, é importante que, sempre que um vértice novo sej
 
 \end{algorithm}
 
-Na \cref{fig:exampleAddition}, são somados 2 QMDDs, o primeiro representa a matriz $\begin{bmatrix}1 & 0 \\ 0 & 1\end{bmatrix}$ enquanto o segundo representa a matriz $\begin{bmatrix}0 & 1 \\ 1 & 0\end{bmatrix}$. As arestas de entrada da operação são as arestas iniciais de cada QMDD. Como elas não são terminais, é preciso somar as arestas dos vértices aos quais elas apontam. Assim, a primeira aresta de $q0$ é somada com a primeira aresta de $q1$ e assim sucessivamente.O resultado dessa soma é $\begin{bmatrix}1 & 1 \\ 1 & 1\end{bmatrix}$ e o vértice resultante é reduntante, logo é descartado na etapa de normalização.
+Na \cref{fig:exampleAddition}, são somados dois QMDDs, o primeiro representa a matriz $\begin{bmatrix}1 & 0 \\ 0 & 1\end{bmatrix}$ enquanto o segundo representa a matriz $\begin{bmatrix}0 & 1 \\ 1 & 0\end{bmatrix}$. As arestas de entrada da operação são as arestas iniciais de cada QMDD. Como elas não são terminais, é preciso somar as arestas dos vértices aos quais elas apontam. Assim, a primeira aresta de $q0$ é somada com a primeira aresta de $q1$ e assim sucessivamente.O resultado dessa soma é $\begin{bmatrix}1 & 1 \\ 1 & 1\end{bmatrix}$ e o vértice resultante é reduntante, logo é descartado na etapa de normalização.
 
-\[
+\begin{equation}
+  \label{fig:exampleAddition}
   \begin{tikzpicture}[
     node distance=1.5cm,
     root/.style={circle,draw,minimum size=8mm},
@@ -474,7 +475,7 @@ Na \cref{fig:exampleAddition}, são somados 2 QMDDs, o primeiro representa a mat
     \node[root] (v) at (0,2) {};
 
     \node[above=of v] (src) {};
-    \draw[->] (src) -- node[right] {$1$} (v);
+    \draw[->] (src) -- node[right] {1} (v);
 
     \draw[->, draw=red] (v) edge[bend left=90]  node[right]  {1} (t); % (0,0)
     \draw[->, draw=blue] (v) edge[bend left=30]  node[right]  {1} (t); % (0,1)
@@ -491,14 +492,14 @@ Na \cref{fig:exampleAddition}, são somados 2 QMDDs, o primeiro representa a mat
   ]
 
     % terminal node
-    \node[leaf] (t) at (0,0) {$1$};
+    \node[leaf] (t) at (0,0) {1};
 
     % incoming edge of weight 1
     \node[above=of t] (src) {};
-    \draw[->] (src) -- node[right] {$1$} (t);
+    \draw[->] (src) -- node[right] {1} (t);
 
   \end{tikzpicture}
-\]
+\end{equation}
 
 \subsection{Multiplicação} \cite{kydros2025tutorial}
 
@@ -538,12 +539,181 @@ Caso nenhuma aresta seja terminal, é necessário construir um novo vértice par
       }
     }
   }
-  $e_n \gets normalize(Aresta(1, v_n$)) \;
+  $e_n \gets normalize(Aresta(1, v_n))$ \;
   \Return $e_n$
 
 \end{algorithm}
 
-% TODO: Exemplo de multiplicação
+No exemplo a seguir, é realizada a multiplicação entre a matriz H e a X. O resultado deve ser uma matriz que represente a aplicação da porta X seguida da aplicação da porta H sobre um qubit. A matriz que representa essa operação é obtida a partir da seguinte equação:
+
+\begin{equation}
+  \label{eq:hx}
+  H \cdot X
+  =
+  \frac{1}{\sqrt{2}}
+  \begin{bmatrix}
+    1 & 1 \\
+    1 & -1
+  \end{bmatrix}
+  \cdot
+  \begin{bmatrix}
+    0 & 0 \\
+    1 & 1
+  \end{bmatrix}
+  =
+  \frac{1}{\sqrt{2}}
+  \begin{bmatrix}
+    1 & 1 \\
+    -1 & 1
+  \end{bmatrix}
+\end{equation}
+
+Como as arestas inicias de ambos os QMDDs não são terminais, o produto entre elas precisa calcular o produto entre as arestas dos vértices aos quais elas apontam. Já que $r=2$ para QMDDs que representam portas quânticas, o produto entre duas arestas não terminais pode ser entendido como a soma de duas matrizes, uma para cada posição do par linha-coluna definido pela multiplicação. A fins de implementação, é mais eficiente que cada posição da matriz resultante seja calculada em um único passo, porém, para fins de demonstração, serão calculadas duas matrizes que serão somadas para obter o resultado final.
+
+% TODO: The values are kinda cramped, I need to space the edges a bit more
+
+\begin{equation}
+  \label{fig:exampleAddition}
+  \begin{tikzpicture}[
+    node distance=1.5cm,
+    root/.style={circle,draw,minimum size=8mm},
+    leaf/.style={rectangle,draw,minimum size=6mm},
+    baseline={(current bounding box.center)}
+  ]
+
+    % terminal node
+    \node[leaf] (t) at (0,0) {1};
+
+    % QMDD internal node
+    \node[root] (v) at (0,2) {};
+
+    % incoming edge of weight 1
+    \node[above=of v] (src) {};
+    \draw[->] (src) -- node[right] {$\frac{1}{\sqrt{2}}$} (v);
+
+    % TODO: Use better colors
+    % four outgoing edges, one for each matrix entry (1,0,0,1)
+    \draw[->, draw=orange] (v) edge[bend right=90] node[right] {1} (t);
+    \draw[->, draw=green] (v) edge[bend right=30] node[right] {1} (t);
+    \draw[->, draw=blue] (v) edge[bend left=30]  node[right]  {1} (t);
+    \draw[->, draw=red] (v) edge[bend left=90]  node[right]  {-1} (t);
+
+  \end{tikzpicture}
+  \;\cdot\;
+  \begin{tikzpicture}[
+    node distance=1.5cm,
+    root/.style={circle,draw,minimum size=8mm},
+    leaf/.style={rectangle,draw,minimum size=6mm},
+    baseline={(current bounding box.center)}
+  ]
+
+    \node[leaf] (t) at (0,0) {1};
+    \node[root] (v) at (0,2) {};
+
+    \node[above=of v] (src) {};
+    \draw[->] (src) -- node[right] {1} (v);
+
+    \draw[->, draw=red] (v) edge[bend right=90]  node[right]  {0} (t);
+    \draw[->, draw=blue] (v) edge[bend right=30]  node[right]  {1} (t);
+    \draw[->, draw=green] (v) edge[bend left=30] node[right] {1} (t);
+    \draw[->, draw=orange] (v) edge[bend left=90] node[right] {0} (t);
+
+  \end{tikzpicture}
+  \;=\;
+  \begin{tikzpicture}[
+    node distance=1.5cm,
+    root/.style={circle,draw,minimum size=8mm},
+    leaf/.style={rectangle,draw,minimum size=6mm},
+    baseline={(current bounding box.center)}
+  ]
+
+    \node[leaf] (t) at (0,0) {1};
+    \node[root] (v) at (0,2) {};
+
+    \node[above=of v] (src) {};
+    \draw[->] (src) -- node[right] {1} (v);
+
+    \draw[->, draw=red] (v) edge[bend right=90]  node[right]  {0} (t); % (0,0)
+    \draw[->, draw=blue] (v) edge[bend right=30]  node[right]  {0} (t); % (0,1)
+    \draw[->, draw=green] (v) edge[bend left=30] node[right] {$\frac{1}{\sqrt{2}}$} (t); % (1,0)
+    \draw[->, draw=orange] (v) edge[bend left=90] node[right] {$\frac{1}{\sqrt{2}}$} (t); % (1,1)
+
+  \end{tikzpicture}
+  \;+\;
+  \begin{tikzpicture}[
+    node distance=1.5cm,
+    root/.style={circle,draw,minimum size=8mm},
+    leaf/.style={rectangle,draw,minimum size=6mm},
+    baseline={(current bounding box.center)}
+  ]
+
+    \node[leaf] (t) at (0,0) {1};
+    \node[root] (v) at (0,2) {};
+
+    \node[above=of v] (src) {};
+    \draw[->] (src) -- node[right] {1} (v);
+
+    \draw[->, draw=red] (v) edge[bend right=90]  node[right]  {$\frac{1}{\sqrt{2}}$} (t); % (0,0)
+    \draw[->, draw=blue] (v) edge[bend right=30]  node[right]  {$\frac{-1}{\sqrt{2}}$} (t); % (0,1)
+    \draw[->, draw=green] (v) edge[bend left=30] node[right] {0} (t); % (1,0)
+    \draw[->, draw=orange] (v) edge[bend left=90] node[right] {0} (t); % (1,1)
+
+  \end{tikzpicture}
+  \quad\Longrightarrow\quad
+  \begin{tikzpicture}[
+    node distance=1.5cm,
+    root/.style={circle,draw,minimum size=8mm},
+    leaf/.style={rectangle,draw,minimum size=6mm},
+    baseline={(current bounding box.center)}
+  ]
+
+    \node[leaf] (t) at (0,0) {1};
+    \node[root] (v) at (0,2) {};
+
+    \node[above=of v] (src) {};
+    \draw[->] (src) -- node[right] {$\frac{1}{\sqrt(2)}$} (v);
+
+    \draw[->, draw=red] (v) edge[bend right=90]  node[right]  {1} (t); % (0,0)
+    \draw[->, draw=blue] (v) edge[bend right=30]  node[right]  {-1} (t); % (0,1)
+    \draw[->, draw=green] (v) edge[bend left=30] node[right] {1} (t); % (1,0)
+    \draw[->, draw=orange] (v) edge[bend left=90] node[right] {1} (t); % (1,1)
+
+  \end{tikzpicture}
+\end{equation}
+
+Esta representação é equivalente a calcular o produto das matrizes pela seguinte equação:
+
+\begin{equation}
+  \label{eq:hx}
+  H \cdot X
+  =
+  \frac{1}{\sqrt{2}}
+  \begin{bmatrix}
+    1 & 1 \\
+    1 & -1
+  \end{bmatrix}
+  \cdot
+  \begin{bmatrix}
+    0 & 1 \\
+    1 & 0
+  \end{bmatrix}
+  =
+  \begin{bmatrix}
+    0 & \frac{1}{\sqrt{2}} \\
+    0 & \frac{1}{\sqrt{2}}
+  \end{bmatrix}
+  +
+  \begin{bmatrix}
+    \frac{1}{\sqrt{2}} & 0 \\
+    \frac{-1}{\sqrt{2}} & 0
+  \end{bmatrix}
+  =    
+  \frac{1}{\sqrt{2}}
+  \begin{bmatrix}
+    1 & 1 \\
+    -1 & 1
+  \end{bmatrix}
+\end{equation}
 
 \subsection{Construção a Partir de Portas}\label{sec:gateconstruct}
 
