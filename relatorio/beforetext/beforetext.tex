@@ -101,16 +101,11 @@
 
 % resumo em português
 
-% TODO:
-% - Toda simulação quântica é exponencial a menos que tenha restrições.
-% - O tempo de simulação nem sempre é exponencial em relação ao número de qubits?????
-% - Explicar no resumo em que cenários o qmdd não é exponencial.
-
 \setlength{\absparsep}{18pt} % ajusta o espaçamento dos parágrafos do resumo
 \begin{resumo}
   Atualmente, o desenvolvimento de algoritmos quânticos é limitado pela falta de formas eficazes e acessíveis de executá-los na prática. Hardware quântico moderno ainda apresenta baixa capacidade de processamento e seu uso é caro. Dessa forma, é adequada a simulação do algoritmo em hardware clássico para viabilizar processo. Para isso, existe o Ket, uma plataforma para elaboração de algoritmos quânticos que permite que o usuário simule localmente seus programas.
 
-  Por sua vez, a simulação quântica em computadores clássicos também traz desafios: o consumo de memória cresce exponencialmente em relação ao número de qubits do circuito a ser simulado, tornando-a inviável para circuitos maiores. O objetivo deste trabalho é implementar um novo método de simulação e integrá-lo ao Ket. Esse método se baseia na técnica de simulação de circuitos por meio da decomposição em matrizes que representam cada porta lógica do circuito. Para contornar o crescimento exponencial das matrizes, este trabalho utiliza o QMDD ({\itshape Quantum Multiple-valued Decision Diagram}), uma estrutura de dados capaz de representar e manipular matrizes em espaço menor que exponencial. Isso é possível ao explorar a repetição de padrões nos valores da matriz.
+  Por sua vez, a simulação quântica em computadores clássicos também traz desafios: nos métodos convencionais, o consumo de memória cresce exponencialmente em relação ao número de qubits do circuito a ser simulado, tornando-a inviável para circuitos maiores. O objetivo deste trabalho é implementar um novo método de simulação e integrá-lo ao Ket. Esse método se baseia na técnica de simulação de circuitos por meio da decomposição em matrizes que representam cada porta lógica do circuito. Para contornar o crescimento exponencial das matrizes, este trabalho utiliza o QMDD ({\itshape Quantum Multiple-valued Decision Diagram}), uma estrutura de dados capaz de compactar matrizes com alta redundância em seus valores. Essas matrizes são comumente encontradas em circuitos com baixa taxa de entrelaçamento, permitindo que eles sejam simulados em espaço e tempo menor que exponencial.
 
   \textbf{Palavras-chave}: Computação Quântica. Simulação Quântica. Diagrama de Decisão. Ket.
 \end{resumo}
@@ -120,7 +115,7 @@
   \begin{otherlanguage*}{english}
     Currently, the development of quantum algorithms is limited by the lack of efficient means to execute them. Modern quantum hardware still presents low capacity and its usage is expensive. Therefore, it is adequate to simulate these algorithms via classic hardware in order to make this process viable. Hence there is Ket, a platform of quantum development, which allows its user to simulate locally their quantum programs.
 
-    Similarly, quantum simulation in classic computers of quantum algorithms also has impediments: memory usage grows exponentially in relation to the number of qubits in the circuit, rendering it infeasible for larger circuits. This work's goal is to implement a new simulation method and integrate it to Ket. This method is based on the  simulation technique of decomposing the circuit in matrices that represent each of the circuit's logic gates. In order to mitigate the exponential growth in the size of said matrices, this work will make use of QMDD (Quantum Multiple-valued Decision Diagram), a data structure capable of representing and manipulating matrices in less than exponential space. This is achieved by exploiting repeating patterns in the matrix.
+    Similarly, quantum simulation in classic computers of quantum algorithms also has impediments: memory usage for conventional methods grows exponentially in relation to the number of qubits in the circuit, rendering it infeasible for larger circuits. This work's goal is to implement a new simulation method and integrate it to Ket. This method is based on the simulation technique of decomposing the circuit in matrices that represent each of the circuit's logic gates. In order to mitigate the exponential growth in the size of said matrices, this work will make use of QMDD (Quantum Multiple-valued Decision Diagram), a data structure capable of compressing matrices with a high level of redundance in its values. These matrices are commonly found in circuits with low levels of entanglement, allowing for them to be simulated in space and time less than exponential.
 
     \textbf{Keywords}: Quantum Computing. Quantum Simulation. Decision Diagram. Ket.
   \end{otherlanguage*}

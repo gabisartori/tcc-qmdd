@@ -379,7 +379,6 @@ A seguir, são oferecidos dois exemplos de normalização de vértices. Na cref{
 
 Apesar de não ser uma operação diretamente necessária para simulação de circuitos, a adição de matrizes é um passo essencial para a multiplicação de matrizes, que, por sua vez, é necessária para a simulação.
 
-% TODO: Reescrever a última frase
 Caso pelo menos uma das arestas a serem somadas seja uma aresta terminal, basta somar o peso da aresta terminal ao peso da outra aresta. As linhas 1 a 8 do \cref{alg:addition} realizam essa parte do algoritmo. Nas linhas 1 e 2, verifica-se se pelo menos uma das duas arestas a serem somadas é terminal, e a identifica como $e_0$. Então as linhas 3 a 8 retornam uma nova aresta cujo peso é a soma dos pesos das duas arestas e o alvo é o alvo da aresta não terminal (se somente uma for terminal, caso ambas sejam terminais o alvo é o vértice terminal).
 
 Caso nenhuma aresta seja terminal, isso significa que as duas arestas apontam para algum vértice que, por sua vez, possui outras 4 arestas. O resultado da soma das duas arestas deve ser um vértice cujas vértices sejam as somas dos 4 pares de arestas que os vértices possuem. Isso é feito nas linhas 9 a 13 do \cref{alg:addition}. A linha 9 cria um vértice sem arestas e o laço de repetição das linhas 11 a 13 cria cada uma das arestas desse vértice \cite{miller2006qmdd}.
