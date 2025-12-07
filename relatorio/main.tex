@@ -31,15 +31,35 @@
   \usepackage{setup/ufscthesisA4-alf}
   \usepackage{siunitx}
   
-  \usepackage[ruled,vlined,linesnumbered]{algorithm2e}
   \usepackage{quantikz}
   \usepackage{amsfonts}
   \usepackage[brazil]{babel}
-  \usepackage{cleveref}
   \usepackage{graphicx}
   \usepackage{float}
   \usepackage[dvipsnames]{xcolor}
+  \usepackage[ruled,vlined,linesnumbered]{algorithm2e}
+  \usepackage{cleveref}
 
+  
+  % Translations
+  %% Algorithm2e
+  \renewcommand{\algorithmcfname}{Algoritmo}
+  \renewcommand{\listalgorithmcfname}{Lista de Algoritmos}
+
+  \SetKwInput{KwIn}{Entrada}
+  \SetKwInput{KwOut}{Saída}
+
+  \SetKw{KwContinue}{continue}
+  \SetKw{Return}{retorne}
+  \SetKw{KwTo}{até}
+
+  \SetKwIF{If}{ElseIf}{Else}
+    {se}{então}{senão se}{senão}{fim}
+
+  \SetKwFor{For}{para}{faça}{fim}
+  \SetKwFor{While}{enquanto}{faça}{fim}
+
+  %% Cref
   \crefname{figure}{figura}{figuras}
   \Crefname{figure}{Figura}{Figuras}
 

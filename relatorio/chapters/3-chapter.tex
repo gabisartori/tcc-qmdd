@@ -266,8 +266,7 @@ Isso faz com que todo vértice tenha sua primeira aresta não nula com peso 1. E
   $w \gets 0$ \;
   \For{$i \gets 0$ \KwTo $3$}{
     \If{$w(E_i(e)) = 0$}{
-      % TODO: Replace this with \KwContinue
-      \Return
+      \KwContinue
     }
     \If{$w = 0 $}{
       $w \gets w(E_i(e))$
