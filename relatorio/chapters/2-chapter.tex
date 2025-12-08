@@ -36,11 +36,27 @@ Isso significa que \ket{0} está totalmente em 0 e \ket{1} totalmente em 1. Uma 
 
 sendo $\alpha$ e $\beta$ valores complexos tais que $|\alpha|^2 + |\beta|^2 = 1$. O Motivo dessa restrição e o efeito que esses valores possuem no resultado da computação serão explicados na próxima seção.
 
+Para que um vetor arbitrário seja transformado em um estado quântico válido, é preciso normalizá-lo. Ou seja, multiplicar seus valores pelo inverso de sua norma. Por exemplo, para que o vetor $\begin{bmatrix}3\\ 4\end{bmatrix}$ satisfaça as condições para representar um estado quântico, ele pode ser normalizado de acordo com a seguinte equação:
+
+\begin{equation}
+  \label{eq:statenormalization}
+  \frac{1}{\sqrt{3^2+4^2}}
+  \begin{bmatrix}
+    3\\
+    4
+  \end{bmatrix}
+  =
+  \begin{bmatrix}
+    \frac{3}{5} \\
+    \frac{4}{5}
+  \end{bmatrix}
+\end{equation}
+
 \subsection{Medição e Colapso da Superposição}\label{sub:result}
 
-Para se obter qualquer informação sobre o estado de um circuito quântico, é necessário realizar uma operação de medida. Quando realizada sobre um estado em superposição, essa operação retorna um valor aleatório 0 ou 1 para cada qubit medido. A probabilidade de cada possível resultado é definida pelos coeficientes no qubit. A medição de um qubit $\ket{\psi} = \alpha \cdot \ket{0}+\beta \cdot \ket{1}$ possui $|\alpha|^2$ de chance de retornar 0 e $|\beta|^2$ de chance de retornar 1. Por isso, um vetor $\begin{bmatrix} \alpha \\ \beta \end{bmatrix}$ só será um estado quântico válido se a soma do quadrado dos módulos de $\alpha$ e $\beta$ resultarem em 1, ou seja, 100\% de chance que a medida retorne 0 ou 1.
+Para se obter qualquer informação sobre o estado de um circuito quântico, é necessário realizar uma operação de medida. Quando realizada sobre um estado em superposição, essa operação retorna um valor aleatório 0 ou 1 para cada qubit medido. A probabilidade de cada possível resultado é definida pelos coeficientes do qubit. A medição de um qubit $\ket{\psi} = \alpha \cdot \ket{0}+\beta \cdot \ket{1}$ possui $|\alpha|^2$ de chance de retornar 0 e $|\beta|^2$ de chance de retornar 1. Por isso, um vetor $\begin{bmatrix} \alpha \\ \beta \end{bmatrix}$ só será um estado quântico válido se a soma do quadrado dos módulos de $\alpha$ e $\beta$ resultarem em 1, ou seja, 100\% de chance que a medida retorne 0 ou 1.
 
-Esse processo de medida, porém, é destrutivo. Isso significa que, apesar que um qubit inicialmente possua 50\% de chance de ser medido em 0 e 50\% de chance de ser medido 1, caso a primeira medição retorne 0, todas as medições subsequentes do mesmo qubit também retornarão 0, o mesmo é válido para caso o resultado da primeira medição fosse 1. Refere-se a esse fenômeno como colapso da superposição {griffiths1995introduction}.
+Esse processo de medida, porém, é destrutivo. Isso significa que, apesar que um qubit inicialmente possua 50\% de chance de ser medido em 0 e 50\% de chance de ser medido 1, caso a primeira medição retorne 0, todas as medições subsequentes do mesmo qubit também retornarão 0, o mesmo é válido para caso o resultado da primeira medição fosse 1. Refere-se a esse fenômeno como colapso da superposição \cite{griffiths1995introduction}.
 
 \subsection{Fase}
 Como a probabilidade de determinado resultado é dada pelo quadrado do módulo do valor que representa esse resultado no vetor do qubit, multiplicar esse valor por qualquer valor complexo de módulo 1 não alterará a medição imediata de um estado. Porém ainda é possível que a evolução temporal do estado seja alterada. A \cref{sec:gates} oferece um exemplo desse caso.
@@ -57,7 +73,7 @@ Essa forma de transformar $\mathbb{C}^2$ em um espaço tridimensional ao descart
 
 Na \cref{fig:bloch}, o polo norte da esfera representa um qubit completamente em \ket{0} enquanto o polo sul representa um qubit em \ket{1}. Ao longo do equador, estão todos os estados nos quais o qubit tenha a mesma chance de colapsar para \ket{0} ou \ket{1} ao ser medido, diferindo apenas pela fase, indicada pelo ângulo da longitude do ponto. Dessa forma, todos os estados sobre o equador da esfera seguem o formato $\frac{1}{\sqrt{2}}\cdot(\ket{0} + e^{i\theta}\cdot\ket{1})$ sendo $\theta$ o ângulo longitudinal da posição na esfera \cite{glendinning2005bloch}.
 
-\begin{figure}[h]
+\begin{figure}[H]
   \centering
   \includegraphics[width=0.5\linewidth]{images/bloch-sphere.png}
   \caption{Esfera de Bloch. Fonte: \cite{wiki:bloch}}
@@ -197,6 +213,25 @@ Matriz de Hadamard, representada pela letra H, descreve o funcionamento da porta
   H = \frac{1}{\sqrt{2}} \begin{bmatrix}
     1 & 1 \\
     1 & -1
+  \end{bmatrix}
+\end{equation}
+
+As matrizes a seguir representam a operação de medição. Ao medir um qubit em determinado estado, o colapso de sua superposição pode ser calculado por meio das matrizes $M_0$ para caso a medição retorne 0 e $M_1$ caso retorne 1. Note que, diferente das outras matrizes, $M_0$ e $M_1$ não são unitárias. Isso significa que elas alteram a norma do vetor sobre o qual são aplicadas. Por isso, após uma operação de medição, é necessário recalcular os valores do vetor de acordo com a \cref{eq:statenormalization} para torná-lo um estado quântico válido novamente.
+
+\begin{equation}
+  \label{eq:measurementmatrices}
+  M_0
+  =
+  \begin{bmatrix}
+    1 & 0 \\
+    0 & 0
+  \end{bmatrix}
+  \qquad
+  M_1
+  =
+  \begin{bmatrix}
+    0 & 0 \\
+    0 & 1
   \end{bmatrix}
 \end{equation}
 

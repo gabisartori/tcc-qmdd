@@ -556,7 +556,7 @@ Na \cref{fig:exampleAddition}, são somados dois QMDDs, o primeiro representa a 
   \end{tikzpicture}
 \end{equation}
 
-\subsection{Multiplicação} \cite{kydros2025tutorial}
+\subsection{Multiplicação}
 
 O algoritmo de multiplicação de QMDDs segue a mesma lógica da multiplicação de matrizes. São construídas n matrizes cujos valores são a multiplicação da i-ésima posição da linha da primeira e a i-ésima posição da coluna da segunda. Essas matrizes são então somadas para obter o resultado da multiplicação.
 
@@ -1061,25 +1061,7 @@ Note que, diferente dos outros grafos apresentados até então, são necessário
 
 \subsection{Medição}\label{sub:measurement}
 
-A operação de medição sobre o estado também pode ser representada por meio de um produto matricial. Para construir a matriz que representa essa operação, basta aplicar as matrizes $M_0$ e $M_1$, apresentadas na \cref{eq:measurementmatrices} sobre o qubit a ser medido, de acordo com o resultado obtido. Assim, pode-se tirar vantagem dos algoritmos já definidos para multiplicação de matrizes e produto tensorial para construir a matrix $I^{\otimes n-1} \otimes (M_0 ou M_1) \otimes I^{\otimes k-n}$, sendo $k$ o número de qubits no circuito e $n$ o índice do qubit medido.
-
-\begin{equation}
-  % \caption{Matrizes de Medição}
-  \label{eq:measurementmatrices}
-  M_0
-  =
-  \begin{bmatrix}
-    1 & 0 \\
-    0 & 0
-  \end{bmatrix}
-  \qquad
-  M_1
-  =
-  \begin{bmatrix}
-    0 & 0 \\
-    0 & 1
-  \end{bmatrix}
-\end{equation}
+A operação de medição sobre o estado também pode ser representada por meio de um produto matricial. Para construir a matriz que representa essa operação, basta aplicar as matrizes $M_0$ e $M_1$, apresentadas na \cref{eq:measurementmatrices} sobre o qubit a ser medido, de acordo com o resultado obtido. Assim, pode-se tirar vantagem dos algoritmos já definidos para multiplicação de matrizes e produto tensorial para construir a matrix $I^{\otimes n-1} \otimes (M_0$ ou $M_1) \otimes I^{\otimes k-n}$, sendo $k$ o número de qubits no circuito e $n$ o índice do qubit medido.
 
 Além disso, para extrair um resultado que obedeça à distribuição de probabilidade ao final da execução do algoritmo, é possível percorrer o grafo do vértice inicial ao final escolhendo as arestas aleatoriamente de acordo com seus pesos. Para isso, é útil exergar apenas a parte do QMDD que represente o vetor de estados do circuito no momento da medição. Ou seja, considerar apenas a primeira e a segunda aresta de cada vértice \cite{kydros2025tutorial}.
 
