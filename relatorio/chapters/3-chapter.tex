@@ -212,6 +212,63 @@ Outras restrições para que o grafo do QMDD seja construído de forma otimizada
   \item Todos os vértices são únicos. Ou seja, não existe um par de vértices com mesmo rótulo e todas as arestas iguais.
 \end{enumerate}
 
+\subsection{QMDD para vetor de estados}\label{sub:qmddvec}
+
+Para a maior parte do processo de simulação, a principal utilidade do QMDD é para a representação de matrizes. Porém, também é possível utilizá-los para representar vetores e, no contexto da simulação quântica, um vetor de estados. Uma extensão útil do entendimento da representação de um circuito por meio de QMDDs é a de que cada vértice representa uma transformação sobre um dos qubits do circuito. Das 4 arestas do vértice, as duas primeiras indicam o resultado da transformação caso o qubit tenha sido inicializado em \ket{0} e as últimas duas arestas caso o estado inicial do qubit fosse \ket{1}. Dessa forma, escolher quais arestas considerar de acordo com a inicialização o circuito. Tipicamente, todos os qubits do circuito são inicializados em \ket{0} e este trabalho considerará esse o caso padrão para os próximos exemplos. Ou seja, para obter o QMDD que representa o vetor de estados resultante da simulação de um circuito quântico, basta descartar as duas últimas arestas de cada vértice
+
+Por exemplo, o QMDD da \cref{fig:xhqmdd} representa um circuito no qual a porta X foi aplicada sobre o primeiro qubit e a porta H sobre o segundo. Ao ignorar a terceira e a quarta aresta de cada vértice deste grafo, resta o QMDD presente na \cref{fig:xhqmddresult}.
+
+\begin{equation}
+  \begin{tikzpicture}[
+    node distance=1.5cm,
+    root/.style={circle,draw,minimum size=8mm},
+    leaf/.style={rectangle,draw,minimum size=6mm},
+    baseline={(current bounding box.center)}
+  ]
+
+    % terminal node
+    \node[leaf] (t) at (0,0) {$1$};
+
+    % nodes
+    \node[root] (v) at (0,4) {q1};
+    \node[root] (B) at (0,2) {q0};
+
+
+    % incoming edge of weight 1
+    \node[above=of v] (src) {};
+    \draw[->] (src) -- node[right] {$\frac{1}{\sqrt{2}}$} (v);
+
+    \draw[->] (v) edge[bend right=30] node[left] {$0$} (B);
+    \draw[->] (v) edge[bend left=30] node[right] {$1$} (B);
+
+    \draw[->] (B) edge[bend right=30] node[left] {$1$} (t);
+    \draw[->] (B) edge[bend left=30] node[right] {$1$} (t);
+
+  \end{tikzpicture}
+  \label{fig:xhqmddresult}
+\end{equation}
+
+Para obter o valor de cada estado, basta percorrer o grafo seguindo as arestas de acordo com o estado desejado. Por exemplo, para obter o valor do estado \ket{00}, basta seguir a aresta esquerda do primeir qubit e a aresta direita do segundo qubit e multiplicar todos os pesos encontrados.
+
+\begin{equation}
+  \frac{1}{\sqrt{2}} * 0 * 1 = 0
+\end{equation}
+
+Logo, o estado $\ket{\psi}$ obtido com a execução do circuito pode ser reconstruído percorrendo cada um dos possíveis caminhos, como na equação a seguir:
+
+\begin{equation}
+  \ket{\psi}
+  =
+  \textcolor{blue}{\frac{1}{\sqrt{2}} \cdot 0 \cdot 1} \cdot \ket{00}
+  +
+  \textcolor{blue}{\frac{1}{\sqrt{2}} \cdot 0 \cdot 1} \cdot \ket{01}
+  +
+  \textcolor{blue}{\frac{1}{\sqrt{2}} \cdot 1 \cdot 1} \cdot \ket{10}
+  +
+  \textcolor{blue}{\frac{1}{\sqrt{2}} \cdot 1 \cdot 1} \cdot \ket{11}
+  =
+  \textcolor{blue}{\frac{1}{\sqrt{2}}} \cdot (\ket{10} + \ket{11})
+\end{equation}
 
 \section{Algoritmos}
 
@@ -568,10 +625,8 @@ No exemplo a seguir, é realizada a multiplicação entre a matriz H e a X. O re
 
 Como as arestas inicias de ambos os QMDDs não são terminais, o produto entre elas precisa calcular o produto entre as arestas dos vértices aos quais elas apontam. Já que $r=2$ para QMDDs que representam portas quânticas, o produto entre duas arestas não terminais pode ser entendido como a soma de duas matrizes, uma para cada posição do par linha-coluna definido pela multiplicação. A fins de implementação, é mais eficiente que cada posição da matriz resultante seja calculada em um único passo, porém, para fins de demonstração, serão calculadas duas matrizes que serão somadas para obter o resultado final.
 
-% TODO: The values are kinda cramped, I need to space the edges a bit more
-
 \begin{equation}
-  \label{fig:exampleAddition}
+  \label{fig:exampleMultiplication}
   \begin{tikzpicture}[
     node distance=1.5cm,
     root/.style={circle,draw,minimum size=8mm},
@@ -633,7 +688,7 @@ Como as arestas inicias de ambos os QMDDs não são terminais, o produto entre e
 
     \draw[->, draw=red] (v) edge[bend right=90]  node[right]  {0} (t); % (0,0)
     \draw[->, draw=blue] (v) edge[bend right=30]  node[right]  {0} (t); % (0,1)
-    \draw[->, draw=green] (v) edge[bend left=30] node[right] {$\frac{1}{\sqrt{2}}$} (t); % (1,0)
+    \draw[->, draw=green] (v) edge[bend left=15] node[right] {$\frac{1}{\sqrt{2}}$} (t); % (1,0)
     \draw[->, draw=orange] (v) edge[bend left=90] node[right] {$\frac{1}{\sqrt{2}}$} (t); % (1,1)
 
   \end{tikzpicture}
@@ -652,8 +707,8 @@ Como as arestas inicias de ambos os QMDDs não são terminais, o produto entre e
     \draw[->] (src) -- node[right] {1} (v);
 
     \draw[->, draw=red] (v) edge[bend right=90]  node[right]  {$\frac{1}{\sqrt{2}}$} (t); % (0,0)
-    \draw[->, draw=blue] (v) edge[bend right=30]  node[right]  {$\frac{-1}{\sqrt{2}}$} (t); % (0,1)
-    \draw[->, draw=green] (v) edge[bend left=30] node[right] {0} (t); % (1,0)
+    \draw[->, draw=blue] (v) edge[bend right=20]  node[right]  {$\frac{-1}{\sqrt{2}}$} (t); % (0,1)
+    \draw[->, draw=green] (v) edge[bend left=40] node[right] {0} (t); % (1,0)
     \draw[->, draw=orange] (v) edge[bend left=90] node[right] {0} (t); % (1,1)
 
   \end{tikzpicture}
@@ -729,6 +784,10 @@ Diferentemente das operações previamente mencionadas, o produto tensorial não
 
 Além disso, a forma como a navegação do primeiro QMDD é feita faz com que o fator da aresta inicial do segundo QMDD seja propagado até chegar na aresta inicial do primeiro QMDD, por meio do processo sucessivo de normalização das arestas.
 
+As linhas 1 a 6 do \cref{alg:kronecker} representam o momento em que uma aresta terminal do primeiro QMDD é atingida. Nesse caso, a aresta terminal do primeiro grafo deve ser substituída pela aresta inicial do segundo grafo com o peso sendo o produto dos dois pesos. Essa operação é feita na linha 6, as linhas 2 a 5 são otimizações para evitar a rescontrução de arestas desnecessariamente. No caso, caso a aresta terminal tenha peso 0, não é necessário conectar o vértice ao segundo QMDD, pois o peso 0 neste caminho anula quaisquer valores subsequentes. Caso a aresta tenha peso 1, basta substituí-la pela aresta já existente.
+
+As linhas 7 a 9 são responsáveis pela navegação do primeiro QMDD, buscando as arestas terminais e reconstruindo o grafo conforme resultados são obtidos. Por exemplo, na linha 9, a aresta de entrada do segundo QMDD é passada adiante junto de cada aresta do vértice do primeiro QMDD. Note também que, cada vértice é normalizado após a construção de seu resultado. Isso faz com que o peso na aresta de entrada do segundo QMDD seja gradativamente propagado para a aresta inicial do primeiro QMDD.
+
 \begin{algorithm}[H]
   \caption{Produto Tensorial Entre Arestas}
   \label{alg:kronecker}
@@ -753,9 +812,166 @@ Além disso, a forma como a navegação do primeiro QMDD é feita faz com que o 
   \Return $normalize(Aresta(w(e_0), v_n))$
 \end{algorithm}
 
+No exemplo a seguir, é realizado o produto tensorial entre uma porta X e uma porta Y. O resultado corresponde à aplicação de uma porta X sobre o primeiro qubit de um circuito e uma porta Y sobre o segundo.
+
+\begin{equation}
+  \label{fig:exampleKronecker}
+  \begin{tikzpicture}[
+    node distance=1.5cm,
+    root/.style={circle,draw,minimum size=8mm},
+    leaf/.style={rectangle,draw,minimum size=6mm},
+    baseline={(current bounding box.center)}
+  ]
+
+    \node[leaf] (t) at (0,0) {1};
+    \node[root] (v) at (0,2) {q1};
+
+    \node[above=of v] (src) {};
+    \draw[->] (src) -- node[right] {1} (v);
+
+    \draw[->, color=red] (v) edge[bend right=90]  node[right]  {0} (t);
+    \draw[->, color=blue] (v) edge[bend right=30]  node[right]  {1} (t);
+    \draw[->, color=blue] (v) edge[bend left=30] node[right] {1} (t);
+    \draw[->, color=red] (v) edge[bend left=90] node[right] {0} (t);
+
+  \end{tikzpicture}
+  \;\otimes\;
+  \begin{tikzpicture}[
+    node distance=1.5cm,
+    root/.style={circle,draw,minimum size=8mm},
+    leaf/.style={rectangle,draw,minimum size=6mm},
+    baseline={(current bounding box.center)}
+  ]
+
+    % terminal node
+    \node[leaf] (t) at (0,0) {1};
+
+    % QMDD internal node
+    \node[root] (v) at (0,2) {q0};
+
+    % incoming edge of weight 1
+    \node[above=of v] (src) {};
+    \draw[->, color=blue] (src) -- node[right] {$i$} (v);
+
+    % TODO: Use better colors
+    % four outgoing edges, one for each matrix entry (1,0,0,1)
+    \draw[->] (v) edge[bend right=90] node[right] {$0$} (t);
+    \draw[->] (v) edge[bend right=30] node[right] {$1$} (t);
+    \draw[->] (v) edge[bend left=15]  node[right]  {$-1$} (t);
+    \draw[->] (v) edge[bend left=90]  node[right]  {$0$} (t);
+
+  \end{tikzpicture}
+  \;=\;
+  \begin{tikzpicture}[
+    node distance=1.5cm,
+    root/.style={circle,draw,minimum size=8mm},
+    leaf/.style={rectangle,draw,minimum size=6mm},
+    baseline={(current bounding box.center)}
+  ]
+
+    % terminal node
+    \node[leaf] (t) at (0,0) {$1$};
+
+    % nodes
+    \node[root] (v) at (0,4) {q1};
+    \node[root] (B) at (0,2) {q0};
+
+
+    % incoming edge of weight 1
+    \node[above=of v] (src) {};
+    \draw[->] (src) -- node[right] {$1$} (v);
+
+    % four outgoing edges, one for each matrix entry (1,0,0,1)
+    \draw[->, color=red] (v) edge[bend right=90] node[right] {$0$} (t);
+    \draw[->, color=blue] (v) edge[bend right=30] node[right] {$i$} (B);
+    \draw[->, color=blue] (v) edge[bend left=30]  node[right]  {$i$} (B);
+    \draw[->, color=red] (v) edge[bend left=90]  node[right]  {$0$} (t);
+
+    \draw[->] (B) edge[bend right=90] node[right] {$0$} (t);
+    \draw[->] (B) edge[bend right=30] node[right] {$1$} (t);
+    \draw[->] (B) edge[bend left=15]  node[right]  {$-1$} (t);
+    \draw[->] (B) edge[bend left=90]  node[right]  {$0$} (t);
+
+
+  \end{tikzpicture}
+\end{equation}
+
+A \cref{fig:exampleKronecker} apresenta um resultado intermediário da operação de produto tensorial. Nela, as arestas finais do primeiro QMDD foram conectadas ao vértice inicial do segundo QMDD. Note que as arestas de peso 0 foram ligadas diretamente ao vértice terminal enquanto as demais tiveram seus pesos multiplicados por $i$, o peso da aresta inicial do segundo QMDD.
+
+A \cref{eq:finalKronecker} apresenta o resultado final da operação, após a normalização dos vértices da parte superior do resultado (originados pelo primeiro QMDD).
+
+\begin{equation}
+  \label{eq:finalKronecker}
+  \begin{tikzpicture}[
+    node distance=1.5cm,
+    root/.style={circle,draw,minimum size=8mm},
+    leaf/.style={rectangle,draw,minimum size=6mm},
+    baseline={(current bounding box.center)}
+  ]
+
+    % terminal node
+    \node[leaf] (t) at (0,0) {$1$};
+
+    % nodes
+    \node[root] (v) at (0,4) {q1};
+    \node[root] (B) at (0,2) {q0};
+
+
+    % incoming edge of weight 1
+    \node[above=of v] (src) {};
+    \draw[->, color=blue] (src) -- node[right] {$1$} (v);
+
+    % four outgoing edges, one for each matrix entry (1,0,0,1)
+    \draw[->] (v) edge[bend right=90] node[right] {$0$} (t);
+    \draw[->, color=blue] (v) edge[bend right=30] node[right] {$i$} (B);
+    \draw[->, color=blue] (v) edge[bend left=30]  node[right]  {$i$} (B);
+    \draw[->] (v) edge[bend left=90]  node[right]  {$0$} (t);
+
+    \draw[->] (B) edge[bend right=90] node[right] {$0$} (t);
+    \draw[->] (B) edge[bend right=30] node[right] {$1$} (t);
+    \draw[->] (B) edge[bend left=15]  node[right]  {$-1$} (t);
+    \draw[->] (B) edge[bend left=90]  node[right]  {$0$} (t);
+
+
+  \end{tikzpicture}
+  \quad\Longrightarrow\quad
+  \begin{tikzpicture}[
+    node distance=1.5cm,
+    root/.style={circle,draw,minimum size=8mm},
+    leaf/.style={rectangle,draw,minimum size=6mm},
+    baseline={(current bounding box.center)}
+  ]
+
+    % terminal node
+    \node[leaf] (t) at (0,0) {$1$};
+
+    % nodes
+    \node[root] (v) at (0,4) {q1};
+    \node[root] (B) at (0,2) {q0};
+
+
+    % incoming edge of weight 1
+    \node[above=of v] (src) {};
+    \draw[->, color=blue] (src) -- node[right] {$i$} (v);
+
+    % four outgoing edges, one for each matrix entry (1,0,0,1)
+    \draw[->] (v) edge[bend right=90] node[right] {$0$} (t);
+    \draw[->, color=blue] (v) edge[bend right=30] node[right] {$1$} (B);
+    \draw[->, color=blue] (v) edge[bend left=30]  node[right]  {$1$} (B);
+    \draw[->] (v) edge[bend left=90]  node[right]  {$0$} (t);
+
+    \draw[->] (B) edge[bend right=90] node[right] {$0$} (t);
+    \draw[->] (B) edge[bend right=30] node[right] {$1$} (t);
+    \draw[->] (B) edge[bend left=15]  node[right]  {$-1$} (t);
+    \draw[->] (B) edge[bend left=90]  node[right]  {$0$} (t);
+
+
+  \end{tikzpicture}
+\end{equation}
+
 \subsubsection{Construção de Portas Controladas}\label{subsub:controlgate}
 
-Como dito na \cref{sec:gateconstruct}, a construção de portas controlodas se divide em duas partes: qubits de controle menos significativos que o alvo e qubits mais significativos. A construção do QMDD por meio desse método ocorre do vértice terminal ao vértice inicial, considerando apenas os qubits de controle e o qubit alvo. Para cada qubit de controle, é construído um QMDD que representa o comportamento de apenas propagar a transformação sobre o qubit alvo pelas arestas que representam o caso em que o qubit está ativo.
+Como dito na \cref{sec:gateconstruct}, a construção de portas controlodas se divide em duas partes: qubits de controle menos significativos que o alvo (mais próximos do vértice terminal) e qubits mais significativos (mais próximos do vértice incial). A construção do QMDD por meio desse método ocorre do vértice terminal ao vértice inicial, considerando apenas os qubits de controle e o qubit alvo. Para cada qubit de controle, é construído um QMDD que representa o comportamento de apenas propagar a transformação sobre o qubit alvo pelas arestas que representam o caso em que o qubit está ativo.
 
 \begin{algorithm}[H]
   \caption{Construção de Portas Controlodas}
@@ -807,7 +1023,54 @@ A operação de medição sobre o estado também pode ser representada por meio 
   \end{bmatrix}
 \end{equation}
 
-Além disso, para extrair um resultado que obedeça à distribuição de probabilidade ao final da execução do algoritmo, é possível percorrer o grafo do vértice inicial ao final escolhendo as arestas aleatoriamente de acordo com seus pesos. Para isso, é preciso considerar apenas duas das quatro arestas dos vértices, sendo as arestas 1 e 2 responsáveis pelo resultado caso o qubit do vértice tenha sido inicializado em \ket{0} e as arestas 3 e 4 para \ket{1}. \cite{kydros2025tutorial}
+Além disso, para extrair um resultado que obedeça à distribuição de probabilidade ao final da execução do algoritmo, é possível percorrer o grafo do vértice inicial ao final escolhendo as arestas aleatoriamente de acordo com seus pesos. Para isso, é útil exergar apenas a parte do QMDD que represente o vetor de estados do circuito no momento da medição. Ou seja, considerar apenas a primeira e a segunda aresta de cada vértice \cite{kydros2025tutorial}.
+
+Por exemplo, o diagrama na \cref{eq:bellstate} representa o estado $\frac{1}{\sqrt{2}}(\ket{00}+\ket{11})$, gerado pelo circuito da \cref{fig:bellcircuit}.
+
+\begin{equation}
+  \label{eq:bellstate}
+  \begin{tikzpicture}[
+    node distance=1.5cm,
+    root/.style={circle,draw,minimum size=8mm},
+    leaf/.style={rectangle,draw,minimum size=6mm},
+    baseline={(current bounding box.center)}
+  ]
+
+    % terminal node
+    \node[leaf] (t) at (2,0) {$1$};
+
+    % nodes
+    \node[root] (B) at (0,2) {$q0_0$};
+    \node[root] (v) at (4,2) {$q0_1$};
+    \node[root] (C) at (2,4) {q1};
+
+
+    % incoming edge of weight 1
+    \node[above=of C] (src) {};
+    \draw[->] (src) -- node[right] {$\frac{1}{\sqrt{2}}$} (C);
+
+    % Control qubit with equal chance of being 0 or 1
+    \draw[->] (C) edge node[left] {$1$} (v);
+    \draw[->] (C) edge node[right] {$1$} (B);
+
+    % Control Qubit is 0. So Target must be 0
+    \draw[->] (v) edge[bend right=30] node[left] {$0$} (t);
+    \draw[->] (v) edge[bend left=30] node[right] {$1$} (t);
+
+
+    % Control Qubit is 1. So Target must be 1
+    \draw[->] (B) edge[bend right=30] node[left] {$1$} (t);
+    \draw[->] (B) edge[bend left=30]  node[right]  {$0$} (t);
+
+
+  \end{tikzpicture}
+\end{equation}
+
+Apesar de não estar normalizado, cada vértice representa corretamente a proporção entre a amplitude de cada estado do qubit que o rotula. Ou seja, pode-se calcular a probabilidade de escolher aleatoriamente cada uma pela proporção de seus quadrados. Por exemplo, se a aresta esqueda de um vértice tem peso 3 e a da direita tem peso 4, a probabilidade de se escolher a aresta esquerda deve ser $3^2/(3^2+4^2)=9/25$, enquanto a de escolher a aresta direita deve ser $4^2/(3^2+4^2)=16/25$
+
+Observando apenas o vértice $q1$, pode-se inferir que o primeiro qubit do circuito possui a mesma chance de ser medido em 0 ou em 1. Já o vértice $q0_0$ diz que o segundo qubit possui 100\% de chance de ser medido em 0. Note que o vértice $q0_0$ só pode ser alcançando seguindo a aresta esquerda do vértice $q1$. Isso significa que, se a medição do primeiro qubit retornar 0, a medição do segundo tem 100\% de chance de retornar 0 também. O mesmo vale para o vértice $q0_1$, que diz que o segundo qubit tem 100\% de chance de ser medido em 1 mas só pode ser alcançado seguindo a aresta direita do primeiro qubit.
+
+Assim, para escolher um resultado possível de uma medição, seria necessário escolher aleatoriamente a aresta esquerda ou direita do primeiro vértice, com 50\% de chance cada. Nesse vértice, existe 50\% de seguir a aresta esquerda, levando ao vértice $q0_0$, o qual sempre diz para seguir a aresta esquerda, logo 50\% das medições retornam o estado \ket{00}. Na outra metade dos cenários, a aresta direita de $q1$ teria sido escolhida, levando a $q0_1$ que sempre diz para escolher sua aresta direita, fazendo com que o estado \ket{11} seja medido nesse cenário.
 
 Esse método de obtenção de um único resultado aleatório de acordo com a distribuição probabilística do estado é chamada de simulação fraca \cite{wang2015weak}.
 
@@ -815,6 +1078,35 @@ Esse método de obtenção de um único resultado aleatório de acordo com a dis
 
 QMMDs permitem a realização de simulação quântica forte. Isso significa que é possível extrair a probabilidade de cada resultado após a execução do circuito. Essa operação inevitavelmente possui custo exponencial, pois n qubits geram $2^n$ possíveis resultados, por isso estratégias de simulação fraca como a apresentada na \cref{sub:measurement} são utilizadas para circuitos com mais qubits \cite{wang2015weak}.
 
-Caso o circuito possua uma quantia moderada de qubits, é possível realizar um procedimento semelhante à busca descrita na \cref{sub:measurement}. A diferença é que, ao invés de escolher arestas aleatoriamente, cada escolha leva ao valor que representa um resultado possível, logo basta visitar todos os caminhos possíveis.
+Caso o circuito possua uma quantia moderada de qubits, é possível realizar um procedimento semelhante à busca descrita na \cref{sub:measurement}. A diferença é que, ao invés de escolher arestas aleatoriamente, cada escolha leva ao valor que representa um resultado possível, logo basta visitar todos os caminhos possíveis, como foi apresentado na \cref{sub:qmddvec}.
 
-Lembrando que o QMDD resultante do produto de todas as portas lógicas representa toda a transformação linear do circuito, envolvendo informações de resultados para circuitos inicializados em estados arbitrários e não apenas $\ket{0}^{\otimes n}$. Para extrair o resultado considerando que o circuito foi inicializado em $\ket{0}^{\otimes n}$, basta ignorar as arestas 2 e 4 de cada vértice.
+Além disso, após reconstruir o vetor de estados gerado por um circuito que envolva uma operação de medição, é necessário normalizá-lo. Por exemplo, caso a matriz $M_0$ da \cref{eq:measurementmatrices} seja aplicada sobre o estado $\frac{1}{\sqrt{2}}\cdot(\ket{0} + \ket{1})$, o resultado será $\frac{1}{\sqrt{2}}\cdot\ket{0}$. Para que esse vetor seja transformado em um estado quântico válido equivalente, ele precisa estar normalizado como descrito na \cref{sub:result}.
+
+\begin{equation}
+  \begin{bmatrix}
+    1 & 0 \\
+    0 & 0
+  \end{bmatrix}
+  \cdot
+  \begin{bmatrix}
+    \frac{1}{\sqrt{2}} \\
+    \frac{1}{\sqrt{2}}
+  \end{bmatrix}
+  =
+  \begin{bmatrix}
+    \frac{1}{\sqrt{2}} \\
+    0
+  \end{bmatrix}
+  \Longrightarrow
+  \begin{bmatrix}
+    \frac{1}{\sqrt{2}} \\
+    0
+  \end{bmatrix}
+  \div
+  \sqrt{(\frac{1}{\sqrt{2}})^2 + 0^2}
+  =
+  \begin{bmatrix}
+    1 \\
+    0
+  \end{bmatrix}
+\end{equation}
