@@ -646,10 +646,10 @@ Como as arestas inicias de ambos os QMDDs não são terminais, o produto entre e
 
     % TODO: Use better colors
     % four outgoing edges, one for each matrix entry (1,0,0,1)
-    \draw[->, draw=orange] (v) edge[bend right=90] node[right] {1} (t);
-    \draw[->, draw=green] (v) edge[bend right=30] node[right] {1} (t);
-    \draw[->, draw=blue] (v) edge[bend left=30]  node[right]  {1} (t);
-    \draw[->, draw=red] (v) edge[bend left=90]  node[right]  {-1} (t);
+    \draw[->] (v) edge[bend right=90] node[right] {1} (t);
+    \draw[->] (v) edge[bend right=30] node[right] {1} (t);
+    \draw[->] (v) edge[bend left=30]  node[right]  {1} (t);
+    \draw[->] (v) edge[bend left=90]  node[right]  {-1} (t);
 
   \end{tikzpicture}
   \;\cdot\;
@@ -666,10 +666,10 @@ Como as arestas inicias de ambos os QMDDs não são terminais, o produto entre e
     \node[above=of v] (src) {};
     \draw[->] (src) -- node[right] {1} (v);
 
-    \draw[->, draw=red] (v) edge[bend right=90]  node[right]  {0} (t);
-    \draw[->, draw=blue] (v) edge[bend right=30]  node[right]  {1} (t);
-    \draw[->, draw=green] (v) edge[bend left=30] node[right] {1} (t);
-    \draw[->, draw=orange] (v) edge[bend left=90] node[right] {0} (t);
+    \draw[->] (v) edge[bend right=90]  node[right]  {0} (t);
+    \draw[->] (v) edge[bend right=30]  node[right]  {1} (t);
+    \draw[->] (v) edge[bend left=30] node[right] {1} (t);
+    \draw[->] (v) edge[bend left=90] node[right] {0} (t);
 
   \end{tikzpicture}
   \;=\;
@@ -686,10 +686,10 @@ Como as arestas inicias de ambos os QMDDs não são terminais, o produto entre e
     \node[above=of v] (src) {};
     \draw[->] (src) -- node[right] {1} (v);
 
-    \draw[->, draw=red] (v) edge[bend right=90]  node[right]  {0} (t); % (0,0)
-    \draw[->, draw=blue] (v) edge[bend right=30]  node[right]  {0} (t); % (0,1)
-    \draw[->, draw=green] (v) edge[bend left=15] node[right] {$\frac{1}{\sqrt{2}}$} (t); % (1,0)
-    \draw[->, draw=orange] (v) edge[bend left=90] node[right] {$\frac{1}{\sqrt{2}}$} (t); % (1,1)
+    \draw[->] (v) edge[bend right=90]  node[right]  {0} (t); % (0,0)
+    \draw[->] (v) edge[bend right=30]  node[right]  {0} (t); % (0,1)
+    \draw[->] (v) edge[bend left=15] node[right] {$\frac{1}{\sqrt{2}}$} (t); % (1,0)
+    \draw[->] (v) edge[bend left=90] node[right] {$\frac{1}{\sqrt{2}}$} (t); % (1,1)
 
   \end{tikzpicture}
   \;+\;
@@ -706,10 +706,10 @@ Como as arestas inicias de ambos os QMDDs não são terminais, o produto entre e
     \node[above=of v] (src) {};
     \draw[->] (src) -- node[right] {1} (v);
 
-    \draw[->, draw=red] (v) edge[bend right=90]  node[right]  {$\frac{1}{\sqrt{2}}$} (t); % (0,0)
-    \draw[->, draw=blue] (v) edge[bend right=20]  node[right]  {$\frac{-1}{\sqrt{2}}$} (t); % (0,1)
-    \draw[->, draw=green] (v) edge[bend left=40] node[right] {0} (t); % (1,0)
-    \draw[->, draw=orange] (v) edge[bend left=90] node[right] {0} (t); % (1,1)
+    \draw[->] (v) edge[bend right=90]  node[right]  {$\frac{1}{\sqrt{2}}$} (t); % (0,0)
+    \draw[->] (v) edge[bend right=20]  node[right]  {$\frac{-1}{\sqrt{2}}$} (t); % (0,1)
+    \draw[->] (v) edge[bend left=40] node[right] {0} (t); % (1,0)
+    \draw[->] (v) edge[bend left=90] node[right] {0} (t); % (1,1)
 
   \end{tikzpicture}
   \quad\Longrightarrow\quad
@@ -726,10 +726,10 @@ Como as arestas inicias de ambos os QMDDs não são terminais, o produto entre e
     \node[above=of v] (src) {};
     \draw[->] (src) -- node[right] {$\frac{1}{\sqrt(2)}$} (v);
 
-    \draw[->, draw=red] (v) edge[bend right=90]  node[right]  {1} (t); % (0,0)
-    \draw[->, draw=blue] (v) edge[bend right=30]  node[right]  {-1} (t); % (0,1)
-    \draw[->, draw=green] (v) edge[bend left=30] node[right] {1} (t); % (1,0)
-    \draw[->, draw=orange] (v) edge[bend left=90] node[right] {1} (t); % (1,1)
+    \draw[->] (v) edge[bend right=90]  node[right]  {1} (t); % (0,0)
+    \draw[->] (v) edge[bend right=30]  node[right]  {-1} (t); % (0,1)
+    \draw[->] (v) edge[bend left=30] node[right] {1} (t); % (1,0)
+    \draw[->] (v) edge[bend left=90] node[right] {1} (t); % (1,1)
 
   \end{tikzpicture}
 \end{equation}
@@ -973,6 +973,12 @@ A \cref{eq:finalKronecker} apresenta o resultado final da operação, após a no
 
 Como dito na \cref{sec:gateconstruct}, a construção de portas controlodas se divide em duas partes: qubits de controle menos significativos que o alvo (mais próximos do vértice terminal) e qubits mais significativos (mais próximos do vértice incial). A construção do QMDD por meio desse método ocorre do vértice terminal ao vértice inicial, considerando apenas os qubits de controle e o qubit alvo. Para cada qubit de controle, é construído um QMDD que representa o comportamento de apenas propagar a transformação sobre o qubit alvo pelas arestas que representam o caso em que o qubit está ativo.
 
+A primeira linha do \cref{alg:controlgateconstruct} cria as arestas da porta a ser aplicada sobre o qubit alvo. Já a segunda linha prepara um vetor de arestas que será usado para gradativamente construir o diagrama da porta, do vértice terminal ao inicial. As linhas 3 a 12 constroem o grafo abaixo do qubit alvo. Ou seja, para cada qubit de controle com índice menor que o do qubit alvo, deve-se construir as arestas da seguinte forma: A primeira aresta do vértice deve ser construída de forma a ser equivalente à aplicação da matriz identidade, já que essa aresta representa o caso em que o qubit de controle está em 0. Enquanto a quarta aresta representa o caso em que o qubit de controle está em 1, logo deve ser equivalente à aplicação da matriz de entrada. Como as outras duas arestas representam o cenário em que o qubit tem seu valor alterado, elas são mantidas em 0 (como inicializadas na linha 2) pois os qubits de controle não são alterados em portas controladas. A linha 12, então, agrupa as arestas criadas em um novo vértice, e passa-as adiante para o próximo qubit de controle.
+
+Após construir todos os vértices do qubit de controle menos significativos que o qubit alvo, basta adicionar um novo vértice para o qubit alvo utilizando as arestas criadas previamente, feito na linha 13.
+
+Para os qubits acima do qubit alvo, a mesma lógica de que a primeira e última aresta do vértice representam o caso em que o qubit está respectivamente em 0 e 1. Porém, no caso em que o qubit de controle esteja em 0, não é necessário utilizar o grafo criado até então, já que a porta não será aplicada sobre o qubit. Enquanto a aresta em que o qubit de controle é 1 pode apenas se conectar à aresta de entrada do qubit alvo, ou do qubit de controle previamente contruído.
+
 \begin{algorithm}[H]
   \caption{Construção de Portas Controlodas}
   \label{alg:controlgateconstruct}
@@ -997,7 +1003,7 @@ Como dito na \cref{sec:gateconstruct}, a construção de portas controlodas se d
       }
     }
   }
-  $e \gets normalize(Aresta(1, Vertice(t, r)))$
+  $e \gets normalize(Aresta(1, Vertice(t, r)))$ \;
   \For{$c \in C \land c > t$}{
     $x_3 \gets e$ \;
     $x_0 \gets Aresta(1, T)$ \;
