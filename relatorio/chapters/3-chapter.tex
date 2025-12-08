@@ -979,7 +979,7 @@ Como dito na \cref{sec:gateconstruct}, a construção de portas controlodas se d
   \KwIn{Índice do qubit alvo $t$; Conjunto de índices dos qubits de controle $C$; Matriz da porta $m$}
   \KwOut{Aresta}
 
-  $r \gets \{Aresta(v_t, m00), Aresta(v_t, m01), Aresta(v_t, m10), Aresta(v_t, m11)\}$
+  $r \gets \{Aresta(v_t, m00), Aresta(v_t, m01), Aresta(v_t, m10), Aresta(v_t, m11)\}$ \;
   $x \gets {Aresta(0, v_t), Aresta(0, v_t), Aresta(0, v_t), Aresta(0, v_t)} $
 
   \For{$c \in C \land c < t$}{
@@ -987,7 +987,12 @@ Como dito na \cref{sec:gateconstruct}, a construção de portas controlodas se d
       \For{$j \gets \{0, 1\}$}{
         $k \gets 2*i + j$ \;
         $x_3 \gets r_k$ \;
-        $x_0 \gets Aresta(1, v_t) if i = j, else Aresta(0, v_t)$ \;
+        \If{$i = j$}{
+          $x_0 \gets Aresta(1, v_t)$
+        }
+        \Else{
+          $x_0 \gets Aresta(0, v_t)$
+        }
         $r_k \gets normalize(Aresta(1, Vertice(c, x)))$
       }
     }
@@ -1000,6 +1005,53 @@ Como dito na \cref{sec:gateconstruct}, a construção de portas controlodas se d
   }
   \Return $e$
 \end{algorithm}
+
+A \cref{fig:cnotqmdd} contém o QMDD que representa a porta CNOT apresentada na \cref{eq:cnot}, construído a partir do \cref{alg:controlgateconstruct}. Nele, o vértice $q0_0$ armazena a informação do que fazer sobre o qubit alvo caso o qubit de controle esteja em 0: não alterar o alvo (matriz identidade). Já o vértice $q0_1$ diz o que fazer quando o qubit de controle está em 1: inverter o alvo (matriz X).
+
+\begin{equation}
+  \label{fig:cnotqmdd}
+  \begin{tikzpicture}[
+    node distance=2cm,
+    root/.style={circle,draw,minimum size=8mm},
+    leaf/.style={rectangle,draw,minimum size=6mm},
+    baseline={(current bounding box.center)}
+  ]
+
+    % terminal node
+    \node[leaf] (t) at (3,0) {$1$};
+
+    % nodes
+    \node[root] (B) at (0,2) {$q0_0$};
+    \node[root] (v) at (6,2) {$q0_1$};
+    \node[root] (C) at (3,4) {q1};
+
+
+    % incoming edge of weight 1
+    \node[above=of C] (src) {};
+    \draw[->] (src) -- node[right] {$1$} (C);
+
+    \draw[->] (C) edge node[left, yshift=12pt] {$1$} (B);
+    \draw[->] (C) edge[bend right=15] node[left, yshift=16pt] {$0$} (t);
+    \draw[->] (C) edge[bend left=15] node[right, yshift=16pt] {$0$} (t);
+    \draw[->] (C) edge node[right, yshift=12pt] {$1$} (v);
+    
+    % Control Qubit is 0. So Target must stay the same
+    \draw[->] (B) edge[bend right=45] node[left] {$1$} (t);
+    \draw[->] (B) edge[bend right=15]  node[left]  {$0$} (t);
+    \draw[->] (B) edge[bend left=15]  node[right, xshift=-4pt, yshift=5pt]  {$0$} (t);
+    \draw[->] (B) edge[bend left=35] node[right, yshift=8pt, xshift=-5pt] {$1$} (t);
+
+    % Control Qubit is 1. So Target must be flipped
+    \draw[->] (v) edge[bend right=35] node[left, yshift=8pt, xshift=5pt] {$0$} (t);
+    \draw[->] (v) edge[bend right=15]  node[left, xshift=4pt, yshift=5pt]  {$1$} (t);
+    \draw[->] (v) edge[bend left=15]  node[right]  {$1$} (t);
+    \draw[->] (v) edge[bend left=45] node[right] {$0$} (t);
+
+  \end{tikzpicture}
+\end{equation}
+
+
+Note que, diferente dos outros grafos apresentados até então, são necessários 2 vértices para representar o segundo qubit do circuito, um para o cenário em que o primeiro qubit esteja em \ket{0} e outro para \ket{1}. Esse comportamento das portas controladas faz com que o tamanho do grafo cresça além do número de qubits envolvidos no circuito. Ou seja, quanto mais portas controladas no circuito, mais o tamanho do grafo se aproxima do tamanho exponencial observado em outros métodos de simulação.
 
 \subsection{Medição}\label{sub:measurement}
 
@@ -1098,12 +1150,11 @@ Além disso, após reconstruir o vetor de estados gerado por um circuito que env
     0
   \end{bmatrix}
   \Longrightarrow
+  \frac{1}{\sqrt{(\frac{1}{\sqrt{2}})^2 + 0^2}}
   \begin{bmatrix}
     \frac{1}{\sqrt{2}} \\
     0
   \end{bmatrix}
-  \div
-  \sqrt{(\frac{1}{\sqrt{2}})^2 + 0^2}
   =
   \begin{bmatrix}
     1 \\
