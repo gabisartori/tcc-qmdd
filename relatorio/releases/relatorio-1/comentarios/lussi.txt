@@ -1,0 +1,12 @@
+Boa tarde, Gabriel.
+
+Seguem meus comentários sobre seu TCC.
+
+Deixei alguns comentários específicos no PDF em anexo, e abaixo apresento algumas observações gerais:
+
+O trabalho está bem escrito, apresenta um bom nível de detalhe nas definições e algoritmos, e segue o formato esperado para um TCC. Para alcançar a nota máxima, sugiro incluir uma seção específica sobre trabalhos relacionados. Atualmente, esse conteúdo aparece resumidamente na seção 1.3 — talvez seja possível expandi-lo e mantê-lo na introdução, ou então desenvolvê-lo em uma seção própria e mais abrangente.
+
+Além disso, percebi que a compreensão da seção 3.2 em diante pode ser um pouco difícil. Seria interessante descrever essas partes com mais detalhes e exemplos, o que ajudaria na clareza e no entendimento do conteúdo.
+
+Fico à disposição.
+

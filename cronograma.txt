@@ -1,0 +1,29 @@
+Envio pra banca: 10/11
+Entregar pro Evandro e Jerusa: 03/11
+Retorno da banca: 15/11
+Defesas: 17/11 até 4/12
+
+
+Descrever implementação dos algoritmos
+- Linguagem
+- Adaptações necessárias
+
+Resultados
+- Simular circuitos existentes no ket
+  - Grover
+  - Simulação de fase
+  - Achar caso no qual qmdd tenha vantagem
+
+- Comparar com (versões default)
+  - Simulação Densa
+  - Simulação Esparsa
+
+- Métricas
+  - Tempo de execução (compilar em release)
+  - Consumo de memória se der
+
+- Testar um simulador de cada vez
+- Pausa entre simulações para esfriar o processador
+
+
+kbw (fork e alterar backend) e ket

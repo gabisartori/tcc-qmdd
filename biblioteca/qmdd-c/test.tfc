@@ -1,7 +1,6 @@
-.v a,b
-.i a,b
-.o a,b
+.v a
+.i a
+.o a
 BEGIN
-h1 a
-t2 a,b
+h a
 END
