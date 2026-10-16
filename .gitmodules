@@ -1,0 +1,3 @@
+[submodule "code/ket"]
+	path = code/ket
+	url = https://gitlab.com/quantum-ket/ket.git
