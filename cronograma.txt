@@ -10,8 +10,9 @@ Descrever implementação dos algoritmos
 
 Resultados
 - Simular circuitos existentes no ket
-  - Grover
-  - Simulação de fase
+  - Grover (Talve demore demais e não valha a pena)
+  - Estimação de fase
+  - Algoritmo Falqon
   - Achar caso no qual qmdd tenha vantagem
 
 - Comparar com (versões default)
@@ -27,3 +28,24 @@ Resultados
 
 
 kbw (fork e alterar backend) e ket
+
+
+Confirmar ordem de bit significativo no basis state do dump (Usar estado de 65 qubits pra descobrir)
+
+## Algoritmos
+Descrever circuitos em alto nível para pontuar onde estão os ganhos do simulador.
+
+
+### Estimação de fase
+https://gitlab.com/quantum-ket/ket/-/blob/master/examples/phase_estimation.py?ref_type=heads
+
+### Falqon
+https://quantumket.org/tutorials/quantum-optimization.html#falqon-feedback-based-algorithm-for-quantum-optimization
+
+## Resultados
+Indicar que algoritmo denso não conseguiu simular determinado tamanho de circuito
+
+Colocar limite de tempo para encerrar testes com método
+
+Fazer fit da curva e projetar expectativas para circuitos inviáveis
+
