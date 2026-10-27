@@ -1,5 +1,7 @@
 import ket as k
 import numpy as np
+from functools import partial
+import argparse
 
 def oracle(target, qubits):
   """Oráculo: inverte a amplitude do estado desejado."""
@@ -14,8 +16,6 @@ def diffusion_operator(qubits):
   """Operador de difusão: amplifica as amplitudes dos estados marcados."""
   with k.around(k.cat(k.H, k.X), qubits):
     k.ctrl(qubits[:-1], k.Z)(qubits[-1])  # Controle multi-qubit
-
-from functools import partial
 
 
 def grover(oracle, qubits):
@@ -32,17 +32,21 @@ def grover(oracle, qubits):
     oracle(qubits)
     diffusion_operator(qubits)
 
-from functools import partial
-
-
-def run_grover(n, target):
+def run_grover(n, target, simulator):
   """Executa o algoritmo de Grover."""
   # Inicialização do processo
-  process = k.Process(simulator="dense")
+  process = k.Process(simulator=simulator, num_qubits=n)
 
   # Alocação de n qubits
   qubits = process.alloc(n)
   grover(partial(oracle, target), qubits)
   print(k.measure(qubits).get())
 
-run_grover(18, 150)
+args = argparse.ArgumentParser(description="Algoritmo de Grover")
+# Add positional arguments for number of qubits and target state
+args.add_argument("simulator", type=str, default="dense", help="Simulador utilizado")
+args.add_argument("n", type=int, default=18, help="Número de qubits")
+args.add_argument("target", type=int, default=150, help="Estado alvo (em decimal)")
+args = args.parse_args()
+
+run_grover(args.n, args.target, args.simulator)
