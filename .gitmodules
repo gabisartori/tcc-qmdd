@@ -1,4 +1,4 @@
 [submodule "code/ket"]
 	path = code/ket
-	url = git@github.com:gabisartori/kbw.git
+	url = git@github.com:gabisartori/ket.git
         branch = qmdd
