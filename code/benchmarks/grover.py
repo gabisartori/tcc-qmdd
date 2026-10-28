@@ -32,21 +32,18 @@ def grover(oracle, qubits):
     oracle(qubits)
     diffusion_operator(qubits)
 
-def run_grover(n, target, simulator):
+def run_grover(n: int, simulator):
   """Executa o algoritmo de Grover."""
-  # Inicialização do processo
   process = k.Process(simulator=simulator, num_qubits=n)
 
-  # Alocação de n qubits
   qubits = process.alloc(n)
-  grover(partial(oracle, target), qubits)
+  # The searched value does not affect the number of iterations, so we can use any value here.
+  grover(partial(oracle, 1), qubits)
   print(k.measure(qubits).get())
 
 args = argparse.ArgumentParser(description="Algoritmo de Grover")
-# Add positional arguments for number of qubits and target state
 args.add_argument("simulator", type=str, default="dense", help="Simulador utilizado")
-args.add_argument("n", type=int, default=18, help="Número de qubits")
-args.add_argument("target", type=int, default=150, help="Estado alvo (em decimal)")
+args.add_argument("n", type=int, default=10, help="Número de qubits")
 args = args.parse_args()
 
-run_grover(args.n, args.target, args.simulator)
+run_grover(args.n, args.simulator)
