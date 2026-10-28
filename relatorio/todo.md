@@ -1,8 +1,7 @@
-- [ ] Exemplso de QMDDs
-- [-] Algoritmos
-  - [-] Construção de Portas Controladas
-- [-] Adicionar referências
-- [-] Traduzir palavras usadas por cref
 - [ ] Trocar imagem da esfera de bloch (aumentar qualidade)
-- [ ] Of course, QMDDs do not guarantee total protection from exponential scaling. Indeed, matrices with no exploitable structure will lead to graphs resembling the one shown in Fig. 6, with exponentially many vertices. Examples include the cluster states—highly entangled quantum states influential in measurement-based quantum computation and fault tolerance [2, 38]—which are known to require exponential QMDD representations [48]. Nevertheless, in many practical quantum algorithms, the unitary matrices involved exhibit structural redundancy, rendering QMDDs useful.
-  FUCKFUCKFUCKFUCKFUCKFUCKFUCKFUCKFUCKFUCKFUCKFUCKFUCKFUCKFUCKFUCKFUCKFUCKFUCKFUCKFUCKFUCKFUCKFUCKFUCKFUCKFUCKFUCKFUCKFUCK
+- [ ] Corrigir explicação de como a medição e leitura de um QMDD são feitas
+- [ ] Remove some fuckass sub sub sub sub title I guess in the bloch sphere section
+- [ ] Descrever implementação em Rust
+ - [ ] I highkey have to read what the code is actually doing
+- [ ] Descrever algoritmos utilizados para benchmarking
+

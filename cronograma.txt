@@ -27,11 +27,6 @@ Resultados
 - Pausa entre simulações para esfriar o processador
 
 
-kbw (fork e alterar backend) e ket
-
-
-Confirmar ordem de bit significativo no basis state do dump (Usar estado de 65 qubits pra descobrir)
-
 ## Algoritmos
 Descrever circuitos em alto nível para pontuar onde estão os ganhos do simulador.
 
