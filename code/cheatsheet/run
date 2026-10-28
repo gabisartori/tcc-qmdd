@@ -1,3 +1,0 @@
-cargo build --release --manifest-path ket/src/ket/clib/libs/kbw/Cargo.toml
-pip install -e ket
-python main.py
