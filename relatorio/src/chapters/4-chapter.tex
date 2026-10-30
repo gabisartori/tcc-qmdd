@@ -1,7 +1,7 @@
 \chapter{Desenvolvimento}\label{chap:development}
 
-% TODO: This whole section
-Neste capítulo, serão descritos os aspectos da implementação prática dos algoritmos descritos na \cref{section:qmdd} junto da integração com a plataforma de desenvolvimento Ket.
+% TODO: This whole chapter
+Neste capítulo, serão descritos os aspectos da implementação prática dos algoritmos descritos no \cref{chap:qmdd} junto da integração com a plataforma de desenvolvimento Ket.
 
 Os algoritmos foram desenvolvidos na linguagem de programação Rust, na versão 1.98.1
 
@@ -13,7 +13,23 @@ Os algoritmos foram desenvolvidos na linguagem de programação Rust, na versão
 \section{Experimentos}\label{sec:experiments}
 De forma a validar o desempenho do simulador desenvolvido, diferentes algoritmos foram executados utilizando 3 técnicas de simulação disponíveis na plataforma. Cada execução passou por uma combinação de simulador, algoritmo quântico e número de qubits simulados.
 
-No Ket, estão disponíveis 2 principais simuladores: denso e esparso. [[TODO: copiar texto descrevendo métodos de simulação]]. Em adição a esses 2 simuladores, o desempenho do simulador à base de QMDD recém implementado também foi medido.
+No Ket, estão disponíveis 2 principais simuladores: denso e esparso. Na simulação densa, um circuito de $n$ qubits é simulado utilizando um array de números complexos com $2^n$ posições. Nesse array, cada posição representa a amplitude de um dos $2^n$ possíveis estados do circuito. Assim, cada porta é aplicada individualmente sobre as posições do array que estejam atreladas ao qubit afetado pela porta. Por exemplo, um circuito de 2 qubits no estado \ket{00} é representado pelo array [1, 0, 0, 0].
+
+Já a simulação esparsa se baseia em tabelas que armazenam apenas as amplitudes não nulas do circuito. No Ket, existem duas implementações desse método: uma utilizando tabelas hash e outra utilizando vetores. Ao utilizar tabelas hash, cria-se pares de chave e valor, sendo a chave a string de bits que representa um determinado estado e o valor a sua amplitude. Por exemplo, o estado $\frac{1}{\sqrt{2}}(\ket{00} + \ket{11})$ seria representado pela tabela.
+
+$$
+\begin{array}{|c|c|}
+  \hline
+  \text{Chave} & \text{Valor} \\
+  \hline
+  00 & \frac{1}{\sqrt{2}} \\
+  11 & \frac{1}{\sqrt{2}} \\
+  \hline
+  % \label{tab:sparse_example}
+\end{array}
+$$
+
+Em adição a esses 2 simuladores, o desempenho do simulador à base de QMDD recém implementado também foi medido.
 
 Já os algoritmos quânticos simulados foram 3: Grover, FALQON, Estimação de Fase Quântica. [[TODO: Descrever algortimos]]. O objetivo em comparar o desempenho do simulador em diferentes algortimos é identificar em quais circunstâncias simulação por meio de QMDD é mais ou menos eficiente. Isso pois, como dito na TODO: cref, a complexidade de um QMDD varia de acordo com a natureza do circuito simulado.
 
