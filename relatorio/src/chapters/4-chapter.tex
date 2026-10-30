@@ -8,3 +8,20 @@ Os algoritmos foram desenvolvidos na linguagem de programação Rust, na versão
 % Representação de nodos e arestas como entradas numa tabela para evitar redundância
 
 % Criação de tabela de memoização das operações
+
+
+\section{Experimentos}\label{sec:experiments}
+De forma a validar o desempenho do simulador desenvolvido, diferentes algoritmos foram executados utilizando 3 técnicas de simulação disponíveis na plataforma. Cada execução passou por uma combinação de simulador, algoritmo quântico e número de qubits simulados.
+
+No Ket, estão disponíveis 2 principais simuladores: denso e esparso. [[TODO: copiar texto descrevendo métodos de simulação]]. Em adição a esses 2 simuladores, o desempenho do simulador à base de QMDD recém implementado também foi medido.
+
+Já os algoritmos quânticos simulados foram 3: Grover, FALQON, Estimação de Fase Quântica. [[TODO: Descrever algortimos]]. O objetivo em comparar o desempenho do simulador em diferentes algortimos é identificar em quais circunstâncias simulação por meio de QMDD é mais ou menos eficiente. Isso pois, como dito na TODO: cref, a complexidade de um QMDD varia de acordo com a natureza do circuito simulado.
+
+O Desempenho dos algoritmos foi medido em termos de consumo de tempo e memória. Porém, o consumo de memória não apresentou variação significativa entre os algoritmos e simuladores. [[TODO: maybe leave this part out]].
+
+Para evitar flutuações no tempo de execução, a ordem de cada simulação foi organizada para que os simuladores sejam testados sequencialmente. Ou seja, primeiro foram feitas todas as simulações do QMDD, depois todas do simulador denso e por fim todas do simulador esparso. Assim, questões práticas da implementação de cada simulador em relação à arquitetura do computador utilizado terão menos interferência um no outro. Por exemplo, um simulador que utiliza a memória de forma mais organizada não vai ser afetado por um simulador que deixa a memória do computador fragmentada após sua execução.
+
+Além disso, todas as simulaçãoes de combinações foram realizadas múltiplas vezes, utilizando rodadas de aquecimento para reduzir picos nas rodadas iniciais. O número de execuções foi variado de acordo com a quantia de qubits na simulação: quanto mais qubits, menos rodadas. Isso pois, dado o maior número de qubits, o tempo de execução se torna maior, fazendo com que a variação entre execuções seja menos relevante.
+
+Desse modo, cada combinação de simulador e algoritmo foi executada usando diferentes números de qubits no algoritmo. Para isso, cada combinação iniciou seus experimentos com uma quantia mínima de qubits (1 para Grover, 3 para FALQON e 2 para QPE) e, após cada execução bem sucedida, o número de qubits era incrementado em um. Uma execução falha caso o tempo de execução ultrasse um tempo limite previamente estabelecido.
+
