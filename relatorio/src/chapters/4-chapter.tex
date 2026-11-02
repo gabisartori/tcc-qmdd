@@ -1,13 +1,47 @@
 \chapter{Desenvolvimento}\label{chap:development}
 
-Neste capítulo, serão descritos os aspectos da implementação prática dos algoritmos descritos no \cref{chap:qmdd} junto da integração com a plataforma de desenvolvimento Ket.
+Neste capítulo, serão descritos os aspectos da implementação prática dos algoritmos descritos no \cref{chap:qmdd} junto da integração com a plataforma de desenvolvimento Ket e a forma como os resultados do simulador foram validados.
 
-% Representação de nodos e arestas como entradas numa tabela para evitar redundância
+\section{Implementação}\label{sec:implementation}
 
-% Criação de tabela de memoização das operações
+\subsection{Identificação de Objetos Duplicados e Memoização de Operações}
+
+A principal vantagem do QMDD está em identificar e remover vértices duplicados do grafo que representa o circuito quântico. Para isso, é necessária uma forma eficiente de identificar que um determinado vértice já existe no QMDD e não precisa ser criado novamente. Assim, foram utilizadas estruturas auxiliares juntamente aos algoritmos descritos na \cref{sec:qmdd_algorithms}. Mais especificamente, a classe QMDD cria uma lista de vértices já criados e utilizada identificadores para operá-los. Quando um novo nodo é criado, primeiro a classe verifica se um nodo equivalente já existe em sua lista e apenas caso contrário insere o novo nodo na lista.
+
+% TODO: Should I explain what a hash table is?
+Outra otimização realizada foi a memoização de operações entre arestas. Para isso, foi criada uma tabela hash que armazena o resultado de operações entre arestas já realizadas. Assim, caso uma operação entre duas arestas já tenha sido realizada, o resultado é obtido diretamente da tabela hash, evitando a necessidade de recalcular o resultado da operação. Isso oferece ganho significativo ao considerar que as operações entre arestas são recursivas e podem ser chamadas múltiplas vezes durante a execução de um algoritmo quântico.
+
+\subsection{Construção de Portas Arbitrárias}
+% TODO: The implementation was based on the paper's code. But the work should have properly described it before, so I'm not sure what to refer
+
+\subsection{Aplicação das Portas do Circuito}
+
+Dada a construção de portas arbitrárias e o algoritmo de multiplicação de arestas, a aplicação de portas do circuito se torna trivial. Basta apenas construir o QMDD que representa as portas utilizadas e, então, invocar sucessivamente o algoritmo de multiplicação entre esses QMDDs.
+
+% TODO
+% GRrrrr im gonna killmyselflffffff
+\subsection{Medições}
+
+\section{Integração com Ket}\label{sec:ket}
+
+A implementação descrita anteriormente foi integrada com sucesso à plataforma de desenvolvimento quântico Ket por meio da estrutura QuantumExecution. Essa classe estabelece a interface ---lista de funcionalidades--- que um simulador deve implementar para poder ser utilizado pela biblioteca.
+
+Então, os métodos desenvolvidos para a classe QMDD foram utilizados para implementar essa interface, que consiste de duas partes principais: aplicação de portas fundamentais e coleção de resultados.
+
+Quanto às portas fundamentais, o Ket faz com que portas arbitrárias utilizadas pelo usuário sejam decompostas na aplicação sucessiva de determinadas portas. Dentre elas, estão as portas de Pauli, porta de Hadamard, porta de fase e portas de rotação, descritas na \cref{sub:relevant_gates}. Logo, a implementação da aplicação dessas portas foi feita utilizando os métodos de aplicação de portas arbitrárias do QMDD.
+
+% TODO: This could change in the next few days
+% Choose which sentence currently describes the implementation
+% - Já a medição de qubits foi implementada utilizando o método de medição do QMDD, que permite a realização de medições destrutivas sobre qubits individuais.
+% - Atualmente, a medição de qubits opera sobre essa coleta do vetor de amplitudes, realizando medições destrutivas sobre qubits individuais e retornando um valor aleatório de acordo com a distribuição de probabilidades descrita pelo vetor.
+Já sobre a coleta de resultados, o Ket permite que o usuário obtenha informações sobre o estado do circuito de duas principais formas: por meio da obtenção do vetor de amplitudes do circuito e pela da medição de qubits. O vetor de amplitudes é um caso específico, por se tratar de um simulador forte, o QMDD permite a reconstrução completa do estado do sistema sem a necessidade de medições destrutivas. Assim o método já descrito para reconstrução do vetor a partir do QMDD foi utilizado para implementar essa funcionalidade. 
+
+\section{Testes}\label{sec:tests}
+
+
 
 \section{Integração com o Ket}\label{sec:ket}
-A implementação descrita anteriormente foi integrada com sucesso à plataforma de desenvolvimento quântico Ket [[TODO: quote ket]] por meio da estrutura QuantumExecution. Essa classe estabelece a interface -lista de funcionalidades- que um simulador deve implementar para poder ser utilizado pela biblioteca. Essa interface consiste em duas partes principais: aplicação de portas específicas e realização de medidas.
+  Essa interface consiste em duas partes principais: aplicação de portas específicas e realização de medidas.
 
 A aplicação de portas específicas é direta, a simulação por QMDD permite a aplicação de portas arbitrárias sobre um qubit alvo com quantia qualquer de qubits de controle. Logo, basta definir as matrizes que representam as portas fundamentais para o Ket e incluí-las na lista de portas que podem ser aplicadas durante a simulação.
 

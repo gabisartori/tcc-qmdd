@@ -7,24 +7,24 @@ everywhere in the work I say that QMDDs should offer less than exponential time 
 
 ## Chapter 4 (Development)
 - [ ] Read source code and document what it is doing
-  - [ ] Class definition
-  - [ ] Operations
-  - [ ] Hash tables for identifying identical edges
-  - [ ] Rewrite Ket integration
+  - [x] Class definition
+  - [x] Operations
+  - [x] Hash tables for identifying identical nodes :(
+  - [x] Rewrite Ket integration
 
 ## Chapter 5 (Experiments and Results)
-- [ ] Use same state as example for dense and sparse simulators (aka B00)
+- [x] Use same state as example for dense and sparse simulators (aka B00)
 - [ ] Chapter structure:
-  - [ ] Section: experiments
+  - [x] Section: experiments
     - [ ] Detail hardware setup
-    - [ ] Mention different simulators and algorithms
-  - [ ] Sub-section: simulators (with sub-sub-section for each simulator)
-  - [ ] Sub-section: algorithms (with sub-sub-section for each algoritm)
+    - [x] Mention different simulators and algorithms
+  - [x] Sub-section: simulators (with sub-sub-section for each simulator)
+  - [x] Sub-section: algorithms (with sub-sub-section for each algoritm)
   - [ ] Sub-section: execution, detailing how each pair (simulator, algorithm) was run using varying numbers of qubits
   - [ ] Sub-section: results
 
 ## Chapter 6 (Conclusions)
-- [ ] Reached goals and their descriptions
+- [x] Reached goals and their descriptions
 - [ ] Compare results across algorithms for QMDD.
 - [ ] Trabalhos futuros
 

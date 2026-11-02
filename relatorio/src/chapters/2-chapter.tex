@@ -155,7 +155,7 @@ Ao aplicar essa porta em \ket{0}, o qubit é levado para uma superposição na q
   \end{bmatrix}
 \end{equation}
 
-\subsection{Portas Quânticas Relevantes}
+\subsection{Portas Quânticas Relevantes}\label{sub:relevant_gates}
 
 Algumas portas quânticas serão utilizadas como exemplos ao longo deste trabalho. Além disso, a matriz identidade é essencial para a definição e funcionamento da representação de circuitos quânticos por meio de matrizes. Esta seção lista e descreve o funcionamento dessas matrizes.
 
@@ -203,7 +203,16 @@ Matrizes de fase S e T representam portas cujo efeito é adicionar uma fase rela
 \begin{equation}
   T = \begin{bmatrix}
     1 & 0 \\
-    0 & e^{\pi/2}
+    0 & e^{i\pi/4}
+  \end{bmatrix}
+\end{equation}
+
+Além disso, pode-se aplicar uma fase relativa arbitrária $\theta$ por meio de uma matriz de fase arbitrária utilizando a matriz P a seguir:
+
+\begin{equation}
+  P = \begin{bmatrix}
+    1 & 0 \\
+    0 & e^{i\theta}
   \end{bmatrix}
 \end{equation}
 
@@ -213,6 +222,29 @@ Matriz de Hadamard, representada pela letra H, descreve o funcionamento da porta
   H = \frac{1}{\sqrt{2}} \begin{bmatrix}
     1 & 1 \\
     1 & -1
+  \end{bmatrix}
+\end{equation}
+
+Matrizes de rotação em torno dos eixos X, Y e Z da esfera de Bloch, representadas pelas letras $R_x$, $R_y$ e $R_z$. Essas matrizes descrevem portas que rotacionam o qubit em torno do eixo especificado por um ângulo $\theta$.
+
+\begin{equation}
+  R_x(\theta) = \begin{bmatrix}
+    cos(\frac{\theta}{2}) & -i\ sin(\frac{\theta}{2}) \\
+    -i\ sin(\frac{\theta}{2}) & cos(\frac{\theta}{2})
+  \end{bmatrix}
+\end{equation}
+
+\begin{equation}
+  R_y(\theta) = \begin{bmatrix}
+      cos(\frac{\theta}{2}) & -sin(\frac{\theta}{2}) \\
+      sin(\frac{\theta}{2}) & cos(\frac{\theta}{2})
+  \end{bmatrix}
+\end{equation}
+
+\begin{equation}
+  R_z(\theta) = \begin{bmatrix}
+      cos(\frac{\theta}{2}) & -i\ sin(\frac{\theta}{2}) \\
+      i\ sin(\frac{\theta}{2}) & cos(\frac{\theta}{2})
   \end{bmatrix}
 \end{equation}
 

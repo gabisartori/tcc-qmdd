@@ -1,10 +1,25 @@
-\chapter{Experimentos}\label{chap:experiments}
-De forma a validar o desempenho do simulador desenvolvido, diferentes algoritmos foram executados utilizando 3 técnicas de simulação disponíveis na plataforma. Cada execução passou por uma combinação de simulador, algoritmo quântico e número de qubits simulados.
+\chapter{Experimentos e Resultados}\label{chap:experiments}
+\section{Experimentos}\label{sec:experiments}
 
-No Ket, estão disponíveis 2 principais simuladores: denso e esparso. Na simulação densa, um circuito de $n$ qubits é simulado utilizando um array de números complexos com $2^n$ posições. Nesse array, cada posição representa a amplitude de um dos $2^n$ possíveis estados do circuito. Assim, cada porta é aplicada individualmente sobre as posições do array que estejam atreladas ao qubit afetado pela porta. Por exemplo, um circuito de 2 qubits no estado \ket{00} é representado pelo array [1, 0, 0, 0].
+Uma vez integrado ao Ket, o novo simulador pode ser utilizado naturalmente em conjunto à infraestrutura já existe da biblioteca. Ou seja, algoritmos quânticos já implementados podem suavemente ser executados tanto pelos simuladores já existentes quanto pelo novo simulador. Isso permite que o desempenho do simulador seja medido e comparado com os simuladores já existentes dentro do ambiente no qual serão utilizados.
+
+Assim, o desempenho do novo simulador foi comparado com dois simuladores já existentes na plataforma Ket: o simulador denso e o simulador esparso. Essas comparações foram feitas utilizando diferentes algoritmos quânticos conhecidos na literatura: algoritmo de Grover, FALQON e algoritmo de estimação de fase quântica. Cada algoritmo foi simulado utilizando diferentes quantidades de qubits para demonstrar como a complexidade de cada algoritmo afeta o desempenho dos simuladores.
+
+% TODO: Descrever o hardware sobre o qual os experimentos foram realizados. Needs ssh to the server to check the specs
+
+\section{Simuladores}\label{sec:simulators}
+
+Atualmente
+
+\subsection{Simulação Densa}\label{sub:dense}
+
+Na simulação densa, um circuito de $n$ qubits é simulado utilizando um array de números complexos com $2^n$ posições. Nesse array, cada posição representa a amplitude de um dos $2^n$ possíveis estados do circuito. Assim, cada porta é aplicada individualmente sobre as posições do array que estejam atreladas ao qubit afetado pela porta. Por exemplo, um circuito de 2 qubits no estado $\frac{1}{\sqrt{2}}(\ket{00} + \ket{11})$ é representado pelo array $[\frac{1}{\sqrt{2}}, 0, 0, \frac{1}{\sqrt{2}}]$.
+
+\subsection{Simulação Esparsa}\label{sub:sparse}
 
 Já a simulação esparsa se baseia em tabelas que armazenam apenas as amplitudes não nulas do circuito. No Ket, existem duas implementações desse método: uma utilizando tabelas hash e outra utilizando vetores. Ao utilizar tabelas hash, cria-se pares de chave e valor, sendo a chave a string de bits que representa um determinado estado e o valor a sua amplitude. Por exemplo, o estado $\frac{1}{\sqrt{2}}(\ket{00} + \ket{11})$ seria representado pela tabela.
 
+% TODO: Label this table
 $$
 \begin{array}{|c|c|}
   \hline
@@ -17,25 +32,18 @@ $$
 \end{array}
 $$
 
-Em adição a esses 2 simuladores, o desempenho do simulador à base de QMDD recém implementado também foi medido.
+% TODO : Add pictures describing the algorithms
+\section{Algoritmos Quânticos}\label{sec:quantum_algorithms}
 
-Já os algoritmos quânticos simulados foram 3: Grover, FALQON, Estimação de Fase Quântica. [[TODO: Descrever algortimos]]. O objetivo em comparar o desempenho do simulador em diferentes algortimos é identificar em quais circunstâncias simulação por meio de QMDD é mais ou menos eficiente. Isso pois, como dito na TODO: cref, a complexidade de um QMDD varia de acordo com a natureza do circuito simulado.
+Dada a natureza variada do desempenho do QMDD, foram utilizados diferentes algoritmos quânticos para identificar em quais cenários o novo simulador apresenta mais ou menos vantagem em relação aos outros. A seguir, esses algoritmos serão descritos brevemente de forma a pontuar suas características relevantes que afetam o desempenho do novo simulador.
 
-O Desempenho dos algoritmos foi medido em termos de consumo de tempo e memória. Porém, o consumo de memória não apresentou variação significativa entre os algoritmos e simuladores. [[TODO: maybe leave this part out]].
-
-Para evitar flutuações no tempo de execução, a ordem de cada simulação foi organizada para que os simuladores sejam testados sequencialmente. Ou seja, primeiro foram feitas todas as simulações do QMDD, depois todas do simulador denso e por fim todas do simulador esparso. Assim, questões práticas da implementação de cada simulador em relação à arquitetura do computador utilizado terão menos interferência um no outro. Por exemplo, um simulador que utiliza a memória de forma mais organizada não vai ser afetado por um simulador que deixa a memória do computador fragmentada após sua execução.
-
-Além disso, todas as simulaçãoes de combinações foram realizadas múltiplas vezes, utilizando rodadas de aquecimento para reduzir picos nas rodadas iniciais. O número de execuções foi variado de acordo com a quantia de qubits na simulação: quanto mais qubits, menos rodadas. Isso pois, dado o maior número de qubits, o tempo de execução se torna maior, fazendo com que a variação entre execuções seja menos relevante.
-
-Desse modo, cada combinação de simulador e algoritmo foi executada usando diferentes números de qubits no algoritmo. Para isso, cada combinação iniciou seus experimentos com uma quantia mínima de qubits (1 para Grover, 3 para FALQON e 2 para QPE) e, após cada execução bem sucedida, o número de qubits era incrementado em um. Uma execução falha caso o tempo de execução ultrasse um tempo limite previamente estabelecido.
-
-\section{Algoritmo de Grover}\label{sec:grover}
+\subsection{Algoritmo de Grover}\label{sub:grover}
 
 Em 1996, Grover propôs um algoritmo quântico para busca em conjuntos desordenados. Esse algoritmo é composto principalmente de portas X, H e CZ (portas Z controladas). A complexidade desse algoritmo surge, inicialmente, da necessidade de repetir a mesma operação múltiplas vezes. \cite{grover}
 
 Porém, para a simulação por QMDD, o fato de todos os qubits do circuito agirem como qubits de controle para as portas Z faz com que o tempo de simulação cresça exponencialmente em relação ao número de qubits do circuito simulado.
 
-\section{Algoritmo FALQON}\label{sec:falqon}
+\subsection{Algoritmo FALQON}\label{sub:falqon}
 
 {\itshaped Feedback-based ALgorithm for Quantum OptimizatioN} (FALQON) é um algoritmo de otimização generalizado cuja proposta é eliminar a parte clássica do processo iterativo dos algoritmos de otimização quânticos até então propostos. 
 
@@ -44,6 +52,15 @@ Por ser um algoritmo de otimização, para realizar qualquer experimento com o F
 
 O FALQON também utiliza portas controladas, porém em menor quantidade quando comparado ao algoritmo de Grover. Isso faz com que a, apesar de manter complexidade exponencial, esse algoritmo apresente custo reduzido ao ser simulado por QMDDs em comparação ao algoritmo de Grover.
 
-\section{Algoritmo de Estimação de Fase Quântica}\label{sec:qpe}
+
+\subsection{Algoritmo de Estimação de Fase Quântica}\label{sub:qpe}
 
 Estimação de Fase Quântica, em inglês {\itshaped Quantum Phase Estimation (QPE)}, permite estimar a fase aplicada por um operador desconhecido. Ele se baseia em incorporar portas não controladas ao algoritmo da Transformada Quântica de Fourier \cite{coppersmith1994qft}, que, por sua vez, utiliza algumas portas controladas. \cite{kitaev1995qpe} 
+
+\section{Execução dos Experimentos}\label{sec:execution}
+
+Para evitar flutuações no tempo de execução, a ordem de cada simulação foi organizada para que os simuladores sejam testados sequencialmente. Ou seja, primeiro foram feitas todas as simulações do QMDD, depois todas do simulador denso e por fim todas do simulador esparso. Assim, questões práticas da implementação de cada simulador em relação à arquitetura do computador utilizado terão menos interferência um no outro. Por exemplo, um simulador que utiliza a memória de forma mais organizada não vai ser afetado por um simulador que deixa a memória do computador fragmentada após sua execução.
+
+Além disso, todas as simulaçãoes de combinações foram realizadas múltiplas vezes, utilizando rodadas de aquecimento para reduzir picos nas rodadas iniciais. O número de execuções foi variado de acordo com a quantia de qubits na simulação: quanto mais qubits, menos rodadas. Isso pois, dado o maior número de qubits, o tempo de execução se torna maior, fazendo com que a variação entre execuções seja menos relevante.
+
+Desse modo, cada combinação de simulador e algoritmo foi executada usando diferentes números de qubits no algoritmo. Para isso, cada combinação iniciou seus experimentos com uma quantia mínima de qubits (1 para Grover, 3 para FALQON e 2 para QPE) e, após cada execução bem sucedida, o número de qubits era incrementado em um. Uma execução falha caso o tempo de execução ultrasse um tempo limite previamente estabelecido.
