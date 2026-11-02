@@ -132,7 +132,7 @@ Outra porta quântica bastante comum e útil é a porta de Hadamard, representad
   \end{bmatrix}
 \end{equation}
 
-Ao aplicar essa porta em \ket{0}, o qubit é levado para uma superposição na qual existe 50\% de chance do qubit ser medido em \ket{0} e 50\% de chance de ser medido em \ket{1}. Note que o mesmo aconteceria se a porta fosse aplicada em \ket{1}, mas os resultados são diferentes. Enquanto $H \cdot\ket{0} = \frac{1}{\sqrt{2}}\cdot(\ket{0} + \ket{1})$, $H \cdot \ket{1} = \frac{1}{\sqrt{2}} \cdot (\ket{0} - \ket{1})$. Isso é um exemplo de como um qubit pode ter a sua fase alterada por meio de operações quânticas. Apesar de não alterar o resultado imediato de uma medição, a fase de um qubit pode alterar o resultado da superposição após a aplicação de outras portas quânticas. Por exemplo, nos estados recém mencionados, apesar de que apenas a fase seja diferente, aplicar a porta H neles novamente irá produzir resultados diferentes:
+Ao aplicar essa porta em \ket{0}, o qubit é levado para uma superposição na qual existe 50\% de chance do qubit ser medido em \ket{0} e 50\% de chance de ser medido em \ket{1}. Note que o mesmo aconteceria se a porta fosse aplicada em \ket{1}, mas os resultados são diferentes. Enquanto $H \cdot\ket{0} = \frac{1}{\sqrt{2}}\cdot(\ket{0} + \ket{1})$, $H \cdot \ket{1} = \frac{1}{\sqrt{2}} \cdot (\ket{0} - \ket{1})$. Isso é um exemplo de como um qubit pode ter a sua fase alterada por meio de operações quânticas. Apesar de não alterar o resultado imediato de uma medição, a fase de um qubit pode alterar o resultado da superposição após a aplicação de outras portas quânticas. Por exemplo, nos estados recém mencionados, como a fase é diferente, aplicar a porta H neles novamente irá produzir resultados diferentes:
 \begin{equation}
   H \begin{bmatrix}
     \frac{1}{\sqrt{2}} \\
@@ -251,7 +251,7 @@ Note que, por atuar sobre dois qubits, a matriz dessa operação tem formato 4x4
 
 \section{Circuitos com Múltiplos Qubits}
 
-Para combinar múltiplos qubits em um único sistema, é preciso criar um novo espaço vetorial que represente todas as combinações dos qubits que o compõem. Para isso, a operação do produto tensorial, apresentada na \cref{sub:kronecker}, pode ser utilizada para fazer o produto do espaço vetorial de 2 qubits separados, criando um espaço vetorial que presente 2 qubits. Essa operação pode ser aplicada sucessivamente para todos os qubits do circuito.
+Para combinar múltiplos qubits em um único sistema, é preciso criar um novo espaço vetorial que represente todas as combinações dos qubits que o compõem. Para isso, a operação do produto tensorial, apresentada na \cref{sub:kronecker}, pode ser utilizada para fazer o produto do espaço vetorial de 2 qubits separados, criando um espaço vetorial que represente 2 qubits. Essa operação pode ser aplicada sucessivamente para todos os qubits do circuito.
 
 Na notação bra-ket \cite{Dirac_1939}, múltiplos qubits podem ser representados por meio de um ket com o valor de todos os qubits. Por exemplo $\ket{0} \otimes \ket{0} = \ket{00}$. Então, um sistema com 2 qubits pode se encontrar numa superposição de 4 estados diferentes: \ket{00}, \ket{01}, \ket{10} e \ket{11}. Assim, nota-se que o número de possíveis estados cresce exponencialmente em relação ao número de qubits no circuito, visto que cada novo qubit duplica o número de possibilidades.
 
@@ -267,7 +267,7 @@ Essa matriz possui dimensão 4x4 para se adequar ao formato do vetor que represe
 
 \subsection{Produto Tensorial}\label{sub:kronecker}
 
-O produto tensorial é uma operação essencial para a construção de matrizes e vetores que representem a interação entre os diferentes elementos presentes em um mesmo circuito quântico. Apesar de que portas quânticas normalmente operam sobre poucos qubits, para que uma matriz represente a porta para qubits específicos e seja compatível com a representação vetorial de múltiplos qubits, essa matriz precisa envolver a informação de que os demais qubits não serão afetados. Dessa forma, é como se todas as portas, na verdade, atuassem sobre todos os qubits do circuito e simplesmente o resultado de certos qubits é igual à entrada.
+O produto tensorial é uma operação essencial para a construção de matrizes e vetores que representem a interação entre os diferentes elementos presentes em um mesmo circuito quântico. Apesar de que portas quânticas normalmente operam sobre poucos qubits, para que uma matriz represente a porta para qubits específicos e seja compatível com a representação vetorial de múltiplos qubits, essa matriz precisa conter a informação de que os demais qubits não serão afetados. Dessa forma, é como se todas as portas, na verdade, atuassem sobre todos os qubits do circuito e simplesmente o resultado de certos qubits é igual à entrada.
 
 A operação consiste em estender o segundo operando seguindo o formato ditado pelo primeiro, da seguinte forma:
 \begin{equation}
