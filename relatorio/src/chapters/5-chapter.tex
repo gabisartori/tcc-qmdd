@@ -5,32 +5,51 @@ Uma vez integrado ao Ket, o novo simulador pode ser utilizado naturalmente em co
 
 Assim, o desempenho do novo simulador foi comparado com dois simuladores já existentes na plataforma Ket: o simulador denso e o simulador esparso. Essas comparações foram feitas utilizando diferentes algoritmos quânticos conhecidos na literatura: algoritmo de Grover, FALQON e algoritmo de estimação de fase quântica. Cada algoritmo foi simulado utilizando diferentes quantidades de qubits para demonstrar como a complexidade de cada algoritmo afeta o desempenho dos simuladores.
 
-% TODO: Descrever o hardware sobre o qual os experimentos foram realizados. Needs ssh to the server to check the specs
+Todos os experimentos foram realizados em um mesmo computador. A seguir estão as especificações de hardware e software do computador utilizado para a execução dos experimentos:
+
+\begin{itemize}
+  \item Processador: Intel 7 240H (16) @ 5.0GHz
+  \item Memória RAM: 32GB 1300MHz
+  \item Sistema Operacional: openSUSE Leap 16.0 x86_64
+  \item Kernel: Linux 6.12.0
+  \item Compilador: rustc 1.98.0
+  \item Python: 3.13.5
+  \item Ket: 0.10.4.1
+\end{itemize}
 
 \section{Simuladores}\label{sec:simulators}
 
-Atualmente
-
 \subsection{Simulação Densa}\label{sub:dense}
 
-Na simulação densa, um circuito de $n$ qubits é simulado utilizando um array de números complexos com $2^n$ posições. Nesse array, cada posição representa a amplitude de um dos $2^n$ possíveis estados do circuito. Assim, cada porta é aplicada individualmente sobre as posições do array que estejam atreladas ao qubit afetado pela porta. Por exemplo, um circuito de 2 qubits no estado $\frac{1}{\sqrt{2}}(\ket{00} + \ket{11})$ é representado pelo array $[\frac{1}{\sqrt{2}}, 0, 0, \frac{1}{\sqrt{2}}]$.
+Na simulação densa, um circuito de $n$ qubits é simulado utilizando um array de números complexos com $2^n$ posições. Nesse array, cada posição representa a amplitude de um dos $2^n$ possíveis estados do circuito. Assim, cada porta é aplicada individualmente sobre as posições do array que estejam atreladas ao qubit afetado pela porta.
+
+Por exemplo, um circuito de 2 qubits no estado $\frac{1}{\sqrt{2}}(\ket{00} + \ket{11})$ é representado pelo array a abaixo:
+
+\[
+[\frac{1}{\sqrt{2}}, 0, 0, \frac{1}{\sqrt{2}}]
+\]
 
 \subsection{Simulação Esparsa}\label{sub:sparse}
 
-Já a simulação esparsa se baseia em tabelas que armazenam apenas as amplitudes não nulas do circuito. No Ket, existem duas implementações desse método: uma utilizando tabelas hash e outra utilizando vetores. Ao utilizar tabelas hash, cria-se pares de chave e valor, sendo a chave a string de bits que representa um determinado estado e o valor a sua amplitude. Por exemplo, o estado $\frac{1}{\sqrt{2}}(\ket{00} + \ket{11})$ seria representado pela tabela.
+Já a simulação esparsa se baseia em tabelas que armazenam apenas as amplitudes não nulas do circuito. No Ket, existem duas implementações desse método: uma utilizando tabelas hash e outra utilizando vetores. Ao utilizar tabelas hash, cria-se pares de chave e valor, sendo a chave a string de bits que representa um determinado estado e o valor a sua amplitude. 
 
-% TODO: Label this table
-$$
-\begin{array}{|c|c|}
-  \hline
-  \text{Chave} & \text{Valor} \\
-  \hline
-  00 & \frac{1}{\sqrt{2}} \\
-  11 & \frac{1}{\sqrt{2}} \\
-  \hline
-  % \label{tab:sparse_example}
-\end{array}
-$$
+Por exemplo, o estado $\frac{1}{\sqrt{2}}(\ket{00} + \ket{11})$ seria representado pela tabela.
+
+No Ket, esse simulador é implementado de forma a permitir a paralelização do cálculo de aplicação das matrizes sobre o vetor de estado. Isto é, o vetor de estados pode ser divido em vários trechos de forma que diferentes trechos possam ser processados simultaneamente por diferentes núcleos de um mesmo computador.
+
+\begin{table}[h]
+  \centering
+  \begin{tabular}{|c|c|}
+    \hline
+    Estado & Amplitude \\
+    \hline
+    00 & $\frac{1}{\sqrt{2}}$ \\
+    11 & $\frac{1}{\sqrt{2}}$ \\
+    \hline
+  \end{tabular}
+  \caption{Exemplo de representação esparsa de um estado quântico.}
+  \label{tab:sparse-state-example}
+\end{table}
 
 % TODO : Add pictures describing the algorithms
 \section{Algoritmos Quânticos}\label{sec:quantum_algorithms}
@@ -45,10 +64,9 @@ Porém, para a simulação por QMDD, o fato de todos os qubits do circuito agire
 
 \subsection{Algoritmo FALQON}\label{sub:falqon}
 
-{\itshaped Feedback-based ALgorithm for Quantum OptimizatioN} (FALQON) é um algoritmo de otimização generalizado cuja proposta é eliminar a parte clássica do processo iterativo dos algoritmos de otimização quânticos até então propostos. 
+{\itshaped Feedback-based ALgorithm for Quantum OptimizatioN} (FALQON) é um algoritmo de otimização generalizado cuja proposta é eliminar a parte clássica do processo iterativo dos algoritmos de otimização quânticos até então propostos. \cite{magann2022falqon}
 
-% TODO: How to mention I used material available in ket's tutorial page
-Por ser um algoritmo de otimização, para realizar qualquer experimento com o FALQON, é necessário ter um problema de otimzação a ser resolvido. Para isso, foi utilizado o exemplo disponível na página de tutoriais do Ket: o problema max-cut. Esse problema envolve grafos e sua complexidade está atrelada ao número de arestas presentes no grafo.
+Por ser um algoritmo de otimização, para realizar qualquer experimento com o FALQON, é necessário ter um problema de otimzação a ser resolvido. Para isso, foi utilizado o exemplo disponível na página de tutoriais do Ket: o problema max-cut \cite{ket2021falqon}. Esse problema envolve grafos e sua complexidade é exponencial em relação ao número de arestas presentes no grafo, tornando-o um bom candidato para ser usado num algoritmo de otimização.
 
 O FALQON também utiliza portas controladas, porém em menor quantidade quando comparado ao algoritmo de Grover. Isso faz com que a, apesar de manter complexidade exponencial, esse algoritmo apresente custo reduzido ao ser simulado por QMDDs em comparação ao algoritmo de Grover.
 
@@ -61,6 +79,11 @@ Estimação de Fase Quântica, em inglês {\itshaped Quantum Phase Estimation (Q
 
 Para evitar flutuações no tempo de execução, a ordem de cada simulação foi organizada para que os simuladores sejam testados sequencialmente. Ou seja, primeiro foram feitas todas as simulações do QMDD, depois todas do simulador denso e por fim todas do simulador esparso. Assim, questões práticas da implementação de cada simulador em relação à arquitetura do computador utilizado terão menos interferência um no outro. Por exemplo, um simulador que utiliza a memória de forma mais organizada não vai ser afetado por um simulador que deixa a memória do computador fragmentada após sua execução.
 
-Além disso, todas as simulaçãoes de combinações foram realizadas múltiplas vezes, utilizando rodadas de aquecimento para reduzir picos nas rodadas iniciais. O número de execuções foi variado de acordo com a quantia de qubits na simulação: quanto mais qubits, menos rodadas. Isso pois, dado o maior número de qubits, o tempo de execução se torna maior, fazendo com que a variação entre execuções seja menos relevante.
+Além disso, todas as instâncias de simulação foram realizadas múltiplas vezes, utilizando rodadas de aquecimento para reduzir picos nas rodadas iniciais. O número de execuções foi variado de acordo com a quantia de qubits na simulação: quanto mais qubits, menos rodadas. Isso pois, dado o maior número de qubits, o tempo de execução se torna maior, fazendo com que a variação entre execuções seja menos relevante.
 
 Desse modo, cada combinação de simulador e algoritmo foi executada usando diferentes números de qubits no algoritmo. Para isso, cada combinação iniciou seus experimentos com uma quantia mínima de qubits (1 para Grover, 3 para FALQON e 2 para QPE) e, após cada execução bem sucedida, o número de qubits era incrementado em um. Uma execução falha caso o tempo de execução ultrasse um tempo limite previamente estabelecido.
+
+\section{Resultados}\label{sec:results}
+
+% Após a execução dos experimentos, os resultados foram coletados e organizados em gráficos de tempo de execução em função do número de qubits simulados. A seguir, serão apresentados os resultados obtidos para cada algoritmo testado.
+

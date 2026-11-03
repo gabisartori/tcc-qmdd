@@ -1,25 +1,30 @@
 \chapter{Desenvolvimento}\label{chap:development}
 
-Neste capítulo, serão descritos os aspectos da implementação prática dos algoritmos descritos no \cref{chap:qmdd} junto da integração com a plataforma de desenvolvimento Ket e a forma como os resultados do simulador foram validados.
+Neste capítulo, será descrita a implementação prática do simulador de circuitos quânticos utilizando a estrutura de dados QMDD. O sistema foi implementado na linguagem de programação Rust e integrado à biblioteca de desenvolvimento quântico Ket, que fornece uma interface para a construção e simulação de circuitos quânticos.
+
+Primeiro, a \cref{sec:implementation} descreve como os algoritmos apresentados no \cref{chap:qmdd} foram utilizados para implementar a estrutura de dados QMDD. Além disso, são pontuados aspectos práticos da programação do sistema, abordando otimizações e decisões de implementação.
+
+Em seguida, a \cref{sec:ket} apresenta como a implementação foi integrada à biblioteca Ket. O ponto principal dessa integração envolve a satisfação da interface definida pela plataforma de forma a permitir que o simulador seja utilizado em conjunto com outras funcionalidades da biblioteca.
+
+Por fim, a \cref{sec:tests} descreve os testes realizados para validar a implementação do simulador.
 
 \section{Implementação}\label{sec:implementation}
 
 \subsection{Identificação de Objetos Duplicados e Memoização de Operações}
 
-A principal vantagem do QMDD está em identificar e remover vértices duplicados do grafo que representa o circuito quântico. Para isso, é necessária uma forma eficiente de identificar que um determinado vértice já existe no QMDD e não precisa ser criado novamente. Assim, foram utilizadas estruturas auxiliares juntamente aos algoritmos descritos na \cref{sec:qmdd_algorithms}. Mais especificamente, a classe QMDD cria uma lista de vértices já criados e utilizada identificadores para operá-los. Quando um novo nodo é criado, primeiro a classe verifica se um nodo equivalente já existe em sua lista e apenas caso contrário insere o novo nodo na lista.
+A principal vantagem do QMDD está em identificar e remover vértices duplicados do grafo que representa o circuito quântico. Para isso, é necessária uma forma eficiente de identificar que um determinado vértice que já existe no QMDD e não precisa ser criado novamente. Assim, foram utilizadas estruturas auxiliares juntamente aos algoritmos descritos na \cref{sec:qmdd_algorithms}. Mais especificamente, a classe QMDD cria uma lista de vértices já criados e utilizada identificadores para operá-los. Quando um novo nodo é criado, primeiro a classe verifica se um nodo equivalente já existe em sua lista e, apenas caso contrário, insere o novo nodo na lista.
 
 % TODO: Should I explain what a hash table is?
 Outra otimização realizada foi a memoização de operações entre arestas. Para isso, foi criada uma tabela hash que armazena o resultado de operações entre arestas já realizadas. Assim, caso uma operação entre duas arestas já tenha sido realizada, o resultado é obtido diretamente da tabela hash, evitando a necessidade de recalcular o resultado da operação. Isso oferece ganho significativo ao considerar que as operações entre arestas são recursivas e podem ser chamadas múltiplas vezes durante a execução de um algoritmo quântico.
 
 \subsection{Construção de Portas Arbitrárias}
-% TODO: The implementation was based on the paper's code. But the work should have properly described it before, so I'm not sure what to refer
+
+Para a interface do Ket, toda porta precisa suportar ser aplicada de forma controlada. Logo, a implementação de portas arbitrárias foi feita utilizando apenas o \cref{alg:controlgateconstruct}, para construção de portas controladas, recebendo da biblioteca a lista de qubits de controle e o qubit alvo.
 
 \subsection{Aplicação das Portas do Circuito}
 
-Dada a construção de portas arbitrárias e o algoritmo de multiplicação de arestas, a aplicação de portas do circuito se torna trivial. Basta apenas construir o QMDD que representa as portas utilizadas e, então, invocar sucessivamente o algoritmo de multiplicação entre esses QMDDs.
+Dada a construção de portas arbitrárias e o algoritmo de multiplicação de arestas, a aplicação de portas do circuito se torna trivial. Basta apenas construir o QMDD que representa as portas utilizadas e, então, invocar sucessivamente o \cref{alg:multiplication} para multiplicação entre esses QMDDs.
 
-% TODO
-% GRrrrr im gonna killmyselflffffff
 \subsection{Medições}
 
 \section{Integração com Ket}\label{sec:ket}
@@ -34,16 +39,32 @@ Quanto às portas fundamentais, o Ket faz com que portas arbitrárias utilizadas
 % Choose which sentence currently describes the implementation
 % - Já a medição de qubits foi implementada utilizando o método de medição do QMDD, que permite a realização de medições destrutivas sobre qubits individuais.
 % - Atualmente, a medição de qubits opera sobre essa coleta do vetor de amplitudes, realizando medições destrutivas sobre qubits individuais e retornando um valor aleatório de acordo com a distribuição de probabilidades descrita pelo vetor.
-Já sobre a coleta de resultados, o Ket permite que o usuário obtenha informações sobre o estado do circuito de duas principais formas: por meio da obtenção do vetor de amplitudes do circuito e pela da medição de qubits. O vetor de amplitudes é um caso específico, por se tratar de um simulador forte, o QMDD permite a reconstrução completa do estado do sistema sem a necessidade de medições destrutivas. Assim o método já descrito para reconstrução do vetor a partir do QMDD foi utilizado para implementar essa funcionalidade. 
+Já sobre a coleta de resultados, o Ket permite que o usuário obtenha informações sobre o estado do circuito de duas principais formas: por meio da obtenção do vetor de amplitudes do circuito e pela da medição de qubits. O vetor de amplitudes é um caso específico, por se tratar de um simulador forte, o QMDD permite a reconstrução completa do estado do sistema sem a necessidade de medições destrutivas. Assim o método já descrito para reconstrução do vetor a partir do QMDD foi utilizado para implementar essa funcionalidade. Por outro lado, a medição de qubits foi implementada utilizando o método de medição do QMDD, que permite a realização de medições destrutivas sobre qubits individuais.
 
 \section{Testes}\label{sec:tests}
 
+Uma vez integrado à plataforma Ket, o simulador foi testado de duas formas principais: avaliações manuais do resultado de circuitos pequenos e a comparação do resultado de circuitos maiores com o resultado obtido por outros simuladores.
 
+\subsection{Avaliação Manual}
 
-\section{Integração com o Ket}\label{sec:ket}
-  Essa interface consiste em duas partes principais: aplicação de portas específicas e realização de medidas.
+Na avaliação manual, circuitos pequenos foram construídos e simulados. O vetor de amplitudes foi obtido ao longo de cada aplicação de porta de forma a permitir a verificação individual de cada operação. Os circuitos utilizados mais relevantes foram os compostos por portas controladas, como a criação de um estado de Bell ---circuito descrito na \cref{fig:bellcircuit}--- e um circuito arbitrário de 3 qubits no qual os qubits mais e menos significativos agem como qubits de controle e o qubit do meio como alvo, como na figura \cref{fig:3qubittestcircuit}. Dessa forma, foi possível verificar o comportamento adequado na presença de qubits de controle mais e menos significativos que o qubit alvo.
 
-A aplicação de portas específicas é direta, a simulação por QMDD permite a aplicação de portas arbitrárias sobre um qubit alvo com quantia qualquer de qubits de controle. Logo, basta definir as matrizes que representam as portas fundamentais para o Ket e incluí-las na lista de portas que podem ser aplicadas durante a simulação.
+\begin{figure}[h]
+  \[
+    \begin{quantikz}
+      \ket{0} & \gate{H} & \ctrl{1} & \qw \\
+      \ket{0} & \qw      & \targ{}  & \qw \\
+      \ket{0} & \gate{H} & \ctrl{-1} & \qw
+    \end{quantikz}
+  \]
+  \caption{Circuito de teste com 3 qubits, no qual os qubits mais e menos significativos agem como qubits de controle e o qubit do meio como alvo.}
+  \label{fig:3qubittestcircuit}
+\end{figure}
 
-% TODO: Descrever a medição
-Já a medição, pode ser feita por meio do método de medição.
+Além disso, foram feitos testes simples para verificar a aleatoriedade do resultado de medições destrutivas. Tanto a medição sucessiva de um mesmo qubit originalmente encontrado em $\frac{1}{\sqrt{2}}(\ket{0} + \ket{1})$ quanto criações de diferentes qubits nesse mesmo estado resultaram nas medições esperadas: o qubit sucessivamente medido retornou sempre o mesmo valor, enquanto os múltiplos qubits retornaram valores aleatórios suficiente próximos de uma distribuição uniforme.
+
+\subsection{Comparação com Outros Simuladores}
+
+Para garantir o funcionamento adequado do simulador em cenários não controlados, circuitos maiores foram construídos e simulados. O resultado obtido foi comparado com o resultado do simulador denso já disponível no Ket, que assume-se estar correto. Dessa forma, foi possível verificar que o simulador implementado retorna o mesmo resultado que o simulador denso para diferentes algoritmos.
+
+Dentre os algoritmos testados, estão o algoritmo de Grover, um algoritmo de otimização chamado FALQON e o algoritmo de estimação de fase quântica. Esses mesmos algoritmos foram utilizados para validar o desempenho do simulador e serão melhor descritos na \cref{sec:quantum_algorithms}.

@@ -210,7 +210,7 @@ Matrizes de fase S e T representam portas cujo efeito é adicionar uma fase rela
 Além disso, pode-se aplicar uma fase relativa arbitrária $\theta$ por meio de uma matriz de fase arbitrária utilizando a matriz P a seguir:
 
 \begin{equation}
-  P = \begin{bmatrix}
+  P(\theta) = \begin{bmatrix}
     1 & 0 \\
     0 & e^{i\theta}
   \end{bmatrix}
@@ -404,6 +404,7 @@ Para facilitar a descrição e visualização de algoritmos quânticos, a notaç
 Como explicado na \cref{sub:kronecker}, todo circuito quântico pode ser representado como um vetor inicial que descreve a superposição de todos os qubits do circuito e as várias matrizes que representam cada uma das portas quânticas utilizadas no circuito. Após a conversão de todas as portas em matrizes, pode-se multiplicar todas elas para formar uma única matriz que represente o circuito inteiro. Também é possível simular a execução passo a passo, aplicando uma matriz de cada vez, de acordo com a ordem estabelecida pelo circuito, sobre o vetor de superposição do sistema \cite{nielsen2010quantum}.
 
 Por exemplo, no circuito da \cref{fig:circuit3qubit}, a aplicação da porta X sobre o segundo qubit mais siginificativo pode ser representada por meio da matriz $I \otimes X \otimes I$, sendo I a matriz identidade. Ou seja, o primeiro e o último qubits não serão alterados, enquanto o segundo será negado.
+
 \begin{figure}[h]
   \[
     \begin{quantikz}

@@ -77,7 +77,7 @@ Note que a possibilidade de ir do ponto A para o ponto B não implica na existê
 
 Por outro lado, no caso de grafos dirigidos, a existência de um ciclo passa a ser apenas uma possibilidade facilmente identificada. No caso dos QMDDs, essa restrição é sempre respeitada pela forma como os algoritmos de construção e manipulação são definidos. Porém, dado um grafo arbitrário, é possivel verificar se existe um ciclo por meio de uma busca a partir de cada vértice, verificando se existe um caminho que leve de volta ao mesmo vértice \cite{jungnickel}.
 
-O presente grafo na \cref{fig:acyclicgraph} é acíclico, visto que não existe caminho de nenhum vértice para si mesmo, já o grafo na \cref{fig:cyclicgraph}, existe um caminho de A para A, passando pelos vértices B e C, logo esse grafo é cíclico.
+O presente grafo na \cref{fig:acyclicgraph} é acíclico, visto que não existe caminho de nenhum vértice para si mesmo, já no grafo da \cref{fig:cyclicgraph}, existe um caminho de A para A, passando pelos vértices B e C, logo esse grafo é cíclico.
 
 \begin{figure}[h]
   \centering
@@ -149,7 +149,7 @@ A representação gráfica de um QMDD permite a visualização de como um determ
 
 Já para matrizes que representam portas sobre múltiplos qubits, a ligação direta entre arestas e posições da matriz deixa de existir. Por exemplo, a matriz $X \otimes H$ pode ser representada com apenas 8 arestas, apesar de ser uma matriz com 16 posições, como demonstrado na \cref{fig:xhqmdd}.
 
-\begin{figure}[h]
+\begin{figure}[H]
   \centering
   \begin{tikzpicture}[
     node distance=1.5cm,
@@ -490,7 +490,6 @@ Na \cref{fig:exampleAddition}, são somados dois QMDDs, o primeiro representa a 
     \node[above=of v] (src) {};
     \draw[->] (src) -- node[right] {1} (v);
 
-    % TODO: Use better colors
     % four outgoing edges, one for each matrix entry (1,0,0,1)
     \draw[->, draw=red] (v) edge[bend left=90]  node[right]  {1} (t);
     \draw[->, draw=blue] (v) edge[bend left=30]  node[right]  {0} (t);
@@ -644,7 +643,6 @@ Como as arestas inicias de ambos os QMDDs não são terminais, o produto entre e
     \node[above=of v] (src) {};
     \draw[->] (src) -- node[right] {$\frac{1}{\sqrt{2}}$} (v);
 
-    % TODO: Use better colors
     % four outgoing edges, one for each matrix entry (1,0,0,1)
     \draw[->] (v) edge[bend right=90] node[right] {1} (t);
     \draw[->] (v) edge[bend right=30] node[right] {1} (t);
@@ -853,7 +851,6 @@ No exemplo a seguir, é realizado o produto tensorial entre uma porta X e uma po
     \node[above=of v] (src) {};
     \draw[->, color=blue] (src) -- node[right] {$i$} (v);
 
-    % TODO: Use better colors
     % four outgoing edges, one for each matrix entry (1,0,0,1)
     \draw[->] (v) edge[bend right=90] node[right] {$0$} (t);
     \draw[->] (v) edge[bend right=30] node[right] {$1$} (t);
@@ -969,6 +966,7 @@ A \cref{eq:finalKronecker} apresenta o resultado final da operação, após a no
   \end{tikzpicture}
 \end{equation}
 
+% TODO: Read algorithm and explain it better
 \subsubsection{Construção de Portas Controladas}\label{subsub:controlgate}
 
 Como dito na \cref{sec:gateconstruct}, a construção de portas controlodas se divide em duas partes: qubits de controle menos significativos que o alvo (mais próximos do vértice terminal) e qubits mais significativos (mais próximos do vértice inicial). A construção do QMDD por meio desse método ocorre do vértice terminal ao vértice inicial, considerando apenas os qubits de controle e o qubit alvo. Para cada qubit de controle, é construído um QMDD que representa o comportamento de apenas propagar a transformação sobre o qubit alvo pelas arestas que representam o caso em que o qubit está ativo.
