@@ -3,7 +3,7 @@
 - [ ] Replace gate construction algorithm
 
 ## Chapter 4 (Development)
-
+- [ ] Lista de Vértices foi substituída por uma árvore binária
 ## Chapter 6 (Conclusions)
 - [ ] Compare results across algorithms for QMDD.
 
