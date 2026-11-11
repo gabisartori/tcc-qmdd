@@ -1,10 +1,11 @@
 import ket as k
 
 p = k.Process(simulator="qmdd")
-qubits = p.alloc(3)
+qubits = p.alloc(5)
 
-k.X(qubits[0])
-k.H(qubits[2])
 
-k.ctrl(qubits[0]+qubits[2], k.X)(qubits[1])
+k.H(qubits)
+
+print(k.dump(qubits).show())
+print("\nMeasure: ", k.measure(qubits[0]).get(), '\n')
 print(k.dump(qubits).show())
