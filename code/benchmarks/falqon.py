@@ -19,10 +19,10 @@ def falqon_layer(edges, delta_t, beta, qubits):
   evolve(cost_h(edges, qubits) * delta_t)
   evolve(mixer_h(qubits) * delta_t * beta)
 
-def run_falqon(num_qubits, simulator="dense"):
+def run_falqon(num_qubits, simulator="dense", layers=10):
   # Initial values
   delta_t = 0.1
-  num_layers = 10
+  num_layers = layers
 
   betas = [0.0]
   cost = []
@@ -46,11 +46,15 @@ def run_falqon(num_qubits, simulator="dense"):
     cost.append(exp_value(cost_h(edges, qubits)).get())
     betas.append(exp_value(beta_h(edges, qubits)).get())
 
+  # print(cost)
+  # print(betas)
+
 args = argparse.ArgumentParser(description="Algoritmo Falqon")
 args.add_argument("simulator", type=str, default="dense", help="Simulador utilizado")
 args.add_argument("n", type=int, default=10, help="Número de qubits")
+args.add_argument("layers", type=int, default=10, help="Número de camadas")
 args = args.parse_args()
 
 assert args.n >= 3, "Número de qubits deve ser maior ou igual a 3"
 
-run_falqon(args.n, args.simulator)
+run_falqon(args.n, args.simulator, args.layers)
