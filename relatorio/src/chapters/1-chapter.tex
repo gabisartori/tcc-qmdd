@@ -20,7 +20,7 @@ Este trabalho consiste na implementação de uma dessas técnicas: o uso de diag
   \end{bmatrix}
 \end{equation}
 
-No caso das matrizes relevantes para a computação quântica, a repetição de valores é muito comum por conta da natureza das operações que levam à construção delas. Por isso, o QMDD se torna uma estrutura eficiente para realizar a simulação de circuitos quânticos. 
+No caso das matrizes relevantes para a computação quântica, a repetição de valores é muito comum por conta da natureza das operações que levam às suas construções. Por isso, o QMDD se torna uma estrutura eficiente para realizar a simulação de circuitos quânticos. 
 
 A partir disso, será feita uma implementação dos algoritmos necessários para simulação de um circuito quântico, envolvendo a conversão de cada porta em um QMDD que representa a matriz equivalente à porta, o produto entre dois QMDDs e a medição sobre determinado QMDD. Essa implementação então será integrada à plataforma Ket \cite{evandro}, uma interface feita para facilitar a descrição de algoritmos quânticos. Então, por meio do módulo de simulação por QMDD, o usuário poderá simular de forma eficiente algoritmos que não exijam matrizes de baixa redundância. Para os casos em que o crescimento exponencial do diagrama é inevitável (casos de alto entrelaçamento entre os estados do circuito), a simulação ainda é possível, apesar de ser viável apenas para circuitos pequenos.
 
@@ -28,11 +28,9 @@ Além disso, não é intuitivamente claro quais circuitos levarão a uma matriz 
 
 \section{Objetivos}
 
-\subsection{Objetivo Geral}
+O objetivo geral deste trabalho é implementar um método de simulação adicional para o Ket, que poderá ser escolhido pelo usuário para otimizar a simulação de circuitos cujas representações matriciais possuam grande redundância.
 
-Implementar um método de simulação adicional para o Ket, que poderá ser escolhido pelo usuário para otimizar a simulação de circuitos cujas representações matriciais possuam grande redundância.
-
-\subsection{Objetivos Específicos}
+Por sua vez, os objetivos específicos são:
 
 \begin{enumerate}[label=O\arabic*]
   \item Compilar e descrever os algoritmos necessários para o QMDD;
