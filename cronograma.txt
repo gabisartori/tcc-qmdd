@@ -25,6 +25,8 @@ Fazer fit da curva e projetar expectativas para circuitos inviáveis
 - [ ] Corrigir formato das citações
 - [ ] Manter texto em mesmo tempo (passado)
 
+### QMDD
+- [ ] Adicionar método para simulação forte
 
 ### Implementação
 - [ ] Representação de números complexos
@@ -47,3 +49,5 @@ Fazer fit da curva e projetar expectativas para circuitos inviáveis
 # Alterações
 - Arestas utilizadas para ket 0: (primeira e segunda) -> (primeira e terceira)
 - Adição da matriz Y em QMDD para clarificar qual aresta representa qual posição na matriz
+- Descrição das medições na seção de implementação
+- Resultados
