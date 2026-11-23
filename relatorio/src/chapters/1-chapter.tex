@@ -1,6 +1,6 @@
 \chapter{Introdução}\label{chap:intro}
 
-Conforme os fenômenos da mecânica quântica foram melhor descritos e compreendidos, um novo paradigma para solução de problemas surge: a computação quântica. Essa nova forma de elaborar algoritmos é equivalente à computação clássica em termos de computabilidade \cite{shor1998quantum}, porém apresenta vantagem em termos de complexidade computacional para certos problemas. Por exemplo, dada uma lista de items sem organização prévia, na computação clássica, a melhor forma de verificar se determinado item está presente nessa lista é percorrendo-a, elemento por elemento, buscando pelo alvo. Essa solução possui complexidade temporal O(n), o que significa que o tempo para encontrar um elemento específico cresce linearmente em relação ao tamanho da lista (uma lista 4 vezes maior que outra leva 4 vezes mais tempo para ser percorrida). Porém, Grover demonstrou que, usando da mecânica quântica, é possível resolver esse mesmo problema com uma complexidade temporal O($\sqrt{n}$) \cite{grover}. Nesse caso, uma lista 4 vezes maior que outra leva apenas o dobro do tempo para que o elemento desejado seja encontrado. Assim, sabe-se que é possível que algoritmos quânticos superem algoritmos clássicos em desempenho, nesse caso, como a complexidade foi reduzida de $O(n)$ para $O(\sqrt{n})$, diz-se que houve um ganho quadrático de desempenho.
+Conforme os fenômenos da mecânica quântica foram melhor descritos e compreendidos, um novo paradigma para solução de problemas surge: a computação quântica. Essa nova forma de elaborar algoritmos é equivalente à computação clássica em termos de computabilidade \cite{shor1998quantum}, porém apresenta vantagem em termos de complexidade computacional para certos problemas. Por exemplo, dada uma lista de items sem organização prévia, na computação clássica, a melhor forma de verificar se determinado item está presente nessa lista é percorrendo-a, elemento por elemento, buscando pelo alvo. Essa solução possui complexidade temporal $O(n)$, o que significa que o tempo para encontrar um elemento específico cresce linearmente em relação ao tamanho da lista (uma lista 4 vezes maior que outra leva 4 vezes mais tempo para ser percorrida). Porém, Grover demonstrou que, usando da mecânica quântica, é possível resolver esse mesmo problema com uma complexidade temporal $O(\sqrt{n})$ \cite{grover}. Nesse caso, uma lista 4 vezes maior que outra leva apenas o dobro do tempo para que o elemento desejado seja encontrado. Assim, sabe-se que é possível que algoritmos quânticos superem algoritmos clássicos em desempenho, nesse caso, como a complexidade foi reduzida de $O(n)$ para $O(\sqrt{n})$, diz-se que houve um ganho quadrático de desempenho.
 
 Atualmente, porém, essa área de pesquisa encontra um obstáculo: a dificuldade de executar os algoritmos elaborados, afetando significativamente o desenvolvimento de novos algoritmos, já que testá-los torna-se uma tarefa manual e demorada sem um computador para realizá-la. Essa dificuldade existe porque hardware que possibilite a execução das operações fundamentais da computação quântica é caro e dificilmente acessível. Além disso, mesmo quando acessível, hardware quântico moderno apresenta baixa capacidade, permitindo apenas a execução de algoritmos simples sobre exemplos de casos pequenos \cite{golec2024quantum}.
 
@@ -29,9 +29,9 @@ Além disso, não é intuitivamente claro quais circuitos levarão a uma matriz 
 \section{Objetivos}
 
 O objetivo geral deste trabalho é implementar um método de simulação adicional para o Ket, que poderá ser escolhido pelo usuário para otimizar a simulação de circuitos cujas representações matriciais possuam grande redundância.
+O objetivo geral deste trabalho é implementar um método de simulação adicional para o Ket, que poderá ser escolhido pelo usuário para otimizar a simulação de circuitos cujas representações matriciais possuam grande redundância.
 
 Por sua vez, os objetivos específicos são:
-
 \begin{enumerate}[label=O\arabic*]
   \item Compilar e descrever os algoritmos necessários para o QMDD;
 
@@ -44,7 +44,7 @@ Por sua vez, os objetivos específicos são:
 
 \section {Estrutura do Documento}
 
-No \cref{chap:compq} são introduzidos os conceitos fundamentais da computação quântica e suas diferentes formas de representações. Ao longo dessa introdução, serão pontuados os aspectos relavantes para definição dos requisitos que o QMDD deve atender e, também, os motivos pelos quais a simulação quântica não é trivial. Em seguida, são estabelecidas as funcionalidades necessárias para que uma determinada ferramenta seja suficiente para realizar a simulação de um circuito quântico.
+No \cref{chap:compq} são introduzidos os conceitos fundamentais da computação quântica e suas diferentes formas de representação. Ao longo dessa introdução, serão pontuados os aspectos relavantes para definição dos requisitos que o QMDD deve atender e, também, os motivos pelos quais a simulação quântica não é trivial. Em seguida, são estabelecidas as funcionalidades necessárias para que uma determinada ferramenta seja suficiente para realizar a simulação de um circuito quântico.
 
 Então, no \cref{chap:qmdd}, foi feita uma breve introdução ao funcionamento de grafos de forma a facilitar o entendimento da estrutura do QMDD, que se baseia em grafos dirigidos. Então, serão apresentadas todas as características de um QMDD, assim como a descrição formal dos algoritmos necessários para implementar as funcionalidades previamente descritas como necessárias para a simulação de um circuito quântico.
 

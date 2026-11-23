@@ -1,35 +1,11 @@
+## Datas
 Envio pra banca: 10/11
 Entregar pro Evandro e Jerusa: 03/11
 Retorno da banca: 15/11
 Defesas: 17/11 até 4/12
 
-
-Descrever implementação dos algoritmos
-- Linguagem
-- Adaptações necessárias
-
-Resultados
-- Simular circuitos existentes no ket
-  - Grover (Talve demore demais e não valha a pena)
-  - Estimação de fase
-  - Algoritmo Falqon
-  - Achar caso no qual qmdd tenha vantagem
-
-- Comparar com (versões default)
-  - Simulação Densa
-  - Simulação Esparsa
-
-- Métricas
-  - Tempo de execução (compilar em release)
-  - Consumo de memória se der
-
-- Testar um simulador de cada vez
-- Pausa entre simulações para esfriar o processador
-
-
 ## Algoritmos
 Descrever circuitos em alto nível para pontuar onde estão os ganhos do simulador.
-
 
 ### Estimação de fase
 https://gitlab.com/quantum-ket/ket/-/blob/master/examples/phase_estimation.py?ref_type=heads
@@ -40,7 +16,34 @@ https://quantumket.org/tutorials/quantum-optimization.html#falqon-feedback-based
 ## Resultados
 Indicar que algoritmo denso não conseguiu simular determinado tamanho de circuito
 
-Colocar limite de tempo para encerrar testes com método
-
 Fazer fit da curva e projetar expectativas para circuitos inviáveis
 
+# TODO list
+## Texto
+### Jerusa
+- [ ] Descrever no resumo o que foi feito e Resultados
+- [ ] Corrigir formato das citações
+- [ ] Manter texto em mesmo tempo (passado)
+
+
+### Implementação
+- [ ] Representação de números complexos
+- [ ] Mencionar as diferentes formas testadas: QuadRes e Snapped Floats
+- [ ]
+
+### Resultados
+- [ ] Executar grover e qpe com qmdd novo
+  - [ ] Fix grover memory consumption crashing the pc. This fix may increase performance and force a rerun of falqon's tests
+- [ ] Gráfico comparando falqon e grover
+- [ ] Gráfico comparando falqon
+- [ ] 
+
+
+## implementação
+- [ ] Fix FALQON output being shitass
+- [ ] Remove dead nodes
+
+
+# Alterações
+- Arestas utilizadas para ket 0: (primeira e segunda) -> (primeira e terceira)
+- Adição da matriz Y em QMDD para clarificar qual aresta representa qual posição na matriz
