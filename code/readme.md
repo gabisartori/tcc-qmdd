@@ -4,7 +4,7 @@ source venv/bin/activate
 ```
 
 # Running main.py
-Make sure python is using the proper ket version (with the newly compilated kbw)
+Make sure python is using the proper ket version (with the newly compiled kbw)
 ```
 pip install -e ket
 ```
