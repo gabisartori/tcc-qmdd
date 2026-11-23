@@ -17,6 +17,16 @@ A principal vantagem do QMDD está em identificar e remover vértices duplicados
 % TODO: Should I explain what a hash table is?
 Outra otimização realizada foi a memoização de operações entre arestas. Para isso, foi criada uma tabela hash que armazena o resultado de operações entre arestas já realizadas. Assim, caso uma operação entre duas arestas já tenha sido realizada, o resultado é obtido diretamente da tabela hash, evitando a necessidade de recalcular o resultado da operação. Isso oferece ganho significativo ao considerar que as operações entre arestas são recursivas e podem ser chamadas múltiplas vezes durante a execução de um algoritmo quântico.
 
+\subsection{Representação de Números Complexos}
+
+% TODO: This part, also cite stuff
+Números complexos podem ser representados com um par de números reais, um para a parte real e um para a parte imaginária. Porém, existem desafios para representar números reais em computadores.
+
+A primeira opção para representação dos números reais é o uso de números de ponto flutante. Essa representação é análoga à notação científica, na qual existe uma mantissa e um expoente. Essa representação possui o problema da falta de precisão matemática. Como números precisam ser expressos de forma decimal, a precisão está limitada à capacidade de memória do computador, sendo impossível a representação exata de dízimas periódicas ou números irracionais. Assim, pequenos erros de precisão surgem nos calculos, dificultando a detecção de valores duplicados. Para contornar esse problema, usa-se uma faixa de tolerância para considerar valores números iguais. Assim, cada número passa a ser um pequeno intervalo no conjunto dos reais. As operações são feitas utilizando a precisão máxima que o computador permite porém os resultados são limitados a uma precisão menor, fazendo com que todos os valores dentro de um intervalo colapsem para o mesmo valor. Isso reduz a variabilidade dos números produzidos durante a simulação e faz com que os resultados sejam mais consistentes, apesar de terem precisão limitada.
+
+% TODO: Explicar melhor Q(sqrt(2))
+Outra opção é a representação de números reais por meio de uma combinação linear de $1$ e $\sqrt{2}$ usando coeficientes racionais. Dessa forma, todo número racional pode ser representado por um par de números inteiros e os números reais podem ser representados como um par de números racionais. Essa abordagem não permite a representação de todos os números reais, porém é possível fazer aproximações. Portas quânticas comuns têm seus valores contidos em $\mathbb{Q}(\sqrt{2})$ e as que precisam de valores externos ao conjunto podem ser aproximadas. Esse método, porém, foi desconsiderado na implementação do trabalho pois possui baixo alcance de representação de números em comparação com a representação por ponto flutuante, gerando comportamento instável em circuitos mais complexos.
+
 \subsection{Construção de Portas Arbitrárias}
 
 Para a interface do Ket, toda porta precisa suportar ser aplicada de forma controlada. Logo, a implementação de portas arbitrárias foi feita utilizando apenas o \cref{alg:controlgateconstruct}, para construção de portas controladas, recebendo da biblioteca a lista de qubits de controle e o qubit alvo.
@@ -27,18 +37,18 @@ Dada a construção de portas arbitrárias e o algoritmo de multiplicação de a
 
 \subsection{Medições}
 
+Para a integração adequada com o Ket, foi necessária a implementação de simulação forte. Logo, o método descrito na \cref{sec:result-extraction}. Para reconstruir o vetor de estados do sistema, percorre-se o grafo seguindo todos os caminhos possíveis do vértice inicial ao final.
+
+Outra [TODO: IMPLEMENTAÇÃO] necessária para o ket é o calculo da probabilidade de um qubit ser medido em 1. Essa probabilidade é utilizada pela biblioteca do Ket para escolher valores aleatórios ao simular um circuito e também é útil para normalizar o QMDD após aplicação da operação de colapso. Para obter esse valor, é necessário percorrer o grafo do estado, somando a probabilidade acumulada de todos os vértices que representem o qubit a ser medido. Para calcular a probabilidade de um vértice, utiliza-se o peso acumulado no caminho entre a raiz e o vértice e multiplica-o pela proporção entre a aresta $\ket{0}$ e a aresta $\ket{1}$ do vértice.
+
 \section{Integração com Ket}\label{sec:ket}
 
 A implementação descrita anteriormente foi integrada com sucesso à plataforma de desenvolvimento quântico Ket por meio da estrutura QuantumExecution. Essa classe estabelece a interface ---lista de funcionalidades--- que um simulador deve implementar para poder ser utilizado pela biblioteca.
 
 Então, os métodos desenvolvidos para a classe QMDD foram utilizados para implementar essa interface, que consiste de duas partes principais: aplicação de portas fundamentais e coleção de resultados.
 
-Quanto às portas fundamentais, o Ket faz com que portas arbitrárias utilizadas pelo usuário sejam decompostas na aplicação sucessiva de determinadas portas. Dentre elas, estão as portas de Pauli, porta de Hadamard, porta de fase e portas de rotação, descritas na \cref{sub:relevant_gates}. Logo, a implementação da aplicação dessas portas foi feita utilizando os métodos de aplicação de portas arbitrárias do QMDD.
+Quanto às portas fundamentais, o Ket faz com que portas arbitrárias utilizadas pelo usuário sejam decompostas na aplicação sucessiva das seguintes portas: portas de Pauli, porta de Hadamard, porta de fase e portas de rotação, descritas na \cref{sub:relevant_gates}. Logo, a implementação da aplicação dessas portas foi feita utilizando os métodos de aplicação de portas arbitrárias do QMDD.
 
-% TODO: This could change in the next few days
-% Choose which sentence currently describes the implementation
-% - Já a medição de qubits foi implementada utilizando o método de medição do QMDD, que permite a realização de medições destrutivas sobre qubits individuais.
-% - Atualmente, a medição de qubits opera sobre essa coleta do vetor de amplitudes, realizando medições destrutivas sobre qubits individuais e retornando um valor aleatório de acordo com a distribuição de probabilidades descrita pelo vetor.
 Já sobre a coleta de resultados, o Ket permite que o usuário obtenha informações sobre o estado do circuito de duas principais formas: por meio da obtenção do vetor de amplitudes do circuito e pela da medição de qubits. O vetor de amplitudes é um caso específico, por se tratar de um simulador forte, o QMDD permite a reconstrução completa do estado do sistema sem a necessidade de medições destrutivas. Assim o método já descrito para reconstrução do vetor a partir do QMDD foi utilizado para implementar essa funcionalidade. Por outro lado, a medição de qubits foi implementada utilizando o método de medição do QMDD, que permite a realização de medições destrutivas sobre qubits individuais.
 
 \section{Testes}\label{sec:tests}
@@ -67,4 +77,4 @@ Além disso, foram feitos testes simples para verificar a aleatoriedade do resul
 
 Para garantir o funcionamento adequado do simulador em cenários não controlados, circuitos maiores foram construídos e simulados. O resultado obtido foi comparado com o resultado do simulador denso já disponível no Ket, que assume-se estar correto. Dessa forma, foi possível verificar que o simulador implementado retorna o mesmo resultado que o simulador denso para diferentes algoritmos.
 
-Dentre os algoritmos testados, estão o algoritmo de Grover, um algoritmo de otimização chamado FALQON e o algoritmo de estimação de fase quântica. Esses mesmos algoritmos foram utilizados para validar o desempenho do simulador e serão melhor descritos na \cref{sec:quantum_algorithms}.
+Dentre os algoritmos testados, estão o algoritmo de Grover, um algoritmo de otimização baseado em feedback e o algoritmo de estimação de fase quântica. Esses mesmos algoritmos foram utilizados para validar o desempenho do simulador e serão melhor descritos na \cref{sec:quantum_algorithms}.
