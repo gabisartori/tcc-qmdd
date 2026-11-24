@@ -70,7 +70,6 @@ Por ser um algoritmo de otimização, para realizar qualquer experimento com o F
 
 O FALQON também utiliza portas controladas, porém em menor quantidade quando comparado ao algoritmo de Grover. Isso faz com que a, apesar de manter complexidade exponencial, esse algoritmo apresente custo reduzido ao ser simulado por QMDDs em comparação ao algoritmo de Grover.
 
-
 \subsection{Algoritmo de Estimação de Fase Quântica}\label{sub:qpe}
 
 Estimação de Fase Quântica, em inglês {\itshaped Quantum Phase Estimation (QPE)}, permite estimar a fase aplicada por um operador desconhecido. Ele se baseia em incorporar portas não controladas ao algoritmo da Transformada Quântica de Fourier \cite{coppersmith1994qft}, que, por sua vez, utiliza algumas portas controladas. \cite{kitaev1995qpe} 
@@ -81,7 +80,9 @@ Para evitar flutuações no tempo de execução, a ordem de cada simulação foi
 
 Além disso, todas as instâncias de simulação foram realizadas múltiplas vezes, utilizando rodadas de aquecimento para reduzir picos nas rodadas iniciais. O número de execuções foi variado de acordo com a quantia de qubits na simulação: quanto mais qubits, menos rodadas. Isso pois, dado o maior número de qubits, o tempo de execução se torna maior, fazendo com que a variação entre execuções seja menos relevante.
 
-Desse modo, cada combinação de simulador e algoritmo foi executada usando diferentes números de qubits no algoritmo. Para isso, cada combinação iniciou seus experimentos com uma quantia mínima de qubits (1 para Grover, 3 para FALQON e 2 para QPE) e, após cada execução bem sucedida, o número de qubits era incrementado em um. Uma execução falha caso o tempo de execução ultrasse um tempo limite previamente estabelecido.
+Desse modo, cada combinação de simulador e algoritmo foi executada usando diferentes números de qubits no algoritmo (no FALQON, o número de camadas foi fixado em 10). Para isso, cada combinação iniciou seus experimentos com uma quantia mínima de qubits (1 para Grover, 3 para FALQON e 2 para QPE) e, após cada execução bem sucedida, o número de qubits era incrementado em um. Uma execução falha caso o tempo de execução ultrasse um tempo limite previamente estabelecido.
+
+Além disso, também foi feita a comparação da execução do FALQON ao variar o número de iterações utilizadas no processo de otimização. Nesse caso, o aumento da demora é linear em relação ao número de camadas ---com o dobro de camadas, espera-se que a simulação demore o dobro do tempo--- enquanto mantém-se um número constante de qubits. Para esse teste, o número de qubits foi fixado em 18 por gerar um tempo base grande o suficiente para ser estável mas ainda pequeno o suficiente para manter conveniente as múltiplas execuções com diferentes números de camadas.
 
 \section{Resultados}\label{sec:results}
 
