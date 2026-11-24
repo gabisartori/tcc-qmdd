@@ -1,52 +1,21 @@
-## Datas
-Envio pra banca: 10/11
-Entregar pro Evandro e Jerusa: 03/11
-Retorno da banca: 15/11
-Defesas: 17/11 até 4/12
+# Datas
+Envio TCC para banca: 2026-11-27
+Preparo da apresentação: 2026-11-29
+Defesa agendada: 2026-12-04 16:30:00
 
-## Algoritmos
+# Algoritmos
 Descrever circuitos em alto nível para pontuar onde estão os ganhos do simulador.
 
-### Estimação de fase
+## Grover
+https://aprenda.quantumket.org/algoritmos/busca/09_2_0-grover.html
+
+## Estimação de fase
 https://gitlab.com/quantum-ket/ket/-/blob/master/examples/phase_estimation.py?ref_type=heads
 
-### Falqon
+## Falqon
 https://quantumket.org/tutorials/quantum-optimization.html#falqon-feedback-based-algorithm-for-quantum-optimization
 
-## Resultados
-Indicar que algoritmo denso não conseguiu simular determinado tamanho de circuito
-
-Fazer fit da curva e projetar expectativas para circuitos inviáveis
-
-# TODO list
-## Texto
-### Jerusa
-- [ ] Descrever no resumo o que foi feito e Resultados
-- [ ] Corrigir formato das citações
-- [ ] Manter texto em mesmo tempo (passado)
-
-### QMDD
-- [ ] Adicionar método para simulação forte
-
-### Implementação
-- [ ] Representação de números complexos
-- [ ] Mencionar as diferentes formas testadas: QuadRes e Snapped Floats
-- [ ]
-
-### Resultados
-- [ ] Executar grover e qpe com qmdd novo
-  - [ ] Fix grover memory consumption crashing the pc. This fix may increase performance and force a rerun of falqon's tests
-- [ ] Gráfico comparando falqon e grover
-- [ ] Gráfico comparando falqon
-- [ ] 
-
-
-## implementação
-- [ ] Fix FALQON output being shitass
-- [ ] Remove dead nodes
-
-
-# Alterações
+# Change log
 - Arestas utilizadas para ket 0: (primeira e segunda) -> (primeira e terceira)
 - Adição da matriz Y em QMDD para clarificar qual aresta representa qual posição na matriz
 - Descrição das medições na seção de implementação
