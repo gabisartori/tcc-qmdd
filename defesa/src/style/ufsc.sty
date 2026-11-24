@@ -1,0 +1,131 @@
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[portuguese-brazil]{babel}
+\usepackage{lmodern}
+
+% Ibagens
+\usepackage{graphicx}
+
+% Legendas
+\usepackage[font=footnotesize,labelfont=bf]{caption}
+\setbeamertemplate{caption}[numbered]
+
+% Coloridos
+\usepackage{xcolor}
+
+% Remover ícones de navegação
+\setbeamertemplate{navigation symbols}{}
+% mas mostrar número de páginas
+\addtobeamertemplate{navigation symbols}{}{%
+    \usebeamerfont{footline}%
+    \usebeamercolor[fg]{footline}%
+}
+\setbeamercolor{footline}{fg=gray}
+\setbeamerfont{footline}{series=\bfseries}
+\setbeamertemplate{footline}{
+  \usebeamercolor[fg]{page number in head}%
+  \usebeamerfont{page number in head}%
+  \hspace{20pt}
+  \insertframenumber/\inserttotalframenumber
+  \vspace{12pt}
+}
+
+% Redefinir propriedades do beamer para conter cores azinzentadas
+% 
+\setbeamersize{text margin left=17pt,text margin right=17pt}
+\setbeamercolor{title}{fg=black!70}
+\setbeamercolor{frametitle}{fg=black!70}
+\setbeamercolor{structure}{fg=black!70}
+\setbeamercolor{normal text}{fg=black!85}
+
+% Variáveis para \capa e \capadetras
+\newcommand{\titulo}[1]{\def\@titulo{#1}}
+\newcommand*{\autores}[1]{\def\@autores{#1}}
+\newcommand{\universidade}[1]{\def\@universidade{#1}}
+\newcommand{\contato}[1]{\def\@contato{#1}}
+\contato{}
+\universidade{}
+
+% Estilo da capa
+\newcommand{\capa}{
+	{
+    \usebackgroundtemplate
+    {%
+        \includegraphics[width=\paperwidth, height=\paperheight]{style/capa.pdf}
+    }
+    \begin{frame}[plain]
+    \vspace{-4em}
+    
+    \makeatletter
+    \begin{beamercolorbox}[sep=5pt,right]{title}
+    \hfill \usebeamerfont{title}{\huge \textcolor{black!65}{\@titulo}}
+    \end{beamercolorbox}
+    
+    \begin{beamercolorbox}[sep=3pt,right]{author}
+    \hfill \scriptsize \textbf{\textcolor{black!65}{\@autores}}
+    \vskip0.35em
+    \hfill \textcolor{black!65}{\@universidade}
+    \end{beamercolorbox}
+
+    \end{frame}
+    \makeatother
+    }
+}
+
+% Estilo do Slide
+\newenvironment{slide}[1]
+{
+    \usebackgroundtemplate
+    {%
+        \includegraphics[width=\paperwidth, height=\paperheight]{style/slide.pdf}
+    }
+    \begin{frame}{#1}
+}
+{
+    \end{frame}
+    
+}
+% 
+%	Redefinir o estilo do frame globalmente.
+%
+\usebackgroundtemplate
+{%
+	\includegraphics[width=\paperwidth, height=\paperheight]{style/slide.pdf}
+}
+
+
+% Estilo da contracapa
+\newcommand{\capadetras}[1]{
+    {
+    \usebackgroundtemplate
+    {%
+        \includegraphics[width=\paperwidth, height=\paperheight]{style/capa.pdf}
+    }
+    \begin{frame}[plain]
+    \vspace{-4em}
+    
+    \begin{beamercolorbox}[sep=5pt,center]{title}
+    \usebeamerfont{title}{\huge \textcolor{black!65}{#1}}
+    \end{beamercolorbox}
+    
+    \makeatletter
+    \begin{beamercolorbox}[sep=3pt,center]{subtitle}
+    \scriptsize \textbf{\textcolor{black!65}{\@contato}}
+    \end{beamercolorbox}
+    \makeatother
+
+    \end{frame}
+    	}
+    
+}
+
+
+
+% Automatização das imagens
+\newcommand {\imagem}[3] {
+    \begin{figure}
+    \centering
+    \includegraphics[width=.90\linewidth,height=0.7\textheight,keepaspectratio]{#1}
+    \caption{#3} \label{#2}
+    \end{figure}
+}
