@@ -4,18 +4,27 @@ from functools import partial
 import argparse
 
 def oracle(target, qubits):
-  """Oráculo: inverte a amplitude do estado desejado."""
-  with k.around(
-    k.X,
-    qubits.at(i for i, bit in enumerate(f"{target:0{len(qubits)}b}") if bit == "0"),
-  ):
-    k.CZ(*qubits)
+    for i, qubit in enumerate(qubits):
+        if ((target >> i) & 1) == 0:
+            k.X(qubit)
+
+    k.H(qubits[-1])
+    k.ctrl(qubits[:-1], k.Z)(qubits[-1])
+    k.H(qubits[-1])
+
+    for i, qubit in enumerate(qubits):
+        if ((target >> i) & 1) == 0:
+            k.X(qubit)
 
 
 def diffusion_operator(qubits):
-  """Operador de difusão: amplifica as amplitudes dos estados marcados."""
-  with k.around(k.cat(k.H, k.X), qubits):
-    k.ctrl(qubits[:-1], k.Z)(qubits[-1])  # Controle multi-qubit
+    k.H(qubits)
+    k.X(qubits)
+    k.H(qubits[-1])
+    k.ctrl(qubits[:-1], k.Z)(qubits[-1])
+    k.H(qubits[-1])
+    k.X(qubits)
+    k.H(qubits)
 
 
 def grover(oracle, qubits):
