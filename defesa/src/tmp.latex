@@ -1,0 +1,401 @@
+\documentclass{beamer}
+
+\usepackage{style/ufsc}
+\usepackage{tikz}
+\usepackage{quantikz}
+\usepackage{amsmath}
+
+\graphicspath{{./figuras/}}
+
+\newcommand{\ket}[1]{\left|#1\right\rangle}
+
+\titulo{Uso de Diagramas de Decisão para Simulação de Circuitos Quânticos no Ket}
+\autores{[Nome do Autor]}
+\universidade{Universidade Federal de Santa Catarina}
+
+\begin{document}
+
+\capa
+
+\begin{frame}{Motivação}
+  \begin{itemize}
+    \item Algoritmos quânticos podem superar algoritmos clássicos em problemas específicos.
+    \item Exemplo: busca não ordenada.
+  \end{itemize}
+
+  \vspace{1em}
+
+  \begin{block}{Algoritmo de Grover}
+    \[
+      O(n) \quad \longrightarrow \quad O(\sqrt{n})
+    \]
+  \end{block}
+
+  \begin{itemize}
+    \item Hardware quântico ainda é caro e possui baixa capacidade.
+    \item A simulação clássica auxilia o desenvolvimento de novos algoritmos.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Computação quântica circuital}
+  Um qubit é representado por:
+
+  \[
+    \ket{\psi} =
+    \alpha\ket{0}+\beta\ket{1},
+    \qquad
+    |\alpha|^2+|\beta|^2=1.
+  \]
+
+  Operações são descritas por matrizes unitárias:
+
+  \[
+    X =
+    \begin{bmatrix}
+      0 & 1\\
+      1 & 0
+    \end{bmatrix},
+    \qquad
+    H =
+    \frac{1}{\sqrt{2}}
+    \begin{bmatrix}
+      1 & 1\\
+      1 & -1
+    \end{bmatrix}.
+  \]
+
+  Circuitos com múltiplos qubits são construídos por meio do produto tensorial.
+\end{frame}
+
+\begin{frame}{Crescimento exponencial da simulação}
+  Um circuito com $n$ qubits possui $2^n$ estados possíveis:
+
+  \[
+    \dim(\ket{\psi}) = 2^n.
+  \]
+
+  Uma porta aplicada ao circuito completo pode produzir uma matriz:
+
+  \[
+    \dim(U) = 2^n \times 2^n.
+  \]
+
+  \begin{alertblock}{Problema}
+    Vetores e matrizes crescem exponencialmente com o número de qubits.
+  \end{alertblock}
+\end{frame}
+
+\begin{frame}{QMDD}
+  \textbf{Quantum Multiple-Valued Decision Diagram}
+
+  \begin{itemize}
+    \item Grafo dirigido acíclico e ponderado.
+    \item Cada vértice representa um qubit.
+    \item As arestas armazenam fatores complexos.
+    \item Padrões repetidos são representados por vértices compartilhados.
+  \end{itemize}
+
+  \begin{exampleblock}{Objetivo}
+    Compactar matrizes e vetores sem perder informação.
+  \end{exampleblock}
+\end{frame}
+
+\begin{frame}{QMDD — porta Y}
+  \[
+    Y =
+    \begin{bmatrix}
+      0 & -i\\
+      i & 0
+    \end{bmatrix}
+  \]
+
+  \begin{center}
+    \begin{tikzpicture}[
+      root/.style={circle,draw,minimum size=9mm},
+      leaf/.style={rectangle,draw,minimum size=8mm},
+      node distance=1.3cm
+    ]
+      \node[leaf] (terminal) {$1$};
+      \node[root,above=of terminal] (q0) {$q_0$};
+
+      \node[above=of q0] (entrada) {};
+      \draw[->] (entrada) -- node[right] {$i$} (q0);
+
+      \draw[->] (q0) edge[bend left=90] node[right] {$0$} (terminal);
+      \draw[->] (q0) edge[bend left=30] node[right] {$-1$} (terminal);
+      \draw[->] (q0) edge[bend right=30] node[right] {$1$} (terminal);
+      \draw[->] (q0) edge[bend right=90] node[right] {$0$} (terminal);
+    \end{tikzpicture}
+  \end{center}
+
+  As arestas representam:
+
+  \[
+    [M_{00},M_{01},M_{10},M_{11}] =
+    [0,-1,1,0].
+  \]
+\end{frame}
+
+\begin{frame}{QMDD — portas sobre vários qubits}
+  \[
+    X \otimes H =
+    \frac{1}{\sqrt{2}}
+    \begin{bmatrix}
+      0 & 0 & 1 & 1\\
+      0 & 0 & 1 & -1\\
+      1 & 1 & 0 & 0\\
+      1 & -1 & 0 & 0
+    \end{bmatrix}
+  \]
+
+  A matriz possui 16 posições.
+
+  \begin{block}{Representação compacta}
+    O QMDD representa o mesmo produto com apenas dois vértices.
+  \end{block}
+
+  \begin{itemize}
+    \item O qubit mais significativo está próximo da aresta inicial.
+    \item O qubit menos significativo está próximo do terminal.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Como recuperar um valor da matriz}
+  Para recuperar o valor $M_{31}$:
+
+  \[
+    (3,1)_{10} = (11,01)_2.
+  \]
+
+  \begin{enumerate}
+    \item Selecionar a aresta correspondente ao primeiro par de bits.
+    \item Selecionar a aresta correspondente ao segundo par de bits.
+    \item Percorrer o caminho até o vértice terminal.
+    \item Multiplicar os pesos encontrados no caminho.
+  \end{enumerate}
+
+  \[
+    M_{31} =
+    \frac{1}{\sqrt{2}}\cdot 1\cdot(-1)
+    =
+    -\frac{1}{\sqrt{2}}.
+  \]
+\end{frame}
+
+\begin{frame}{Porta controlada}
+  \[
+    \ket{0}_{c}\ket{\psi}_{t}
+    \longrightarrow
+    \ket{0}_{c}\ket{\psi}_{t},
+  \]
+
+  \[
+    \ket{1}_{c}\ket{\psi}_{t}
+    \longrightarrow
+    \ket{1}_{c}U\ket{\psi}_{t}.
+  \]
+
+  \begin{itemize}
+    \item Quando o controle está em $0$: aplica-se a identidade.
+    \item Quando o controle está em $1$: aplica-se a porta desejada.
+  \end{itemize}
+
+  \begin{exampleblock}{Exemplo — CNOT}
+    O vértice de controle aponta para:
+    \begin{itemize}
+      \item um vértice correspondente à identidade;
+      \item um vértice correspondente à porta X.
+    \end{itemize}
+  \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Implementação no Ket}
+  Os algoritmos foram implementados em Rust e integrados ao simulador do Ket.
+
+  \begin{itemize}
+    \item Construção de QMDDs a partir de portas.
+    \item Construção de portas controladas.
+    \item Multiplicação entre QMDDs.
+    \item Medição destrutiva.
+    \item Recuperação do vetor de amplitudes.
+  \end{itemize}
+
+  \begin{block}{Otimizações}
+    \begin{itemize}
+      \item Identificação de vértices duplicados.
+      \item Memoização das operações entre arestas.
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}{Aplicação de uma porta genérica}
+  A porta é aplicada multiplicando:
+
+  \[
+    \ket{\psi_{\text{novo}}}
+    =
+    U\ket{\psi_{\text{atual}}}.
+  \]
+
+  A aplicação é realizada diretamente sobre QMDDs:
+
+  \[
+    \mathrm{QMDD}(U)
+    \times
+    \mathrm{QMDD}(\psi).
+  \]
+
+  As operações multiplicam arestas recursivamente até atingir o vértice terminal.
+\end{frame}
+
+\begin{frame}{Medição e simulação forte}
+  \textbf{Recuperação do vetor de amplitudes}
+
+  \begin{itemize}
+    \item Percorrer todos os caminhos até o terminal.
+    \item Multiplicar os pesos de cada caminho.
+    \item Associar o resultado ao estado da base computacional.
+  \end{itemize}
+
+  \vspace{1em}
+
+  \textbf{Medição destrutiva}
+
+  \begin{itemize}
+    \item Somar as probabilidades associadas ao resultado $0$.
+    \item Somar as probabilidades associadas ao resultado $1$.
+    \item Escolher o resultado de acordo com a regra de Born.
+    \item Eliminar os caminhos incompatíveis com o resultado obtido.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Testes da implementação}
+  \begin{enumerate}
+    \item Avaliação manual de circuitos pequenos.
+    \item Verificação de estados de Bell.
+    \item Teste de um circuito com três qubits de controle alternados.
+    \item Testes de medições sucessivas.
+    \item Comparação com o simulador denso do Ket.
+  \end{enumerate}
+
+  O simulador produziu resultados compatíveis com o simulador denso para diferentes algoritmos.
+\end{frame}
+
+\begin{frame}{Métodos utilizados nos experimentos}
+  Comparação entre três simuladores:
+
+  \begin{itemize}
+    \item Simulador QMDD.
+    \item Simulador denso.
+    \item Simulador esparso.
+  \end{itemize}
+
+  Os experimentos utilizaram:
+
+  \begin{itemize}
+    \item Algoritmo de Grover.
+    \item Algoritmo FALQON.
+    \item Estimação de Fase Quântica.
+  \end{itemize}
+
+  As execuções variaram o número de qubits e o número de camadas do FALQON.
+\end{frame}
+
+\begin{frame}{Algoritmos utilizados}
+  \begin{block}{Grover}
+    Utiliza repetidamente portas controladas. O número de controles pode crescer junto com o circuito.
+  \end{block}
+
+  \begin{block}{FALQON}
+    Algoritmo de otimização aplicado ao problema Max-Cut. Possui menos portas controladas que Grover.
+  \end{block}
+
+  \begin{block}{Estimação de Fase Quântica}
+    Combina portas controladas com operações da Transformada Quântica de Fourier.
+  \end{block}
+\end{frame}
+
+\begin{frame}{Experimentos — número de qubits}
+  Para cada simulador e algoritmo:
+
+  \begin{enumerate}
+    \item Iniciar com uma quantidade mínima de qubits.
+    \item Executar a simulação.
+    \item Incrementar o número de qubits após sucesso.
+    \item Interromper ao ultrapassar o tempo limite.
+  \end{enumerate}
+
+  O objetivo é observar como o tempo cresce com a largura do circuito.
+\end{frame}
+
+\begin{frame}{Experimentos — camadas do FALQON}
+  \begin{itemize}
+    \item Número de qubits fixado em 18.
+    \item Número de camadas variado entre 250 e 1500.
+  \end{itemize}
+
+  Com o número de qubits constante, o aumento das camadas produz crescimento aproximadamente linear no número de operações.
+
+  O objetivo é medir o custo da profundidade do circuito.
+\end{frame}
+
+\begin{frame}{Limitações — circuitos com muitos controles}
+  A construção de portas controladas pode exigir novos vértices para representar cada cenário possível.
+
+  Em circuitos com muitos qubits de controle:
+
+  \begin{itemize}
+    \item O grau de redundância pode diminuir.
+    \item O QMDD pode perder sua vantagem de compactação.
+    \item O tamanho do diagrama pode crescer exponencialmente.
+  \end{itemize}
+
+  O comportamento se aproxima das representações densas nesses cenários.
+\end{frame}
+
+\begin{frame}{Trabalhos futuros}
+  \begin{block}{Tabela hash para vértices}
+    Substituir a busca linear por identificação constante de vértices duplicados.
+  \end{block}
+
+  \begin{block}{Aplicação direta de portas arbitrárias}
+    Evitar decompor portas em conjuntos fundamentais no lado do Ket.
+  \end{block}
+
+  \begin{block}{Representação exata de números complexos}
+    Comparar ponto flutuante com representações baseadas em $\mathbb{Q}(\sqrt{2})$.
+  \end{block}
+
+  \begin{block}{LIMDD}
+    Estender o trabalho para o \emph{Local Invertible Map Decision Diagram}.
+  \end{block}
+\end{frame}
+
+\begin{frame}{Conclusão}
+  \begin{itemize}
+    \item Os algoritmos necessários foram compilados e implementados.
+    \item Um simulador QMDD foi integrado ao Ket.
+    \item O simulador foi testado em circuitos controlados e em algoritmos quânticos.
+    \item O método apresenta vantagens em circuitos com redundância e poucos controles.
+    \item Para circuitos altamente entrelaçados, o tamanho compacto não é garantido.
+  \end{itemize}
+
+  \begin{exampleblock}{Objetivo geral atingido}
+    O usuário pode escolher o simulador QMDD junto aos métodos já disponíveis no Ket.
+  \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Referências}
+  \begin{itemize}
+    \item Miller, Thornton — *QMDD: Quantum Multiple-Valued Decision Diagram*.
+    \item Nielsen e Chuang — \emph{Quantum Computation and Quantum Information}.
+    \item Grover — algoritmo de busca quântica.
+    \item Magann et al. — FALQON.
+    \item Vinkhuijzen et al. — LIMDD.
+  \end{itemize}
+\end{frame}
+
+\contato{Contato: \\ \url{[seu-email]}}
+\capadetras{Obrigado!}
+
+\end{document}
