@@ -1,0 +1,2 @@
+command,time_wall_clock_unit,time_wall_clock_mean,time_wall_clock_stddev,time_wall_clock_median,time_wall_clock_min,time_wall_clock_max,memory_peak_resident_unit,memory_peak_resident_mean,memory_peak_resident_stddev,memory_peak_resident_median,memory_peak_resident_min,memory_peak_resident_max
+python3 benchmarks/falqon.py sparse 18 250,s,242.907070807,,242.907070807,242.907070807,242.907070807,B,76005376,,76005376,76005376,76005376
