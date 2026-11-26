@@ -85,3 +85,82 @@ Além disso, também foi feita a comparação da execução do FALQON ao variar 
 
 \section{Resultados}\label{sec:results}
 
+Nesta seção, os tempos apresentados correspondem à média das execuções registradas para cada combinação de algoritmo, simulador e tamanho do circuito. Quando uma combinação foi executada mais de uma vez, as médias das execuções foram agrupadas novamente pelo número de qubits ou pelo número de camadas. Experimentos que ultrapassaram o limite estabelecido não foram incluídos em intervalos maiores.
+
+\subsection{Variação do número de qubits}
+
+\subsubsection{Grover}
+
+Na Figura~\ref{fig:grover-by-qubits}, observa-se que o simulador QMDD apresentou resultado competitivo com os demais simuladores em circuitos de até 14 qubits. Nesse ponto, o tempo médio foi de aproximadamente $0{,}49$~s no QMDD, contra $0{,}31$~s no simulador denso e $3{,}21$~s no esparso. Até 13 qubits, o simulador QMDD permaneceu próximo ao denso e foi mais rápido que o esparso.
+
+A partir de 15 qubits, o crescimento da quantidade de qubits de controle produziu um aumento expressivo no tempo do QMDD. Com 18 qubits, o tempo médio foi de $42{,}85$~s no QMDD, enquanto os simuladores denso e esparso levaram, respectivamente, $2{,}72$~s e $349{,}87$~s. O QMDD continuou sendo executado com 19 qubits, em $92{,}09$~s, mas não concluiu a combinação com 20 qubits dentro do limite definido.
+
+Nesse cenário, o simulador denso alcançou o maior intervalo, tendo sido executado até 23 qubits, com tempo médio de $890{,}13$~s nessa dimensão. O simulador esparso foi executado até 19 qubits, atingindo $1174{,}49$~s nesse último tamanho concluído. Assim, o crescimento dos controles do algoritmo de Grover foi particularmente desfavorável à implementação atual do QMDD.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.88\linewidth]{images/grover_by_qubits.png}
+  \caption{Tempo médio do algoritmo de Grover em função do número de qubits.
+  O eixo vertical utiliza escala logarítmica.}
+  \label{fig:grover-by-qubits}
+\end{figure}
+
+\subsubsection{FALQON}
+
+O comportamento obtido com o FALQON foi mais favorável ao QMDD do que o observado no algoritmo de Grover, como ilustrado pela Figura~\ref{fig:falqon-by-qubits}. Na faixa inicial, os três simuladores apresentaram tempos próximos. Com 14 qubits, os tempos médios foram aproximadamente $0{,}32$~s para o QMDD, $0{,}32$~s para o denso e $0{,}82$~s para o esparso.
+
+Com 17 qubits, o QMDD levou $1{,}81$~s, contra $2{,}12$~s do denso e $6{,}40$~s do esparso. Com 18 qubits, o tempo médio foi de $2{,}98$~s no QMDD, $3{,}08$~s no denso e $11{,}59$~s no esparso. A partir de 19 qubits, o denso novamente apresentou vantagem numérica sobre o QMDD. Mesmo assim, o método QMDD continuou substancialmente mais rápido que o esparso até as maiores dimensões em que ambos concluíram o experimento.
+
+O simulador QMDD foi concluído até 25 qubits, com tempo médio de $309{,}56$~s. Nessa dimensão, o denso levou $230{,}26$~s e o esparso não concluiu a execução dentro do limite. O simulador denso chegou a 27 qubits, atingindo $1362{,}15$~s, enquanto o esparso foi executado até 24 qubits, com $1475{,}26$~s. Esses resultados indicam que o FALQON permite ao QMDD compartilhar partes repetidas da estrutura com maior eficácia do que o Grover.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.88\linewidth]{images/falqon_by_qubits.png}
+  \caption{Tempo médio do algoritmo FALQON em função do número de qubits.
+  O eixo vertical utiliza escala logarítmica.}
+  \label{fig:falqon-by-qubits}
+\end{figure}
+
+\subsubsection{Estimação de fase quântica}
+
+Na Estimação de Fase Quântica, os três simuladores apresentaram desempenhos próximos até aproximadamente 16 qubits, como mostrado na Figura~\ref{fig:qpe-by-qubits}. Com 18 qubits, o simulador esparso levou $0{,}49$~s, o denso $0{,}15$~s e o QMDD $7{,}90$~s. Nessa faixa intermediária, o denso apresentou o melhor crescimento. Com 20 qubits, o denso levou $0{,}17$~s, o esparso $1{,}96$~s e o QMDD $115{,}61$~s.
+
+A partir desse ponto, o tempo do QMDD passou a crescer rapidamente e não concluiu a combinação com 21 qubits. Em contraste, o simulador esparso chegou a 27 qubits, com tempo médio de $506{,}62$~s, e o denso alcançou 30 qubits, com $135{,}80$~s. Assim, a combinação de portas controladas com operações da Transformada Quântica de Fourier foi desfavorável ao QMDD no intervalo testado, embora o método permanecesse próximo aos demais em circuitos menores.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.88\linewidth]{images/qpe_by_qubits.png}
+  \caption{Tempo médio da Estimação de Fase Quântica em função do número de qubits.
+  O eixo vertical utiliza escala logarítmica.}
+  \label{fig:qpe-by-qubits}
+\end{figure}
+
+\subsection{Variação do número de camadas no FALQON}
+
+No experimento de variação das camadas, o número de qubits foi mantido em 18 e o número de iterações do FALQON foi aumentado de 100 a 5400. Cada aumento de 100 camadas repetiu uma estrutura já construída nas iterações anteriores, de modo que o crescimento observado deveu-se principalmente ao número de aplicações do circuito e não ao aumento do vetor de estado.
+
+O tempo do QMDD apresentou crescimento aproximadamente linear, como pode ser visto na Figura~\ref{fig:falqon-by-layers}. Com 100 camadas, foram necessários $29{,}67$~s; com 1000 camadas, $297{,}89$~s; com 3000 camadas, $1107{,}21$~s; e com 5000 camadas, $2181{,}50$~s. Isso corresponde a uma razão próxima de 0{,}3~s por camada no ponto intermediário do experimento.
+
+Na comparação com o simulador denso, o QMDD levou menos tempo a partir de aproximadamente 1500 camadas. Com 1000 camadas, o denso levou $325{,}79$~s contra $297{,}89$~s do QMDD; com 1500 camadas, os tempos foram $521{,}17$~s e $483{,}68$~s, respectivamente. Com 3500 camadas, o denso alcançou $1791{,}44$~s, enquanto o QMDD levou $1313{,}37$~s.
+
+Como observado nos resultados do experimento de variação do número de qubits para o FALQON, o simulador esparso apresentou desempenho significativamente pior que o simulador denso e o QMDD. Por isso, os resultados do simulador esparso para execuções maiores do FALQON não foram incluídos.
+
+Em ambos os pontos, o QMDD apresentou menor tempo. Os resultados mostram que, embora o custo por camada seja significativo, a reutilização da estrutura no QMDD torna o aumento das iterações mais eficiente que a execução repetida pelos vetores denso e esparso no intervalo observado.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.88\linewidth]{images/falqon_by_layers.png}
+  \caption{Tempo médio do FALQON com 18 qubits em função do número de camadas.
+  Os pontos esparsos disponíveis no intervalo de 1000 a 1500 camadas são
+  comparados separadamente no texto.}
+  \label{fig:falqon-by-layers}
+\end{figure}
+
+\subsection{Síntese dos resultados}
+
+Os resultados mostram que o desempenho do QMDD está diretamente relacionado à estrutura do circuito. No Grover e na Estimação de Fase Quântica, o crescimento dos qubits de controle fez o número de vértices crescer rapidamente e reduziu a competitividade do método. No FALQON, em que o diagrama construído nas primeiras iterações é reutilizado nas iterações seguintes, o simulador manteve melhor desempenho e apresentou vantagem sobre os demais em partes relevantes do intervalo.
+
+O simulador denso alcançou o maior número de qubits no Grover e na Estimação de Fase Quântica. Isso é coerente com sua representação direta do vetor de estado e com a possibilidade de distribuir independentemente as operações sobre suas posições em arquiteturas com vários núcleos. O simulador esparso apresentou vantagem em algumas dimensões da Estimação de Fase Quântica, mas seu custo cresceu de forma mais intensa no Grover.
+
+Portanto, o novo simulador não supera os simuladores existentes em todos os circuitos. Sua eficiência foi maior em problemas em que padrões estruturais podem ser reutilizados e em que o número de controles não domina o crescimento do diagrama. O FALQON e o experimento com 18 qubits variando o número de camadas representaram os cenários mais favoráveis à implementação atual.
+
