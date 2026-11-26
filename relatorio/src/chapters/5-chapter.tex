@@ -10,7 +10,7 @@ Todos os experimentos foram realizados em um mesmo computador. A seguir estão a
 \begin{itemize}
   \item Processador: Intel 7 240H (16) @ 5.0GHz
   \item Memória RAM: 32GB 1300MHz
-  \item Sistema Operacional: openSUSE Leap 16.0 x86_64
+  \item Sistema Operacional: openSUSE Leap 16.0 x86\_64
   \item Kernel: Linux 6.12.0
   \item Compilador: rustc 1.98.0
   \item Python: 3.13.5
@@ -37,7 +37,7 @@ Por exemplo, o estado $\frac{1}{\sqrt{2}}(\ket{00} + \ket{11})$ seria representa
 
 No Ket, esse simulador é implementado de forma a permitir a paralelização do cálculo de aplicação das matrizes sobre o vetor de estado. Isto é, o vetor de estados pode ser divido em vários trechos de forma que diferentes trechos possam ser processados simultaneamente por diferentes núcleos de um mesmo computador.
 
-\begin{table}[h]
+\begin{table}[ht]
   \centering
   \begin{tabular}{|c|c|}
     \hline
@@ -51,10 +51,9 @@ No Ket, esse simulador é implementado de forma a permitir a paralelização do 
   \label{tab:sparse-state-example}
 \end{table}
 
-% TODO : Add pictures describing the algorithms
 \section{Algoritmos Quânticos}\label{sec:quantum_algorithms}
 
-Dada a natureza variada do desempenho do QMDD, foram utilizados diferentes algoritmos quânticos para identificar em quais cenários o novo simulador apresenta mais ou menos vantagem em relação aos outros. A seguir, esses algoritmos serão descritos brevemente de forma a pontuar suas características relevantes que afetam o desempenho do novo simulador.
+Dada a natureza variável do desempenho do QMDD, foram utilizados diferentes algoritmos quânticos para identificar os cenários nos quais o novo simulador apresenta vantagens ou desvantagens em relação aos demais. As subseções seguintes descrevem esses algoritmos e destacam suas características pertinentes ao desempenho da simulação.
 
 \subsection{Algoritmo de Grover}\label{sub:grover}
 
@@ -64,15 +63,15 @@ Porém, para a simulação por QMDD, o fato de todos os qubits do circuito agire
 
 \subsection{Algoritmo FALQON}\label{sub:falqon}
 
-{\itshaped Feedback-based ALgorithm for Quantum OptimizatioN} (FALQON) é um algoritmo de otimização generalizado cuja proposta é eliminar a parte clássica do processo iterativo dos algoritmos de otimização quânticos até então propostos. \cite{magann2022falqon}
+{\itshape Feedback-based ALgorithm for Quantum OptimizatioN} (FALQON) é um algoritmo de otimização generalizado cuja proposta é eliminar a parte clássica do processo iterativo dos algoritmos de otimização quânticos até então propostos. \cite{magann2022falqon}
 
-Por ser um algoritmo de otimização, para realizar qualquer experimento com o FALQON, é necessário ter um problema de otimzação a ser resolvido. Para isso, foi utilizado o exemplo disponível na página de tutoriais do Ket: o problema max-cut \cite{ket2021falqon}. Esse problema envolve grafos e sua complexidade é exponencial em relação ao número de arestas presentes no grafo, tornando-o um bom candidato para ser usado num algoritmo de otimização.
+Por ser um algoritmo de otimização, o FALQON requer um problema de otimização a ser resolvido em cada experimento. Para isso, foi utilizado o exemplo disponível na página de tutoriais do Ket: o problema max-cut \cite{ket2021falqon}. Esse problema envolve grafos e sua complexidade é exponencial em relação ao número de arestas presentes no grafo, tornando-o adequado à avaliação do algoritmo.
 
-O FALQON também utiliza portas controladas, porém em menor quantidade quando comparado ao algoritmo de Grover. Isso faz com que a, apesar de manter complexidade exponencial, esse algoritmo apresente custo reduzido ao ser simulado por QMDDs em comparação ao algoritmo de Grover.
+O FALQON também utiliza portas controladas, porém em quantidade menor que o algoritmo de Grover. Apesar de manter complexidade exponencial, esse algoritmo apresenta custo reduzido ao ser simulado por QMDDs em comparação ao algoritmo de Grover.
 
 \subsection{Algoritmo de Estimação de Fase Quântica}\label{sub:qpe}
 
-Estimação de Fase Quântica, em inglês {\itshaped Quantum Phase Estimation (QPE)}, permite estimar a fase aplicada por um operador desconhecido. Ele se baseia em incorporar portas não controladas ao algoritmo da Transformada Quântica de Fourier \cite{coppersmith1994qft}, que, por sua vez, utiliza algumas portas controladas. \cite{kitaev1995qpe} 
+Estimação de Fase Quântica, em inglês {\itshape Quantum Phase Estimation} (QPE), permite estimar a fase aplicada por um operador desconhecido. Ela se baseia em incorporar portas não controladas ao algoritmo da Transformada Quântica de Fourier \cite{coppersmith1994qft}, que, por sua vez, utiliza algumas portas controladas. \cite{kitaev1995qpe}
 
 \section{Execução dos Experimentos}\label{sec:execution}
 
@@ -85,6 +84,4 @@ Desse modo, cada combinação de simulador e algoritmo foi executada usando dife
 Além disso, também foi feita a comparação da execução do FALQON ao variar o número de iterações utilizadas no processo de otimização. Nesse caso, o aumento da demora é linear em relação ao número de camadas ---com o dobro de camadas, espera-se que a simulação demore o dobro do tempo--- enquanto mantém-se um número constante de qubits. Para esse teste, o número de qubits foi fixado em 18 por gerar um tempo base grande o suficiente para ser estável mas ainda pequeno o suficiente para manter conveniente as múltiplas execuções com diferentes números de camadas.
 
 \section{Resultados}\label{sec:results}
-
-% Após a execução dos experimentos, os resultados foram coletados e organizados em gráficos de tempo de execução em função do número de qubits simulados. A seguir, serão apresentados os resultados obtidos para cada algoritmo testado.
 

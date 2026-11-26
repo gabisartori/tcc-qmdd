@@ -1,6 +1,6 @@
 \chapter{Desenvolvimento}\label{chap:development}
 
-Neste capítulo, foi descrita a implementação prática do simulador de circuitos quânticos utilizando a estrutura de dados QMDD. O sistema foi implementado na linguagem de programação Rust e integrado à biblioteca de desenvolvimento quântico Ket, que fornece uma interface para a construção e simulação de circuitos quânticos.
+Neste capítulo, apresenta-se a implementação prática do simulador de circuitos quânticos utilizando a estrutura de dados QMDD. O sistema foi implementado na linguagem de programação Rust e integrado à biblioteca de desenvolvimento quântico Ket, que fornece uma interface para a construção e simulação de circuitos quânticos.
 
 Primeiro, a \cref{sec:implementation} descreve como os algoritmos apresentados no \cref{chap:qmdd} foram utilizados para implementar a estrutura de dados QMDD. Além disso, são pontuados aspectos práticos da programação do sistema, abordando otimizações e decisões de implementação.
 
@@ -12,24 +12,21 @@ Por fim, a \cref{sec:tests} descreve os testes realizados para validar a impleme
 
 \subsection{Identificação de Objetos Duplicados e Memoização de Operações}
 
-A principal vantagem do QMDD está em identificar e remover vértices duplicados do grafo que representa o circuito quântico. Para isso, é necessária uma forma eficiente de identificar que um determinado vértice que já existe no QMDD e não precisa ser criado novamente. Assim, foram utilizadas estruturas auxiliares juntamente aos algoritmos descritos na \cref{sec:qmdd_algorithms}. Mais especificamente, a classe QMDD mantém uma lista de vértices já criados e utilizada identificadores para operá-los. Quando um novo vértice é criado, primeiro a classe verifica se um equivalente já existe em sua lista de forma a evitar a inserção desnecessária de um novo vértice.
+A principal vantagem do QMDD está em identificar e remover vértices duplicados do grafo que representa o circuito quântico. Para isso, é necessária uma forma eficiente de verificar se um vértice já existe no QMDD e não deve ser criado novamente. Assim, são utilizadas estruturas auxiliares juntamente aos algoritmos descritos na \cref{sec:qmdd_algorithms}. Mais especificamente, a classe QMDD mantém uma lista de vértices já criados e utiliza identificadores para operá-los. Quando um novo vértice é criado, a classe verifica inicialmente se um equivalente já existe na lista, evitando inserções desnecessárias.
 
-% TODO: Should I explain what a hash table is?
-Outra otimização realizada foi a memoização de operações entre arestas. Para isso, as operações entre arestas mantém tabelas hash que armazenam os resultados de operações entre arestas já visitadas. Assim, caso uma operação entre duas arestas já tenha sido realizada, o resultado é obtido diretamente da tabela hash, evitando a necessidade de recalcular o resultado da operação. Isso oferece ganho significativo ao considerar que as operações entre arestas são recursivas e podem ser chamadas múltiplas vezes durante a execução de um algoritmo quântico.
+Outra otimização realizada foi a memoização de operações entre arestas. As operações entre arestas mantêm tabelas hash que armazenam os resultados de operações já visitadas. Caso uma operação entre duas arestas já tenha sido realizada, o resultado é obtido diretamente da tabela hash, evitando recálculos. Esse mecanismo oferece ganho significativo, pois as operações entre arestas são recursivas e podem ser chamadas várias vezes durante a execução de um algoritmo quântico.
 
 \subsection{Representação de Números Complexos}
 
-% TODO: After this paragraph, cite the different representations of floats article
-Um desafio para o armazenamento e identificação eficiente das arestas é a forma como números complexos são representados. Isso pois o alcance de possíveis valores que um número complexo pode assumir dificulta a identificação de valores repetidos. Apesar da aritmética complexa ser simples, representar e manipular os números reais que representam as parte real e imaginária do número é uma tarefa complicada para computadores. Assim, existem diferentes formas de representar números reais em programas, cada uma com suas vantagens e desvantagens para uso no QMDD. 
+Um desafio para o armazenamento e a identificação eficiente das arestas consiste na representação dos números complexos. O amplo conjunto de valores que um número complexo pode assumir dificulta a identificação de valores repetidos. Apesar de a aritmética complexa ser simples, representar e manipular as partes real e imaginária constitui uma tarefa complexa para computadores. Assim, existem diferentes formas de representar números reais em programas, cada uma com vantagens e desvantagens para o uso no QMDD.
 
 Dentre as diferentes abordagens, busca-se um equilíbrio entre precisão do resultado e capacidade de identificação de valores duplicados. Representações muito precisas estão sujeitas a pequenas variações que fazem com que valores suficientemente próximos sejam considerados completamente diferentes, sacrificando a capacidade de compactação do QMDD. Além disso, o armazenamento de múltiplos valores essencialmente equivalentes faz com que o programa consuma mais memória que o necessário, o que também afeta o desempenho da simulação.
 
-% TODO: Cite the guy article about snapped floats again
-A primeira opção para representação dos números reais é o uso de números de ponto flutante. Essa representação é análoga à notação científica, na qual existe uma mantissa e um expoente, porém possui o problema da falta de precisão matemática. Como os números precisam ser expressos de forma decimal, a precisão está limitada à capacidade de memória do computador, sendo impossível a representação exata de dízimas periódicas ou números irracionais. Assim, pequenos erros de truncagem surgem nos calculos, dificultando a detecção de valores duplicados. Para contornar esse problema, usa-se uma faixa de tolerância para considerar valores números iguais. Assim, cada número passa a ser um pequeno intervalo no conjunto dos reais. As operações são feitas utilizando a precisão máxima que o computador permite porém os resultados são limitados a uma precisão menor, fazendo com que todos os valores dentro de um intervalo colapsem para o mesmo valor. Isso reduz a variabilidade dos números produzidos durante a simulação e faz com que os resultados sejam mais consistentes, apesar de terem precisão reduzida.
+A primeira opção para a representação dos números reais é o uso de números de ponto flutuante. Essa representação é análoga à notação científica, em que se utilizam mantissa e expoente, porém não garante precisão matemática exata. Como os números são armazenados em formato decimal finito, a precisão depende da capacidade de memória do computador, sendo impossível representar exatamente dízimas periódicas ou números irracionais. Consequentemente, erros de arredondamento dificultam a detecção de valores duplicados. Para contornar essa situação, utiliza-se uma faixa de tolerância que considera próximos os valores pertencentes ao mesmo intervalo. As operações podem utilizar a precisão máxima disponível, mas os resultados são limitados a uma precisão menor; dessa forma, todos os valores de um mesmo intervalo colapsam para um único valor. Essa estratégia reduz a variabilidade dos números produzidos durante a simulação e torna os resultados mais consistentes, embora com precisão reduzida.
 
-Outra opção é a representação de números reais por meio de uma combinação linear de $1$ e $\sqrt{2}$ usando coeficientes racionais. Essa forma de representar números cria um subconjunto dos números reais conhecido como racionais extendidos pela raiz quadrada de 2. Esse subconjunto é suficiente para representação de portas quânticas necessárias para aproximar com precisão arbitrária qualquer circuito quântico, especificamente o conjunto das portas de pauli controladas e a porta T. 
+Outra opção é a representação dos números reais por meio de uma combinação linear de $1$ e $\sqrt{2}$ com coeficientes racionais. Essa representação define um subconjunto dos números reais conhecido como conjunto dos racionais estendidos pela raiz quadrada de $2$. Esse conjunto é suficiente para representar as portas quânticas necessárias à aproximação, com precisão arbitrária, de qualquer circuito quântico, especialmente as portas de Pauli controladas e a porta T.
 
-Por fim, o método escolhido durante a implementação do trabalho foi o uso de ponto flutuante truncado. Isso pois a representação por racionais extendidos possui baixo alcance de representação de números em comparação com a representação por ponto flutuante, gerando comportamento instável em circuitos mais complexos, como o algoritmo de Grover. Além disso, o ponto flutuante truncado se provou suficiente para a identificação de vértices duplicados, garantindo a eficácia prometida pelo QMDD.
+Por fim, o método escolhido durante a implementação foi o uso de ponto flutuante truncado. A representação por racionais estendidos possui alcance limitado em comparação com a representação por ponto flutuante e pode gerar comportamento instável em circuitos mais complexos, como o algoritmo de Grover. Além disso, o ponto flutuante truncado se mostrou suficiente para identificar vértices duplicados e garantir a eficácia esperada do QMDD.
 
 \subsection{Construção de Portas Arbitrárias}
 
@@ -43,7 +40,7 @@ Dada a construção de portas arbitrárias e o algoritmo de multiplicação de a
 
 Para a integração adequada com o Ket, foi necessária a implementação de simulação forte. Logo, o método descrito na \cref{sec:result-extraction}. Para reconstruir o vetor de estados do sistema, percorre-se o grafo seguindo todos os caminhos possíveis do vértice inicial ao final.
 
-Outra [TODO: IMPLEMENTAÇÃO] necessária para o ket é o calculo da probabilidade de um qubit ser medido em 1. Essa probabilidade é utilizada pela biblioteca do Ket para escolher valores aleatórios ao simular um circuito e também é útil para normalizar o QMDD após aplicação da operação de colapso. Para obter esse valor, é necessário percorrer o grafo do estado, somando a probabilidade acumulada de todos os vértices que representem o qubit a ser medido. Para calcular a probabilidade de um vértice, utiliza-se o peso acumulado no caminho entre a raiz e o vértice e multiplica-o pela proporção entre a aresta $\ket{0}$ e a aresta $\ket{1}$ do vértice.
+Outra funcionalidade necessária para a integração com o Ket é o cálculo da probabilidade de um qubit ser medido em $1$. Essa probabilidade é utilizada pela biblioteca para escolher valores aleatórios durante a simulação de um circuito e também permite normalizar o QMDD após a operação de colapso. Para obtê-la, percorrem-se os vértices do grafo do estado e somam-se as probabilidades acumuladas associadas ao qubit considerado. A probabilidade de um vértice corresponde ao produto entre o peso acumulado no caminho da raiz até o vértice e a proporção das arestas $\ket{0}$ e $\ket{1}$ desse vértice.
 
 \section{Integração com Ket}\label{sec:ket}
 
@@ -63,7 +60,7 @@ Uma vez integrado à plataforma Ket, o simulador foi testado de duas formas prin
 
 Na avaliação manual, circuitos pequenos foram construídos e simulados. O vetor de amplitudes foi obtido ao longo de cada aplicação de porta de forma a permitir a verificação individual de cada operação. Os circuitos utilizados mais relevantes foram os compostos por portas controladas, como a criação de um estado de Bell ---circuito descrito na \cref{fig:bellcircuit}--- e um circuito arbitrário de 3 qubits no qual os qubits mais e menos significativos agem como qubits de controle e o qubit do meio como alvo, como na figura \cref{fig:3qubittestcircuit}. Dessa forma, foi possível verificar o comportamento adequado na presença de qubits de controle mais e menos significativos que o qubit alvo.
 
-\begin{figure}[h]
+\begin{figure}[ht]
   \[
     \begin{quantikz}
       \ket{0} & \gate{H} & \ctrl{1} & \qw \\
@@ -75,7 +72,7 @@ Na avaliação manual, circuitos pequenos foram construídos e simulados. O veto
   \label{fig:3qubittestcircuit}
 \end{figure}
 
-Além disso, foram feitos testes simples para verificar a aleatoriedade do resultado de medições destrutivas. Tanto a medição sucessiva de um mesmo qubit originalmente encontrado em $\frac{1}{\sqrt{2}}(\ket{0} + \ket{1})$ quanto criações de diferentes qubits nesse mesmo estado resultaram nas medições esperadas: o qubit sucessivamente medido retornou sempre o mesmo valor, enquanto os múltiplos qubits retornaram valores aleatórios suficiente próximos de uma distribuição uniforme.
+Além disso, foram realizados testes simples para verificar a aleatoriedade do resultado de medições destrutivas. Tanto a medição sucessiva de um mesmo qubit preparado em $\frac{1}{\sqrt{2}}(\ket{0} + \ket{1})$ quanto a criação de diferentes qubits nesse estado produziram os resultados esperados: o qubit medido sucessivamente retornou sempre o mesmo valor, enquanto os qubits independentes retornaram valores aleatórios suficientemente próximos de uma distribuição uniforme.
 
 \subsection{Comparação com Outros Simuladores}
 

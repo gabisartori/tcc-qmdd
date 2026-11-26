@@ -10,13 +10,13 @@ Além disso, também será feita uma breve introdução ao conceito de grafos, e
 
 \section{Grafos}\label{sec:graph}
 
-Visto que QMDDs dependem integralmente de grafos, esta seção busca introduzir os conceitos necessários para compreender as definições do QMDD e as restrições necessárias para que um grafo seja válido para um QMDD \cite{jungnickel}
+Como os QMDDs dependem integralmente de grafos, esta seção introduz os conceitos necessários para compreender suas definições e as restrições impostas a um grafo válido para um QMDD \cite{jungnickel}.
 
 Grafo é o nome dado para estruturas de dados organizadas em elementos e ligações entre esses elementos. Cada elemento do grafo é chamado de vértice e as ligações entre os elementos são chamadas de arestas. Um cenário no qual grafos são úteis, por exemplo, é a representação entre diferentes pontos de ônibus de uma cidade e a existência de uma rota que ligue 2 pontos. Nesse caso, cada ponto de ônibus é um vértice e sempre que exista uma linha de ônibus levando de um ponto A para um ponto B, vai existir uma aresta ligando os vértices A e B. Arestas podem ser representadas como uma tupla com o vértice de saída e o vértice destino da aresta.
 
 O grafo da \cref{fig:graph2nodes} é composto do conjunto de vértices \{A, B\} e do conjunto de arestas \{(A, B)\}.
 
-\begin{figure}[h]
+\begin{figure}[ht]
   \centering
   \begin{tikzpicture}[>=stealth, node distance=2cm]
 
@@ -34,7 +34,7 @@ O grafo da \cref{fig:graph2nodes} é composto do conjunto de vértices \{A, B\} 
 \subsection{Caminhos}
 A existência de uma aresta saindo de A e levando a B significa que existe um caminho de A para B. Nem todos os vértices do precisam estar diretamente ligados por uma aresta, é possível que exista um caminho indireto entre dois vértices. Por exemplo, no grafo da imagem \cref{fig:graph3node}, existe um caminho de A para B e um de B para C, isso significa que, indiretamente, também existe um caminho de A para C \cite{jungnickel}.
 
-\begin{figure}[h]
+\begin{figure}[ht]
   \centering
   \begin{tikzpicture}[>=stealth, node distance=2cm]
 
@@ -55,7 +55,7 @@ Além de armazenar apenas a informação de que se existe ou não um caminho ent
 
 No exemplo dos pontos de ônibus, o valor de uma aresta poderia representar o tempo que leva para chegar de um lugar a outro. Isso se torna útil em junção com o conceito de caminho indireto: se o caminho de A para C é na verdade o caminho de A para B seguido do caminho de B para C, sabe-se que o custo para chegar em C a partir de A será a soma dos custos para ir de A a B e de B a C. Por exemplo, se a aresta (A, B) tem valor 10 minutos e a aresta (B, C) tem valor 20 minutos, sabe-se que é possível sair de A e chegar em C em 30 minutos.
 
-\begin{figure}[h]
+\begin{figure}[ht]
   \centering
   \begin{tikzpicture}[>=stealth, node distance=2cm]
 
@@ -75,11 +75,11 @@ No exemplo dos pontos de ônibus, o valor de uma aresta poderia representar o te
 \subsection{Grafos Dirigidos e Ciclos}
 Note que a possibilidade de ir do ponto A para o ponto B não implica na existência de um caminho de B para A. Por isso a ordem da tupla é importante para as arestas. Dessa forma, grafos podem ou não ser dirigidos, ou seja, é possível impor a restrição de que toda aresta representa a existência de ambos os caminhos, tornando a ordem da tupla irrelevante. Caso o grafo não seja dirigido, toda aresta resulta na existência de um ciclo, ou seja, existe um caminho de um vértice para ele mesmo. No caso da aresta não dirigida (A, B), existe um caminho de A para B e existe um caminho de B para A, logo existe um caminho de A para A.
 
-Por outro lado, no caso de grafos dirigidos, a existência de um ciclo passa a ser apenas uma possibilidade facilmente identificada. No caso dos QMDDs, essa restrição é sempre respeitada pela forma como os algoritmos de construção e manipulação são definidos. Porém, dado um grafo arbitrário, é possivel verificar se existe um ciclo por meio de uma busca a partir de cada vértice, verificando se existe um caminho que leve de volta ao mesmo vértice \cite{jungnickel}.
+Por outro lado, no caso de grafos dirigidos, a existência de um ciclo passa a ser apenas uma possibilidade identificável. Nos QMDDs, essa restrição é sempre respeitada pela forma como os algoritmos de construção e manipulação são definidos. Em um grafo arbitrário, é possível verificar a existência de ciclos por meio de uma busca a partir de cada vértice, verificando se algum caminho retorna ao vértice de origem \cite{jungnickel}.
 
 O presente grafo na \cref{fig:acyclicgraph} é acíclico, visto que não existe caminho de nenhum vértice para si mesmo, já no grafo da \cref{fig:cyclicgraph}, existe um caminho de A para A, passando pelos vértices B e C, logo esse grafo é cíclico.
 
-\begin{figure}[h]
+\begin{figure}[ht]
   \centering
   \begin{minipage}{0.45\textwidth}
     \centering
@@ -121,7 +121,7 @@ Assim, o grafo da \cref{fig:graph3nodeweighted} pode ser representado como o con
 A representação gráfica de um QMDD permite a visualização de como um determinado valor da matriz codificada pode ser extraído por meio de um caminho entre o vértice raiz e o vértice terminal. A \Cref{fig:hqmdd} representa a matriz H. QMDDs que representam uma porta sobre um único qubit podem facilmente ser construídos, precisando apenas de um vértice inicial e um terminal, sendo as 4 arestas do vértice inicial os 4 valores presentes em cada posição da matriz. Note que o diagrama foi normalizado de acordo com o algoritmo de normalização apresentado em \cref{alg:normalization}, fazendo com que $\frac{1}{\sqrt{2}}$, o fator em comum a todas as arestas, seja fatorado e colocado na aresta raiz do diagrama.
 
 
-\begin{figure}[h]
+\begin{figure}[ht]
   \[
     H = \frac{1}{\sqrt{2}}
     \begin{bmatrix}
@@ -158,7 +158,7 @@ A representação gráfica de um QMDD permite a visualização de como um determ
 
 Para evidenciar a ordem na qual as arestas do QMDD representam as posições da matriz, considere a matriz Y, representada na \cref{fig:yqmdd}. Note que as arestas do QMDD seguem a ordem $[M_{00}, M_{01}, M_{10}, M_{11}]$
 
-\begin{figure}[h]
+\begin{figure}[ht]
   \[
     Y
     =
@@ -343,7 +343,7 @@ Logo, o estado $\ket{\psi}$ obtido com a execução do circuito pode ser reconst
 
 \section{Algoritmos}\label{sec:qmdd_algorithms}
 
-A seguir, serão definidas operações entre arestas de QMDDs. Dessa forma, a operação entre dois QMDDs é realizada por meio da operação entre suas duas arestas iniciais.
+A seguir, são definidas operações entre arestas de QMDDs. Dessa forma, a operação entre dois QMDDs é realizada por meio de suas arestas iniciais.
 
 A maior parte das operações são construídas de forma recursiva. Isso significa que o algoritmo é divido em dois passos: o inicial e o recursivo. O passo inicial representa um cenário trivial, no qual a solução pode ser facilmente encontrada, já o passo recursivo pode ser entendido como uma combinação de múltiplos passos iniciais, nele é preciso definir como os passos iniciais serão construídos e como seus resultados serão utilizados para gerar o resultado do passo recursivo.
 
@@ -351,7 +351,7 @@ Para o QMDD, o passo inicial é quando se atinge uma aresta terminal, fazendo co
 
 \subsection{Funções Fundamentais}\label{sub:fundamentals}
 
-Para definição sucinta dos algoritmos, serão utilizadas algumas notações para se referir a informações presentes nos vértices e arestas do QMDD.
+Para uma definição sucinta dos algoritmos, são utilizadas as seguintes notações para se referir às informações presentes nos vértices e arestas do QMDD.
 
 \begin{enumerate}
   \item $x(v)$: $v$ é um vértice e $x(v)$ signfica o rótulo do vértice $v$;
@@ -370,7 +370,7 @@ Além disso, note que, para representar as matrizes utilizadas por circuitos qu�
 
 Normalizar um vértice é essencial para possibilitar a detecção de redundância presente em um QMDD, visto que a presença de um múltiplo em comum a todas as arestas de um mesmo vértice pode ser fatorado e adicionado à aresta que aponta para esse vértice. Dessa forma, a equivalência entre diferentes vértices pode ser encontrada apenas comparando o alvo e peso de suas arestas.
 
-O processo de normalizar um vértice também envolve a remoção de vértices reduntantes. Ou seja, vértices cujas arestas sejam todas iguais entre si podem ser substituídos por um caminho direto para o alvo de suas arestas. Assim, o algoritmo de normalização deve retornar uma aresta que aponta ou para o vértice original (caso o vértice não seja redundante) ou para o próximo vértice (caso o original seja reduntante). Por isso, é importante que os algoritmos sejam definidos sobre as arestas e não sobre os vértices. Assim, para normalizar um vértice, o algoritmo deve ser aplicado sobre a aresta que aponta para esse vértice.
+O processo de normalização de um vértice também envolve a remoção de vértices redundantes. Ou seja, vértices cujas arestas sejam todas iguais entre si podem ser substituídos por um caminho direto ao destino dessas arestas. Assim, o algoritmo de normalização deve retornar uma aresta que aponta para o vértice original, caso ele não seja redundante, ou para o vértice seguinte, caso seja redundante. Por isso, é importante que os algoritmos sejam definidos sobre as arestas e não sobre os vértices. Dessa forma, a normalização de um vértice é aplicada à aresta que aponta para ele.
 
 Além disso, como as outras operações constroem seu resultado do vértice final ao inicial, o fato que o algoritmo de normalização retorna a aresta que aponta para o vértice faz com que o efeito da normalização seja propagado do vértice final ao inicial. 
 
@@ -412,7 +412,7 @@ Isso faz com que todo vértice tenha sua primeira aresta não nula com peso 1. E
 
 \end{algorithm}
 
-A seguir, são oferecidos dois exemplos de normalização de vértices. Na \cref{fig:redundantNormalization}, o vértice é reduntante pois todas suas arestas são iguais, logo é descartado e o fator comum a todas as arestas é passado para a aresta de entrada. Já na \cref{fig:exampleNormalization}, a primeira aresta é ignorada por ter peso 0, enquanto as demais tem seus pesos dividos pelo peso da primeira aresta não nula, que é 2. Por fim, o peso da aresta de entrada é multiplicado por 2.
+A seguir, são apresentados dois exemplos de normalização de vértices. Na \cref{fig:redundantNormalization}, o vértice é redundante, pois todas as suas arestas são iguais; por isso, ele é descartado e o fator comum a todas as arestas é transferido para a aresta de entrada. Já na \cref{fig:exampleNormalization}, a primeira aresta é ignorada por possuir peso $0$, enquanto as demais têm seus pesos divididos pelo peso da primeira aresta não nula, que é $2$. Por fim, o peso da aresta de entrada é multiplicado por $2$.
 
 \begin{figure}[H]
   \centering
@@ -451,7 +451,7 @@ A seguir, são oferecidos dois exemplos de normalização de vértices. Na \cref
     \draw[->] (src) -- node[right] {$\frac{1}{2}$} (t);
 
   \end{tikzpicture}
-  \caption{Normalização de um vértice reduntante}
+  \caption{Normalização de um vértice redundante}
   \label{fig:redundantNormalization}
 \end{figure}
 
@@ -497,7 +497,7 @@ A seguir, são oferecidos dois exemplos de normalização de vértices. Na \cref
 
   \end{tikzpicture}
 
-  \caption{Normalização de um vértice não reduntante}
+  \caption{Normalização de um vértice não redundante}
   \label{fig:exampleNormalization}
 \end{figure}
 
@@ -540,7 +540,7 @@ Para os próximos algoritmos, é importante que, sempre que um vértice novo sej
 
 \end{algorithm}
 
-Na \cref{fig:exampleAddition}, são somados dois QMDDs, o primeiro representa a matriz $\begin{bmatrix}1 & 0 \\ 0 & 1\end{bmatrix}$ enquanto o segundo representa a matriz $\begin{bmatrix}0 & 1 \\ 1 & 0\end{bmatrix}$. As arestas de entrada da operação são as arestas iniciais de cada QMDD. Como elas não são terminais, é preciso somar as arestas dos vértices aos quais elas apontam. Assim, a primeira aresta de $q0$ é somada com a primeira aresta de $q1$ e assim sucessivamente.O resultado dessa soma é $\begin{bmatrix}1 & 1 \\ 1 & 1\end{bmatrix}$ e o vértice resultante é reduntante, logo é descartado na etapa de normalização.
+Na \cref{fig:exampleAddition}, são somados dois QMDDs: o primeiro representa a matriz $\begin{bmatrix}1 & 0 \\ 0 & 1\end{bmatrix}$, enquanto o segundo representa a matriz $\begin{bmatrix}0 & 1 \\ 1 & 0\end{bmatrix}$. As arestas de entrada da operação são as arestas iniciais de cada QMDD. Como elas não são terminais, somam-se as arestas dos vértices aos quais apontam. Assim, a primeira aresta de $q0$ é somada à primeira aresta de $q1$, e o procedimento é repetido para as demais arestas. O resultado da soma é $\begin{bmatrix}1 & 1 \\ 1 & 1\end{bmatrix}$ e o vértice resultante é redundante, sendo descartado na etapa de normalização.
 
 \begin{equation}
   \label{fig:exampleAddition}
@@ -632,8 +632,7 @@ O algoritmo de multiplicação de QMDDs segue a mesma lógica da multiplicação
 
 Assim como na adição, o passo inicial do algoritmo é quando pelo menos uma das arestas é uma aresta final. As linhas 1 a 8 do \cref{alg:multiplication} seguem a mesma lógica que a adição para verificar se pelo menos uma das arestas é terminal. A diferença é que, agora, em vez de somados, os pesos das arestas são multiplicados. A lógica para escolha de alvo é a mesma da adição.
 
-% TODO: eu tenho quase ctz que a ordem de linha-coluna ta invertida
-Caso nenhuma aresta seja terminal, é necessário construir um novo vértice para acumular o resultado da multiplicação das duas arestas. Para cada posição dos pares linha-coluna das arestas do vértice cujas arestas de entrada apontam, é construída uma nova aresta para armazenar o produto do par. O valor da nova aresta é então somado na posição respectiva do novo vértice. No \cref{alg:multiplication}, as linhas 10 e 11 servem para navegar pelos índices das arestas de cada vértice. A linha 12 cria uma aresta representando a linha $i$, coluna $j$ da matriz resultante, enquanto as linhas 13 a 16 fazem a soma dos produtos cada um dos pares ao longo da linha $i$ da primeira matriz com a coluna $j$ da segunda. A construção das duas arestas, nas linhas 14 e 15, envolve multiplicar o peso da aresta de entrada pelo peso da aresta que será utilizada para aplicar o passo recursivo.
+Caso nenhuma aresta seja terminal, é necessário construir um vértice que acumule o resultado da multiplicação das duas arestas. Para cada posição $(i,j)$ da matriz resultante, é necessário somar o produto dos elementos correspondentes à linha $i$ da primeira matriz e à coluna $j$ da segunda. No \cref{alg:multiplication}, as linhas 10 e 11 percorrem os índices das arestas de cada vértice. A linha 12 cria uma aresta para representar a posição $(i,j)$ da matriz resultante, enquanto as linhas 13 a 16 acumulam os produtos dos pares associados a essa posição. Nas linhas 14 e 15, o peso da aresta de entrada é multiplicado pelo peso da aresta utilizada no passo recursivo.
 
 \begin{algorithm}[H]
   \caption{Multiplicação de Arestas}
@@ -693,7 +692,7 @@ No exemplo a seguir, é realizada a multiplicação entre a matriz H e a X. O re
   \end{bmatrix}
 \end{equation}
 
-Como as arestas inicias de ambos os QMDDs não são terminais, o produto entre elas precisa calcular o produto entre as arestas dos vértices aos quais elas apontam. Já que $r=2$ para QMDDs que representam portas quânticas, o produto entre duas arestas não terminais pode ser entendido como a soma de duas matrizes, uma para cada posição do par linha-coluna definido pela multiplicação. A fins de implementação, é mais eficiente que cada posição da matriz resultante seja calculada em um único passo, porém, para fins de demonstração, serão calculadas duas matrizes que serão somadas para obter o resultado final.
+Como as arestas iniciais de ambos os QMDDs não são terminais, o produto entre elas requer o cálculo dos produtos entre as arestas dos vértices aos quais apontam. Como $r=2$ para QMDDs que representam portas quânticas, o produto entre duas arestas não terminais pode ser entendido como a soma de duas matrizes, uma para cada posição do par linha-coluna definido pela multiplicação. Para fins de implementação, é mais eficiente calcular cada posição da matriz resultante em uma única etapa; para fins de demonstração, entretanto, são calculadas duas matrizes que posteriormente são somadas.
 
 \begin{equation}
   \label{fig:exampleMultiplication}
@@ -806,7 +805,8 @@ Como as arestas inicias de ambos os QMDDs não são terminais, o produto entre e
 Esta representação é equivalente a calcular o produto das matrizes pela seguinte equação:
 
 \begin{equation}
-  \label{eq:hx}
+  \small
+  \label{eq:hxdiagram}
   H \cdot X
   =
   \frac{1}{\sqrt{2}}
@@ -1037,19 +1037,18 @@ A \cref{eq:finalKronecker} apresenta o resultado final da operação, após a no
   \end{tikzpicture}
 \end{equation}
 
-% TODO: Read algorithm and explain it better
 \subsubsection{Construção de Portas Controladas}\label{subsub:controlgate}
 
-Como dito na \cref{sec:gateconstruct}, a construção de portas controlodas se divide em duas partes: qubits de controle menos significativos que o alvo (mais próximos do vértice terminal) e qubits mais significativos (mais próximos do vértice inicial). A construção do QMDD por meio desse método ocorre do vértice terminal ao vértice inicial, considerando apenas os qubits de controle e o qubit alvo. Para cada qubit de controle, é construído um QMDD que representa o comportamento de apenas propagar a transformação sobre o qubit alvo pelas arestas que representam o caso em que o qubit está ativo.
+Como apresentado na \cref{sec:gateconstruct}, a construção de portas controladas se divide em duas partes: qubits de controle menos significativos que o alvo, mais próximos do vértice terminal, e qubits mais significativos, mais próximos do vértice inicial. A construção do QMDD por esse método ocorre do vértice terminal ao vértice inicial e considera apenas os qubits de controle e o qubit alvo. Para cada qubit de controle, constrói-se um QMDD que propaga a transformação sobre o qubit alvo exclusivamente pelas arestas correspondentes ao estado ativo do controle.
 
 A primeira linha do \cref{alg:controlgateconstruct} cria as arestas da porta a ser aplicada sobre o qubit alvo. Já a segunda linha prepara um vetor de arestas que será usado para gradativamente construir o diagrama da porta, do vértice terminal ao inicial. As linhas 3 a 12 constroem o grafo abaixo do qubit alvo. Ou seja, para cada qubit de controle com índice menor que o do qubit alvo, deve-se construir as arestas da seguinte forma: A primeira aresta do vértice deve ser construída de forma a ser equivalente à aplicação da matriz identidade, já que essa aresta representa o caso em que o qubit de controle está em 0. Enquanto a quarta aresta representa o caso em que o qubit de controle está em 1, logo deve ser equivalente à aplicação da matriz de entrada. Como as outras duas arestas representam o cenário em que o qubit tem seu valor alterado, elas são mantidas em 0 (como inicializadas na linha 2) pois os qubits de controle não são alterados em portas controladas. A linha 12, então, agrupa as arestas criadas em um novo vértice, e passa-as adiante para o próximo qubit de controle.
 
 Após construir todos os vértices do qubit de controle menos significativos que o qubit alvo, basta adicionar um novo vértice para o qubit alvo utilizando as arestas criadas previamente, feito na linha 13.
 
-Para os qubits acima do qubit alvo, a mesma lógica de que a primeira e última aresta do vértice representam o caso em que o qubit está respectivamente em 0 e 1. Porém, no caso em que o qubit de controle esteja em 0, não é necessário utilizar o grafo criado até então, já que a porta não será aplicada sobre o qubit. Enquanto a aresta em que o qubit de controle é 1 pode apenas se conectar à aresta de entrada do qubit alvo, ou do qubit de controle previamente contruído.
+Para os qubits acima do qubit alvo, a mesma lógica se aplica: a primeira aresta representa o caso em que o qubit está em $0$, enquanto a última representa o caso em que está em $1$. Quando o qubit de controle está em $0$, não é necessário utilizar o grafo construído anteriormente, pois a porta não é aplicada sobre o qubit. Por sua vez, a aresta correspondente ao controle em $1$ pode ser conectada à aresta de entrada do qubit alvo ou à aresta do qubit de controle construído anteriormente.
 
 \begin{algorithm}[H]
-  \caption{Construção de Portas Controlodas}
+  \caption{Construção de portas controladas}
   \label{alg:controlgateconstruct}
   \KwIn{Índice do qubit alvo $t$; Conjunto de índices dos qubits de controle $C$; Matriz da porta $m$}
   \KwOut{Aresta}
