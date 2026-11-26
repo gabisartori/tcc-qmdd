@@ -10,7 +10,7 @@ OUTPUT_DIR = CODE_DIR / "plots"
 
 # The qubit runner's outer process timeout. Set the layer value once confirmed.
 TIME_CEILINGS_SECONDS = {
-    "qubits": 3600,
+    "qubits": None,
     "layers": None,
 }
 
@@ -18,6 +18,18 @@ SIMULATOR_COLORS = {
     "qmdd": "tab:blue",
     "dense": "tab:orange",
     "sparse": "tab:green",
+}
+
+SIMULATOR_LABELS = {
+    "qmdd": "QMDD",
+    "dense": "Denso",
+    "sparse": "Esparso",
+}
+
+ALGORITHM_LABELS = {
+    "grover": "Grover",
+    "falqon": "FALQON",
+    "qpe": "Estimação de Fase Quântica",
 }
 
 
@@ -38,6 +50,7 @@ def plot_series(
     data: pd.DataFrame,
     x_column: str,
     time_limit: float | None,
+    log_scale: bool = False,
 ) -> None:
     # Average repeat runs at the same simulator and size.
     grouped = (
@@ -54,11 +67,14 @@ def plot_series(
             linewidth=1.8,
             markersize=4,
             color=SIMULATOR_COLORS.get(simulator),
-            label=simulator,
+            label=SIMULATOR_LABELS.get(simulator, simulator),
         )
 
-    ax.set_yscale("log")
-    ax.set_ylabel("Mean runtime (seconds, log scale)")
+    if log_scale:
+        ax.set_yscale("log")
+        ax.set_ylabel("Tempo médio de execução (segundos, escala em log)")
+    else:
+        ax.set_ylabel("Tempo médio de execução (segundos)")
     ax.grid(True, which="both", linestyle=":", alpha=0.5)
 
     if time_limit is not None:
@@ -67,10 +83,10 @@ def plot_series(
             color="black",
             linestyle="--",
             linewidth=1.2,
-            label=f"Process timeout ({time_limit:g} s)",
+            label=f"Tempo limite do processo ({time_limit:g} s)",
         )
 
-    ax.legend(title="Simulator")
+    ax.legend(title="Simulador")
 
 
 def main() -> None:
@@ -88,30 +104,42 @@ def main() -> None:
     for algorithm in ("grover", "falqon", "qpe"):
         subset = qubits.loc[qubits["algorithm"] == algorithm]
         if subset.empty:
-            print(f"No qubit-scaling data for {algorithm}; skipping.")
+            print(f"Não há dados de escalonamento por qubits para {algorithm}; ignorando.")
             continue
 
         fig, ax = plt.subplots(figsize=(8, 5))
-        plot_series(ax, subset, "n_qubits", TIME_CEILINGS_SECONDS["qubits"])
-        ax.set_title(f"{algorithm.title()} runtime vs. number of qubits")
-        ax.set_xlabel("Number of qubits")
+        plot_series(
+            ax,
+            subset,
+            "n_qubits",
+            TIME_CEILINGS_SECONDS["qubits"],
+            log_scale=True,
+        )
+        ax.set_xlim(left=14)
+        ax.set_title(
+            f"{ALGORITHM_LABELS.get(algorithm, algorithm)}: "
+            "tempo de execução por número de qubits"
+        )
+        ax.set_xlabel("Número de qubits")
         fig.tight_layout()
         fig.savefig(OUTPUT_DIR / f"{algorithm}_by_qubits.png", dpi=200)
         plt.close(fig)
 
-    falqon_layers = layers.loc[layers["algorithm"] == "falqon"]
+    falqon_layers = layers.loc[
+        (layers["algorithm"] == "falqon") & (layers["simulator"] != "sparse")
+    ]
     if falqon_layers.empty:
-        print("No Falqon layer-scaling data; skipping.")
+        print("Não há dados de escalonamento por camadas do FALQON; ignorando.")
     else:
         fig, ax = plt.subplots(figsize=(8, 5))
         plot_series(ax, falqon_layers, "n_layers", TIME_CEILINGS_SECONDS["layers"])
-        ax.set_title("Falqon runtime vs. number of layers")
-        ax.set_xlabel("Number of layers")
+        ax.set_title("FALQON: tempo de execução por número de camadas")
+        ax.set_xlabel("Número de camadas")
         fig.tight_layout()
         fig.savefig(OUTPUT_DIR / "falqon_by_layers.png", dpi=200)
         plt.close(fig)
 
-    print(f"Saved plots to {OUTPUT_DIR}")
+    print(f"Gráficos salvos em {OUTPUT_DIR}")
 
 
 if __name__ == "__main__":
