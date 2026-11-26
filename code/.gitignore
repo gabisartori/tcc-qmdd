@@ -1,2 +1,4 @@
 __pycache__
-results/*.csv
+results/layers
+results/qubits
+plots
