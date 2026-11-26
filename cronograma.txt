@@ -16,7 +16,20 @@ https://gitlab.com/quantum-ket/ket/-/blob/master/examples/phase_estimation.py?re
 https://quantumket.org/tutorials/quantum-optimization.html#falqon-feedback-based-algorithm-for-quantum-optimization
 
 # Change log
-- Arestas utilizadas para ket 0: (primeira e segunda) -> (primeira e terceira)
+## Prefácio
+- Resumo do trabalho agora inclui menção aos resultados
+
+## QMDD
+- Interpretação da ordem das arestas do QMDD corrigida: (primeira e segunda) -> (primeira e terceira); (terceira e quarta) -> (segunda e quarta)
 - Adição da matriz Y em QMDD para clarificar qual aresta representa qual posição na matriz
-- Descrição das medições na seção de implementação
-- Resultados
+
+## Implementação
+- Explicação mais aprofundada sobre como a implementação lida com desafios de desempenho do QMDD
+- Descrição de como os métodos de medição necessários para o Ket foram implementados
+
+## Experimentos
+- Melhor explicação dos algoritmos quânticos utilizados para validação do simulador
+- Inclusão de um novo experimento. Variar número de camadas na execução do FALQON
+
+## Resultados
+- Resultados adicionados e comentados
