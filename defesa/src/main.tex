@@ -8,7 +8,7 @@
 
 \graphicspath{{./figuras/}}
 
-\titulo{Uso de Diagramas de Decisão para Simulação de Circuitos Quânticos no Ket}
+\titulo{Simulação Quântica Via QMDD}
 \autores{Gabriel Sartori Rangel}
 \universidade{Universidade Federal de Santa Catarina}
 
@@ -17,26 +17,35 @@
 \capa
 
 \begin{frame}{Motivação}
-  \begin{itemize}
-    \item Algoritmos quânticos podem ser mais eficientes que algoritmos clássicos em problemas específicos.
-    \item O algoritmo de Grover encontra um elemento em uma lista desordenada em $O(\sqrt{n})$.
-    \item O melhor algoritmo clássico conhecido possui complexidade $O(n)$.
-  \end{itemize}
-
-  \begin{block}{Hardware quântico}
-    Os dispositivos disponíveis são caros e possuem baixa capacidade.
+  \begin{block}{Desempenho Quântico}
+    \centering
+    \begin{tabular}{lc}
+      \textbf{Busca em lista desordenada} & \textbf{Complexidade} \\
+      Clássica & $O(n)$ \\
+      Quântica (Grover) & $O(\sqrt{n})$
+    \end{tabular}
   \end{block}
 
-  \begin{itemize}
-    \item A simulação em computadores clássicos permite desenvolver e testar novos algoritmos.
-  \end{itemize}
+  \begin{block}{Hardware Quântico}
+    \begin{itemize}
+      \item Inacessível e de baixa capacidade
+      \item Equivalente à computação clássica
+    \end{itemize}
+  \end{block}
+
+  Logo, algoritmos quânticos devem ser simulados em computadores clássicos.
 \end{frame}
 
 \begin{frame}{Computação quântica circuital}
   Um qubit é representado por um vetor em $\mathbb{C}^{2}$:
 
   \[
-    \ket{\psi}=\alpha\ket{0}+\beta\ket{1},
+    \ket{\psi}
+    =
+    \begin{bmatrix}
+      \alpha \\
+      \beta
+    \end{bmatrix},
     \qquad
     |\alpha|^{2}+|\beta|^{2}=1.
   \]
