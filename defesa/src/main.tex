@@ -1,112 +1,416 @@
 \documentclass{beamer}
 
-% Pacote de estilo da UFSC
 \usepackage{style/ufsc}
+\usepackage{tikz}
+\usepackage{quantikz}
+\usepackage{amsmath}
+\usepackage{graphicx}
 
-% Incluir arquivos da pasta figuras
 \graphicspath{{./figuras/}}
 
-% Pacote de texto aleatório
-\usepackage{lipsum}
+\titulo{Uso de Diagramas de Decisão para Simulação de Circuitos Quânticos no Ket}
+\autores{Gabriel Sartori Rangel}
+\universidade{Universidade Federal de Santa Catarina}
 
-
-% Início do documento
 \begin{document}
 
-%%
-%%	Incluir \capa para os slides
-%% 
-\titulo{Apresentação em \LaTeX!}
-\autores{Autor 1, Autor 2 e Autor 3}
-\universidade{Universidade Federal de Santa Catarina}
 \capa
 
+\begin{frame}{Motivação}
+  \begin{itemize}
+    \item Algoritmos quânticos podem ser mais eficientes que algoritmos clássicos em problemas específicos.
+    \item O algoritmo de Grover encontra um elemento em uma lista desordenada em $O(\sqrt{n})$.
+    \item O melhor algoritmo clássico conhecido possui complexidade $O(n)$.
+  \end{itemize}
 
-%%
-%%	Chamar o ambiente frame para slides comuns
-%%
-\begin{frame}{Introdução}
-\lipsum[75]
+  \begin{block}{Hardware quântico}
+    Os dispositivos disponíveis são caros e possuem baixa capacidade.
+  \end{block}
+
+  \begin{itemize}
+    \item A simulação em computadores clássicos permite desenvolver e testar novos algoritmos.
+  \end{itemize}
 \end{frame}
 
+\begin{frame}{Computação quântica circuital}
+  Um qubit é representado por um vetor em $\mathbb{C}^{2}$:
 
-%%
-%%	Remover o número de páginas do slide com [plain]
-%%
-\begin{frame}[plain]{Sem número de páginas}
-\lipsum[1]
+  \[
+    \ket{\psi}=\alpha\ket{0}+\beta\ket{1},
+    \qquad
+    |\alpha|^{2}+|\beta|^{2}=1.
+  \]
+
+  Operações sobre qubits são descritas por matrizes unitárias:
+  \[
+    X=
+    \begin{bmatrix}
+      0&1\\
+      1&0
+    \end{bmatrix},
+    \qquad
+    H=\frac{1}{\sqrt{2}}
+    \begin{bmatrix}
+      1&1\\
+      1&-1
+    \end{bmatrix}.
+  \]
 \end{frame}
 
+\begin{frame}{O problema do crescimento exponencial}
+  Um circuito com $n$ qubits possui $2^n$ estados possíveis:
+  \[
+    \dim(\ket{\psi})=2^n.
+  \]
 
+  Uma porta aplicada ao circuito completo pode produzir uma matriz com
+  \[
+    \dim(U)=2^n\times 2^n
+  \]
+  posições.
 
-%%
-%%	Você pode usar mais de uma coluna! Inclusão automatizada de imagens com \imagem{arquivo}{label}{legenda}
-%%
-\begin{frame}{Texto em duas colunas}
-  \begin{columns}[c]
-    \begin{column}{.5\textwidth}
+  \begin{alertblock}{Consequência}
+    Vetores e matrizes densas tornam-se inviáveis para circuitos maiores.
+  \end{alertblock}
+\end{frame}
 
-	O brasão da UFSC pode ser observado na \figurename~\ref{fig:ufsc}.
+\begin{frame}{QMDD}
+  \textbf{Quantum Multiple-Valued Decision Diagram}
 
+  \begin{itemize}
+    \item Grafo dirigido acíclico e ponderado.
+    \item Os vértices representam seções da matriz ou do vetor.
+    \item Cada vértice está associado a um qubit.
+    \item As arestas armazenam fatores complexos.
+  \end{itemize}
+
+  \begin{block}{Princípio de compactação}
+    Fatores comuns são normalizados e vértices equivalentes são compartilhados.
+  \end{block}
+\end{frame}
+
+\begin{frame}{QMDD --- porta Y}
+  \[
+    Y=
+    \begin{bmatrix}
+      0&-i\\
+      i&0
+    \end{bmatrix}.
+  \]
+
+  \begin{center}
+    \begin{tikzpicture}[root/.style={circle,draw,minimum size=9mm},
+                        leaf/.style={rectangle,draw,minimum size=8mm}]
+      \node[leaf] (terminal) {$1$};
+      \node[root,above=1.4cm of terminal] (q0) {$q_0$};
+      \node[above=1.2cm of q0] (entrada) {};
+      \draw[->] (entrada) -- node[right] {$i$} (q0);
+      \draw[->] (q0) edge[bend left=75] node[right] {$0$} (terminal);
+      \draw[->] (q0) edge[bend left=25] node[right] {$-1$} (terminal);
+      \draw[->] (q0) edge[bend right=25] node[right] {$1$} (terminal);
+      \draw[->] (q0) edge[bend right=75] node[right] {$0$} (terminal);
+    \end{tikzpicture}
+  \end{center}
+
+  \[
+    [M_{00},M_{01},M_{10},M_{11}]=[0,-1,1,0].
+  \]
+\end{frame}
+
+\begin{frame}{QMDD --- porta sobre dois qubits}
+  \[
+    X\otimes H=
+    \frac{1}{\sqrt{2}}
+    \begin{bmatrix}
+      0&0&1&1\\
+      0&0&1&-1\\
+      1&1&0&0\\
+      1&-1&0&0
+    \end{bmatrix}.
+  \]
+
+  \begin{columns}
+    \begin{column}{.48\textwidth}
+      \begin{itemize}
+        \item Matriz densa: 16 posições.
+        \item Redundância formada pelo padrão de H.
+      \end{itemize}
     \end{column}
-    \begin{column}{.5\textwidth}
-
-	\imagem{UFSC.pdf}{fig:ufsc}{Brasão da UFSC.}
-
+    \begin{column}{.48\textwidth}
+      \begin{exampleblock}{QMDD}
+        Apenas dois vértices e oito arestas.
+      \end{exampleblock}
     \end{column}
   \end{columns}
 \end{frame}
 
+\begin{frame}{Recuperação de um valor da matriz}
+  Para recuperar $M_{31}$:
 
-%%
-%%	Caixas de texto
-%%
-\begin{frame}{Caixas de Texto}
+  \[
+    (3,1)_{10}=(11,01)_2.
+  \]
 
-\begin{block}{Bloco Normal}
-Conteúdo do bloco normal.
-\end{block}
+  \begin{enumerate}
+    \item Converter o índice da linha e da coluna para binário.
+    \item Selecionar a aresta correspondente em cada vértice.
+    \item Percorrer o caminho até o vértice terminal.
+    \item Multiplicar os pesos encontrados no caminho.
+  \end{enumerate}
 
-\begin{alertblock}{Bloco de Alerta}
-Conteúdo do bloco de alerta.
-\end{alertblock}
-
-\begin{exampleblock}{Bloco de Exemplo}
-Conteúdo do bloco de exemplo
-\end{exampleblock}
-
+  \[
+    M_{31}=\frac{1}{\sqrt{2}}\cdot 1\cdot(-1)
+    =-\frac{1}{\sqrt{2}}.
+  \]
 \end{frame}
 
+\begin{frame}{Porta controlada}
+  \[
+    \ket{0}_c\ket{\psi}_t
+    \longrightarrow
+    \ket{0}_c\ket{\psi}_t,
+  \]
+  \[
+    \ket{1}_c\ket{\psi}_t
+    \longrightarrow
+    \ket{1}_cU\ket{\psi}_t.
+  \]
 
-%%
-%%	Equações
-%%
-\begin{frame}{Equações}
+  \begin{itemize}
+    \item Controle em $\ket{0}$: aplica-se a identidade.
+    \item Controle em $\ket{1}$: aplica-se a porta desejada.
+  \end{itemize}
 
-Observe a Equação \ref{eq:sum}.
-
-% Iniciar ambiente equation
-\begin{equation}\label{eq:sum}
-\sum_{n=1}^\infty \frac{1}{n^2} = \lim_{n \to \infty} \left( \frac{1}{1^2} + \frac{1}{2^2} + \cdots + \frac{1}{n^2} \right) = \frac{\pi^2}{6}
-\end{equation}
-
-Observe as Equações \ref{eq:bhaskara}.
-
-% Iniciar ambiente split dentro de equation para várias linhas
-\begin{equation}\label{eq:bhaskara}
-\begin{split}
-x_1 = \frac{-b + \sqrt{b^2 - 4ac}}{2a} \\
-x_2 = \frac{-b - \sqrt{b^2 - 4ac}}{2a}
-\end{split}
-\end{equation}
-
+  \begin{exampleblock}{CNOT}
+    Uma aresta leva à identidade; a outra leva à porta X.
+  \end{exampleblock}
 \end{frame}
 
+\begin{frame}{Efeito das portas controladas no QMDD}
+  \begin{center}
+    \begin{tikzpicture}[root/.style={circle,draw,minimum size=9mm},
+                        leaf/.style={rectangle,draw,minimum size=8mm}]
+      \node[leaf] (terminal) {$1$};
+      \node[root,above left=.8cm and 1.1cm of terminal] (i) {$I$};
+      \node[root,above right=.8cm and 1.1cm of terminal] (x) {$X$};
+      \node[root,above=.8cm of $(i)!0.5!(x)$] (q1) {$q_1$};
+      \node[above=.7cm of q1] (entrada) {};
+      \draw[->] (entrada) -- node[right] {$1$} (q1);
+      \draw[->] (q1) -- node[left] {$q_1=\ket{0}$} (i);
+      \draw[->] (q1) -- node[right] {$q_1=\ket{1}$} (x);
+      \draw[->] (i) -- (terminal);
+      \draw[->] (x) -- (terminal);
+    \end{tikzpicture}
+  \end{center}
 
-%%
-%%	Incluir \capadetras para agradecimentos e contato.
-%%
-\contato{Contato: \\ \url{{autor1, autor2, autor3}@ufsc.br}}
+  Circuitos com muitos controles podem exigir vértices adicionais para representar todos os cenários possíveis.
+
+  \begin{alertblock}{Hipótese}
+    A estrutura deve ser eficiente em circuitos com padrões repetidos e poucos controles.
+  \end{alertblock}
+\end{frame}
+
+\begin{frame}{Implementação no Ket}
+  Os algoritmos necessários foram implementados em Rust e integrados ao código-fonte do Ket.
+
+  \begin{columns}[t]
+    \begin{column}{.48\textwidth}
+      \begin{block}{Criação e aplicação}
+        \begin{itemize}
+          \item Normalização.
+          \item Adição de arestas.
+          \item Multiplicação de QMDDs.
+          \item Portas controladas.
+        \end{itemize}
+      \end{block}
+    \end{column}
+    \begin{column}{.48\textwidth}
+      \begin{block}{Otimizações}
+        \begin{itemize}
+          \item Identificação de vértices duplicados.
+          \item Memoização de operações entre arestas.
+        \end{itemize}
+      \end{block}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Aplicação de uma porta genérica}
+  O estado atual é representado por um QMDD:
+  \[
+    \ket{\psi_{\text{novo}}}=U\ket{\psi_{\text{atual}}}.
+  \]
+
+  \begin{center}
+    $\mathrm{QMDD}(U)\times\mathrm{QMDD}(\psi_{\text{atual}})$
+  \end{center}
+
+  \begin{itemize}
+    \item A operação de multiplicação é recursiva.
+    \item O método visita vértices e arestas até chegar ao terminal.
+    \item Pares de arestas já calculados são reutilizados pela memoização.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Medição e simulação forte}
+  \textbf{Recuperação do vetor de amplitudes}
+  \begin{itemize}
+    \item Percorrer todos os caminhos da aresta inicial ao terminal.
+    \item Multiplicar os pesos de cada caminho.
+    \item Associar o produto ao estado correspondente da base computacional.
+  \end{itemize}
+
+  \textbf{Medição destrutiva}
+  \[
+    M_0=
+    \begin{bmatrix}
+      1&0\\
+      0&0
+    \end{bmatrix},
+    \qquad
+    M_1=
+    \begin{bmatrix}
+      0&0\\
+      0&1
+    \end{bmatrix}.
+  \]
+
+  Aplicar $M_0$ ou $M_1$ e renormalizar o estado colapsado.
+\end{frame}
+
+\begin{frame}{Testes da implementação}
+  \begin{itemize}
+    \item Avaliação manual de circuitos pequenos.
+    \item Criação de estados de Bell.
+    \item Circuito de três qubits com controles em posições diferentes do alvo.
+    \item Medição sucessiva de um mesmo qubit.
+    \item Medição independente de diferentes qubits em superposição.
+  \end{itemize}
+
+  \begin{exampleblock}{Validação}
+    Os resultados foram comparados ao simulador denso do Ket e apresentaram compatibilidade em diferentes algoritmos.
+  \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Experimentos realizados}
+  Comparação entre:
+  \begin{itemize}
+    \item simulador QMDD;
+    \item simulador denso;
+    \item simulador esparso.
+  \end{itemize}
+
+  Algoritmos:
+  \begin{itemize}
+    \item Grover;
+    \item FALQON;
+    \item Estimação de Fase Quântica.
+  \end{itemize}
+
+  Dois tipos de variação:
+  \begin{enumerate}
+    \item Número de qubits.
+    \item Número de camadas do FALQON.
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{Algoritmos utilizados}
+  \begin{block}{Grover}
+    Busca em conjuntos desordenados. Utiliza repetidamente portas X, H e portas Z controladas.
+  \end{block}
+
+  \begin{block}{FALQON}
+    Otimização por feedback aplicada ao problema Max-Cut. Possui menos controles que Grover.
+  \end{block}
+
+  \begin{block}{Estimação de Fase Quântica}
+    Estima a fase de um operador e combina portas controladas com a Transformada Quântica de Fourier.
+  \end{block}
+\end{frame}
+
+\begin{frame}{Variação do número de qubits}
+  \begin{enumerate}
+    \item Começar com uma quantidade mínima de qubits.
+    \item Executar a simulação dentro do limite de tempo.
+    \item Incrementar o número de qubits após o sucesso.
+    \item Avançar para a próxima combinação quando o limite for ultrapassado.
+  \end{enumerate}
+
+  \begin{block}{Ambiente}
+    As mesmas execuções foram organizadas sequencialmente para reduzir a interferência entre simuladores.
+  \end{block}
+\end{frame}
+
+\begin{frame}{Resultado --- Grover}
+  \begin{center}
+    \includegraphics[width=.86\textwidth,height=.68\textheight,keepaspectratio]{grover_by_qubits.png}
+  \end{center}
+
+  O QMDD foi competitivo até aproximadamente 14 qubits. A partir desse ponto, o crescimento dos controles aumentou rapidamente o tempo de execução.
+\end{frame}
+
+\begin{frame}{Resultado --- FALQON por qubits}
+  \begin{center}
+    \includegraphics[width=.86\textwidth,height=.68\textheight,keepaspectratio]{falqon_by_qubits.png}
+  \end{center}
+
+  Aos 18 qubits, QMDD, denso e esparso tiveram tempos próximos. O QMDD manteve-se competitivo em um intervalo maior que no Grover.
+\end{frame}
+
+\begin{frame}{Resultado --- Estimação de Fase Quântica}
+  \begin{center}
+    \includegraphics[width=.86\textwidth,height=.68\textheight,keepaspectratio]{qpe_by_qubits.png}
+  \end{center}
+
+  O simulador denso chegou a 30 qubits. O esparso chegou a 27 qubits, enquanto o QMDD deixou de concluir a partir de 21 qubits.
+\end{frame}
+
+\begin{frame}{Variação do número de camadas no FALQON}
+  \begin{itemize}
+    \item Número de qubits fixado em 18.
+    \item Primeira execução a partir de 250 camadas.
+    \item Experimentos posteriores aumentaram o número de camadas.
+  \end{itemize}
+
+  Como a largura do circuito permanece constante, o objetivo é observar o custo provocado pelo aumento da profundidade.
+\end{frame}
+
+\begin{frame}{Resultado --- camadas do FALQON}
+  \begin{center}
+    \includegraphics[width=.86\textwidth,height=.68\textheight,keepaspectratio]{falqon_by_layers.png}
+  \end{center}
+
+  O tempo do QMDD cresceu aproximadamente de forma linear. A partir de cerca de 1500 camadas, ele passou a superar o simulador denso.
+\end{frame}
+
+\begin{frame}{Conclusões}
+  \begin{itemize}
+    \item O QMDD é competitivo em circuitos com padrões repetidos e poucos controles.
+    \item O crescimento do número de vértices reduz essa vantagem em circuitos altamente controlados.
+    \item O simulador denso se beneficia da paralelização em arquiteturas com vários núcleos.
+    \item O QMDD tende a ser relativamente mais vantajoso em dispositivos com menos núcleos.
+  \end{itemize}
+
+  \begin{exampleblock}{Objetivo geral atingido}
+    Um simulador QMDD foi implementado e integrado ao Ket, podendo ser escolhido como opção de execução.
+  \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Limitações e trabalhos futuros}
+  \begin{block}{Baixa paralelização}
+    Operações recursivas sobre vértices e arestas dificultam a distribuição segura entre núcleos.
+  \end{block}
+
+  \begin{block}{Memória}
+    Vértices não alcançados não são removidos imediatamente, podendo aumentar o consumo de memória.
+  \end{block}
+
+  \begin{block}{LIMDD}
+    Estender o trabalho para o \emph{Local Invertible Map Decision Diagram}, que usa matrizes invertíveis locais nas arestas.
+  \end{block}
+\end{frame}
+
+\contato{Contato: \\ \url{gabriel.sartori@grad.ufsc.br}}
 \capadetras{Obrigado!}
 
 \end{document}

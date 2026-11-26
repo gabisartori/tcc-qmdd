@@ -6,9 +6,9 @@ O tema do trabalho é a simulação de circuitos quânticos por meio de diagrama
 
 ## Motivação
 
-Primeiramente, é importante ressaltar como o desenvolvimento de algoritmos quânticos impacta a área da computação. Sabe-se que é possível utilizar fenômenos quânticos para executar algoritmos mais eficientes que algoritmos clássicos.
+Sobre a motivação, é importante ressaltar como o desenvolvimento de algoritmos quânticos impacta a área da computação.
 
-Por exemplo, o algoritmo de Grover permite encontrar um elemento em uma lista desordenada com complexidade $O(\sqrt{n})$, onde $n$ é o tamanho da lista. O melhor algoritmo clássico conhecido possui complexidade linear, $O(n)$.
+Sabe-se que é possível utilizar fenômenos quânticos para executar algoritmos mais eficientes que algoritmos clássicos. Por exemplo, o algoritmo de Grover permite encontrar um elemento em uma lista desordenada com complexidade $O(\sqrt{n})$, onde $n$ é o tamanho da lista. O melhor algoritmo clássico conhecido possui complexidade linear, $O(n)$.
 
 Apesar desse ganho de desempenho, computação quântica e computação clássica são formalmente equivalentes em termos de capacidade computacional. Isso significa que todo algoritmo quântico pode ser executado em um computador clássico e vice-versa.
 
@@ -18,7 +18,7 @@ Essa equivalência é relevante porque o desenvolvimento de algoritmos quântico
 
 Uma das formas de representar um algoritmo quântico é por meio de circuitos compostos por qubits e portas lógicas quânticas.
 
-O menor elemento dessa representação é o qubit, representado por um vetor em $\mathbb{C}^2$:
+Nela, o qubit é a menor unidade de informação possível. Ele é representado por um vetor em $\mathbb{C}^2$:
 
 $$
 \ket{\psi} = \alpha\ket{0} + \beta\ket{1},
@@ -93,7 +93,9 @@ Para recuperar um valor da matriz, são escolhidas arestas de acordo com os índ
 
 ### Construção de Porta Controlada
 
-Portas controladas exigem uma representação diferente porque a operação aplicada no qubit alvo depende do estado do qubit de controle.
+Porém, não basta concatenar matrizes individuais para ser capaz de simular qualquer algoritmo quântico. É preciso poder construir portas controladas ---portas que atuam no qubit alvo apenas se determinados qubits estiverem ativos.
+
+Essas portas exigem uma representação diferente porque a operação aplicada no qubit alvo depende do estado do qubit de controle.
 
 Se o controle estiver em $\ket{0}$, o alvo deve permanecer inalterado e será aplicada a matriz identidade.
 
@@ -103,7 +105,9 @@ Um exemplo é a porta CNOT. O vértice que representa o qubit de controle possui
 
 A combinação desses caminhos permite representar a aplicação condicional da porta.
 
-Esse comportamento gera um problema relevante para a estrutura. Cada qubit de controle pode exigir vértices adicionais para representar os cenários possíveis. Por isso, circuitos com muitos controles podem fazer o tamanho do QMDD crescer rapidamente.
+O QMDD da CNOT possui um vértice para o qubit de controle no nível superior. Uma de suas arestas representa o cenário em que o controle está em $\ket{0}$ e leva a um vértice que aplica a identidade sobre o alvo. A outra representa o cenário em que o controle está em $\ket{1}$ e leva a um vértice que aplica a porta X.
+
+Esse comportamento gera um problema relevante para a estrutura. Cada qubit de controle requer o dobro de vértices para representar as duas possibilidades. Por isso, circuitos com muitos controles podem fazer o tamanho do QMDD crescer exponencialmente.
 
 Espera-se, portanto, que o método tenha melhor desempenho em circuitos nos quais as matrizes possuam padrões repetidos e poucos qubits sejam utilizados como controle.
 
@@ -126,26 +130,45 @@ Durante essa multiplicação, dois tipos de mecanismos foram utilizados para mel
 
 Essas otimizações são importantes porque as operações de adição e multiplicação são recursivas e podem visitar várias vezes os mesmos pares de arestas.
 
-Atualmente, o Ket decompõe portas arbitrárias em um conjunto fundamental composto por portas de Pauli, Hadamard, fase e rotações. Após a decomposição, as portas fundamentais são enviadas ao simulador, que cria e aplica seus QMDDs.
+Atualmente, o Ket decompõe portas arbitrárias em um conjunto fundamental composto por portas de Pauli, Hadamard, fase e rotações. Após a decomposição, as portas fundamentais são enviadas ao simulador, que cria e aplica seus QMDDs respectivos.
 
 ### Medição e Simulação Forte
 
 O Ket exige que um simulador seja capaz de realizar dois tipos de operação sobre os estados:
 
+- Cálculo de probabilidade de medição em determinado estado
 - Medição destrutiva de qubits.
 - Recuperação completa do vetor de amplitudes.
 
-Por isso, o simulador implementado suporta simulação forte.
+Por isso, o simulador implementado suporta simulação forte. Ou seja, o vetor de estado pode ser inteiramente reconstruído durante a simulação.
 
 Para recuperar o vetor de amplitudes, o algoritmo percorre todos os caminhos possíveis entre a aresta inicial e o vértice terminal. Para cada caminho, os pesos das arestas são multiplicados.
 
 O resultado é a amplitude correspondente ao estado associado a esse caminho.
 
-A medição de um qubit é realizada percorrendo o QMDD e somando as probabilidades dos caminhos nos quais o qubit pode assumir o valor $\ket{0}$ ou o valor $\ket{1}$.
+O cálculo da probabilidade do resultado de um qubit é realizado percorrendo o QMDD e somando as probabilidades dos caminhos nos quais o qubit pode assumir o valor $\ket{0}$ ou o valor $\ket{1}$.
 
-A probabilidade de cada resultado é utilizada para escolher aleatoriamente o resultado da medição, de acordo com a regra de Born.
+Dada a probabilidade de cada resultado para a medição de um qubit, a biblioteca Ket escolhe uma possibilidade aleatoriamente e invoca o método de medição destrutiva para o resultado escolhido.
 
-Após o resultado ser escolhido, o estado é atualizado de modo que a superposição seja colapsada. Se o qubit é medido em $\ket{0}$, os caminhos associados a $\ket{1}$ são eliminados. Caso contrário, os caminhos associados a $\ket{0}$ são eliminados.
+O colapso do estado é feito pelas matrizes de projeção
+
+$$
+M_0 =
+\begin{bmatrix}
+1 & 0 \\
+0 & 0
+\end{bmatrix}
+\qquad
+\text{e}
+\qquad
+M_1 =
+\begin{bmatrix}
+0 & 0 \\
+0 & 1
+\end{bmatrix}.
+$$
+
+De acordo com o resultado escolhido, aplica-se a matriz correspondente ao estado e realiza-se a normalização. No QMDD, essa normalização é trivial: basta dividir o peso da aresta inicial pela raiz quadrada da probabilidade calculada previamente.
 
 Esse procedimento também permite que o Ket realize medições sucessivas sobre o mesmo circuito. O mesmo qubit retornará sempre o resultado compatível com o estado colapsado.
 
@@ -155,13 +178,15 @@ Os experimentos foram realizados para analisar o comportamento do simulador em d
 
 O simulador QMDD foi comparado com o simulador denso e com o simulador esparso já disponíveis no Ket.
 
+A representação densa permite processar as posições do vetor de estado de forma independente em várias partes da operação. Isso torna o simulador denso adequado para a execução paralela em computadores com múltiplos núcleos de processamento. Já o QMDD realiza operações recursivas sobre vértices e arestas, mas possui baixa paralelização na implementação atual.
+
 ### Algoritmos
 
 Os algoritmos utilizados foram o algoritmo de Grover, o FALQON e o algoritmo de Estimação de Fase Quântica.
 
 O algoritmo de Grover utiliza repetidamente portas controladas. Isso faz com que o número de qubits de controle possa crescer junto com o tamanho do circuito.
 
-O FALQON é um algoritmo de otimização composto por portas controladas em menor quantidade que o algoritmo de Grover. Foi utilizado o problema Max-Cut sobre um grafo.
+O FALQON é um algoritmo de otimização composto por portas controladas em menor quantidade que o algoritmo de Grover. Foi utilizado o problema Max-Cut sobre um grafo. Um detalhe importante é que, o FALQON opera com a repetição do mesmo circuito por múltiplas iterações, variando apenas os parâmetros de portas de rotações. Isso faz com que, apesar da aplicação de múltiplas portas controladas, o grafo da simulação não cresce mais do que já cresceu durante a primeira iteração (visto que todos os vértices dos qubits de controle já foram duplicados, eles não precisam ser duplicados novamente da segunda iteração em diante).
 
 Por fim, o algoritmo de Estimação de Fase Quântica combina portas controladas com operações da Transformada Quântica de Fourier.
 
@@ -173,18 +198,40 @@ No primeiro tipo de experimento, o número de qubits foi aumentado progressivame
 
 Em cada combinação, iniciam-se as execuções em uma quantidade mínima de qubits. Quando a simulação termina dentro do limite estabelecido, o número de qubits é aumentado.
 
-Caso o tempo máximo seja ultrapassado, a combinação deixa de ser executada naquele cenário.
+Caso o tempo máximo seja ultrapassado, o experimento avança para a próxima combinação de simulador-algoritmo.
 
-Essa estratégia permite observar como o tempo de simulação cresce em relação ao tamanho do circuito.
+Essa estratégia permite observar como o tempo de simulação cresce em relação ao tamanho do circuito e evita que as diferentes técnicas de simulação interfiram entre si durante os experimentos.
 
 ### Variando as Camadas no FALQON
 
-Um segundo experimento manteve o número de qubits fixo e variou o número de camadas do FALQON.
+Visto que o FALQON pode ser executado com uma quantia arbitrária de iterações, também foi temporizado o efeito que o número de camadas tem sobre o desempenho do simulador.
 
-Nesse caso, o número de qubits foi fixado em 18. O número de camadas variou de 250 até 1500.
-
-O objetivo desse experimento foi observar o custo causado por aumentar a quantidade de operações, mantendo a largura do circuito constante.
+Nesse caso, o número de qubits foi fixado em 18. O número de camadas variou a partir de 250.
 
 ### Resultados
 
-Esta seção será preenchida após a conclusão da coleta e análise dos resultados.
+Os resultados mostram que o desempenho do QMDD depende fortemente da estrutura dos circuitos.
+
+No algoritmo de Grover, o simulador QMDD foi competitivo até aproximadamente 14 qubits. A partir desse ponto, o crescimento do número de controles fez o tempo aumentar rapidamente: aos 18 qubits, foram necessários cerca de 42 segundos, enquanto o simulador denso levou cerca de 3 segundos e o esparso levou cerca de 348 segundos. O QMDD deixou de concluir os experimentos a partir de 20 qubits.
+
+No FALQON, o QMDD apresentou vantagem em relação aos simuladores denso e esparso em diferentes partes do intervalo testado. Com 18 qubits, por exemplo, o QMDD levou cerca de 3,1 segundos, o denso cerca de 3,1 segundos e o esparso cerca de 11,6 segundos. O desempenho do QMDD permaneceu competitivo até números maiores de qubits.
+
+Na Estimação de Fase Quântica, o método denso apresentou o melhor crescimento de desempenho: simulou até 30 qubits em cerca de 136 segundos. O simulador esparso também chegou a 27 qubits, com cerca de 506 segundos, enquanto o QMDD deixou de concluir o experimento a partir de 21 qubits.
+
+No experimento com 18 qubits variando o número de camadas do FALQON, o tempo do QMDD cresceu de forma aproximadamente linear. Em 100 camadas, foram necessários cerca de 30 segundos; em 1000, cerca de 300 segundos; e em 5000, cerca de 2182 segundos. O QMDD manteve vantagem sobre o denso a partir de aproximadamente 1500 camadas e sobre o esparso em todas as combinações em que o esparso foi executado.
+
+## Conclusões e Objetivos
+
+Os resultados indicam que o QMDD apresenta desempenho competitivo em algoritmos que utilizam uma quantidade limitada de qubits de controle. Nos circuitos testados, essa característica permitiu ao método aproveitar padrões repetidos e compartilhar vértices do diagrama. Por outro lado, o crescimento do número de vértices em circuitos com muitos controles fez o QMDD perder competitividade em relação aos simuladores denso e esparso.
+
+O simulador denso se beneficia da possibilidade de paralelizar operações sobre as posições do vetor de estado, o que favorece arquiteturas com vários núcleos de processamento. Dessa forma, o QMDD tende a apresentar maior vantagem relativa em dispositivos com menos núcleos, nos quais a utilização da memória compartilhada e da estrutura compacta pode compensar a baixa paralelização.
+
+Como resultado principal do trabalho, o simulador foi implementado e integrado corretamente à plataforma Ket. Ele está disponível aos usuários por meio da interface de seleção de simuladores, permitindo que circuitos já escritos para a biblioteca sejam executados utilizando o novo método sem alterações adicionais.
+
+## Limitações e Trabalhos Futuros
+
+A implementação atual apresenta baixa paralelização. As operações sobre vértices e arestas são recursivas e dependentes umas das outras, dificultando a distribuição segura do processamento entre diferentes núcleos.
+
+Também existe a possibilidade de otimizar o consumo de memória do simulador. Atualmente, vértices que deixam de ser alcançáveis por uma aresta não são removidos imediatamente da estrutura. Dessa forma, regiões não utilizadas continuam ocupando memória e podem aumentar o custo das operações de identificação de vértices duplicados.
+
+Como evolução do método, pode-se estudar o LIMDD, ou *Local Invertible Map Decision Diagram*, que é uma versão aprimorada do QMDD proposta para lidar com o crescimento exponencial em circuitos com alto grau de entrelaçamento. O LIMDD utiliza vértices compactos semelhantes aos do QMDD, mas permite que suas arestas sejam rotuladas por matrizes invertíveis locais. Essa extensão poderia preservar os conhecimentos obtidos com a implementação atual e ampliar o desempenho da simulação em um conjunto mais amplo de circuitos quânticos.
