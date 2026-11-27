@@ -7,6 +7,7 @@
 \usepackage{graphicx}
 
 \graphicspath{{./figuras/}}
+\definecolor{darkgreen}{RGB}{6,128,40}
 
 \titulo{Simulação Quântica Via QMDD}
 \autores{Gabriel Sartori Rangel}
@@ -67,29 +68,46 @@
 \end{frame}
 
 \begin{frame}{O problema do crescimento exponencial}
-  Um circuito com $n$ qubits possui $2^n$ estados possíveis:
-  \[
-    \dim(\ket{\psi})=2^n.
-  \]
+  \begin{columns}[c]
+    \begin{column}{.48\textwidth}
+      Uma operação sobre dois qubits combina matrizes pelo produto tensorial:
+      \[
+        X\otimes H
+        =\frac{1}{\sqrt{2}}
+        \begin{bmatrix}
+          0&0&1&1\\
+          0&0&1&-1\\
+          1&1&0&0\\
+          1&-1&0&0
+        \end{bmatrix}.
+      \]
 
-  Uma porta aplicada ao circuito completo pode produzir uma matriz com
-  \[
-    \dim(U)=2^n\times 2^n
-  \]
-  posições.
+      Duas matrizes $2\times2$ produzem uma matriz $4\times4$.
+    \end{column}
 
-  \begin{alertblock}{Consequência}
-    Vetores e matrizes densas tornam-se inviáveis para circuitos maiores.
-  \end{alertblock}
+    \begin{column}{.48\textwidth}
+      Considerando $n$ matrizes unitárias:
+      \[
+        U_1\otimes U_2\otimes\cdots\otimes U_n
+      \]
+
+      o resultado possui:
+      \[
+        2^n\times2^n
+      \]
+      posições.
+
+      \begin{alertblock}{Crescimento exponencial}
+      \end{alertblock}
+    \end{column}
+  \end{columns}
 \end{frame}
-
 \begin{frame}{QMDD}
   \textbf{Quantum Multiple-Valued Decision Diagram}
 
   \begin{itemize}
     \item Grafo dirigido acíclico e ponderado.
-    \item Os vértices representam seções da matriz ou do vetor.
-    \item Cada vértice está associado a um qubit.
+    \item Os vértices representam qubits.
     \item As arestas armazenam fatores complexos.
   \end{itemize}
 
@@ -98,18 +116,19 @@
   \end{block}
 \end{frame}
 
+% TODO: Better align those
 \begin{frame}{QMDD --- porta Y}
   \[
-    Y=
-    \begin{bmatrix}
-      0&-i\\
-      i&0
-    \end{bmatrix}.
-  \]
-
-  \begin{center}
+    \begin{centering}
+      Y=
+      \begin{bmatrix}
+        0&-i\\
+        i&0
+      \end{bmatrix}
+      =
+    \end{centering}
     \begin{tikzpicture}[root/.style={circle,draw,minimum size=9mm},
-                        leaf/.style={rectangle,draw,minimum size=8mm}]
+                        leaf/.style=X ⊗H{rectangle,draw,minimum size=8mm}]
       \node[leaf] (terminal) {$1$};
       \node[root,above=1.4cm of terminal] (q0) {$q_0$};
       \node[above=1.2cm of q0] (entrada) {};
@@ -119,58 +138,99 @@
       \draw[->] (q0) edge[bend right=25] node[right] {$1$} (terminal);
       \draw[->] (q0) edge[bend right=75] node[right] {$0$} (terminal);
     \end{tikzpicture}
-  \end{center}
-
-  \[
-    [M_{00},M_{01},M_{10},M_{11}]=[0,-1,1,0].
   \]
 \end{frame}
 
 \begin{frame}{QMDD --- porta sobre dois qubits}
-  \[
-    X\otimes H=
-    \frac{1}{\sqrt{2}}
-    \begin{bmatrix}
-      0&0&1&1\\
-      0&0&1&-1\\
-      1&1&0&0\\
-      1&-1&0&0
-    \end{bmatrix}.
-  \]
+  \begin{figure}[H]
+    \[
+      X \otimes H
+      = 
+      \frac{1}{\sqrt{2}}
+      \begin{bmatrix}
+        \textcolor{blue}{0} & \textcolor{blue}{0} & \textcolor{red}{1} & \textcolor{red}{1} \\
+        \textcolor{blue}{0} & \textcolor{blue}{0} & \textcolor{red}{1} & \textcolor{red}{-1} \\
+        \textcolor{darkgreen}{1} & \textcolor{darkgreen}{1} & \textcolor{orange}{0} & \textcolor{orange}{0} \\
+        \textcolor{darkgreen}{1} & \textcolor{darkgreen}{-1} & \textcolor{orange}{0} & \textcolor{orange}{0}
+      \end{bmatrix}
+      =
+      \begin{tikzpicture}[
+        node distance=1.5cm,
+        root/.style={circle,draw,minimum size=8mm},
+        leaf/.style={rectangle,draw,minimum size=6mm},
+        baseline={(current bounding box.center)}
+      ]
 
-  \begin{columns}
+        % terminal node
+        \node[leaf] (t) at (0,0) {$1$};
+
+        % nodes
+        \node[root] (v) at (0,4) {q1};
+        \node[root] (B) at (0,2) {q0};
+
+
+        % incoming edge of weight 1
+        \node[above=of v] (src) {};
+        \draw[->] (src) -- node[right] {$\frac{1}{\sqrt{2}}$} (v);
+
+        % four outgoing edges, one for each matrix entry (1,0,0,1)
+        \draw[->] (v) edge[bend left=90]  node[right, text=orange]  {$0$} (B);
+        \draw[->] (v) edge[bend left=30]  node[right, text=darkgreen]  {$1$} (B);
+        \draw[->] (v) edge[bend right=30] node[right, text=red] {$1$} (B);
+        \draw[->] (v) edge[bend right=90] node[right, text=blue] {$0$} (B);
+
+        \draw[->] (B) edge[bend left=30]  node[right]  {$1$} (t);
+        \draw[->] (B) edge[bend right=30] node[right] {$1$} (t);
+        \draw[->] (B) edge[bend left=90]  node[right]  {$-1$} (t);
+        \draw[->] (B) edge[bend right=90] node[right] {$1$} (t);
+
+
+      \end{tikzpicture}
+    \]
+  \end{figure}
+\end{frame}
+
+\begin{frame}{QMDD para o vetor de estados}
+  \begin{columns}[c]
     \begin{column}{.48\textwidth}
       \begin{itemize}
-        \item Matriz densa: 16 posições.
-        \item Redundância formada pelo padrão de H.
+        \item Projeção da primeira coluna da matriz;
+        \item Use a primeira e a terceira a resta para um qubit inicializado em \ket{0}.
       \end{itemize}
     \end{column}
     \begin{column}{.48\textwidth}
-      \begin{exampleblock}{QMDD}
-        Apenas dois vértices e oito arestas.
-      \end{exampleblock}
+      \[
+        X \otimes H \ket{00}
+        =
+        \begin{tikzpicture}[
+          node distance=1.5cm,
+          root/.style={circle,draw,minimum size=8mm},
+          leaf/.style={rectangle,draw,minimum size=6mm},
+          baseline={(current bounding box.center)}
+        ]
+      
+          % terminal node
+          \node[leaf] (t) at (0,0) {$1$};
+      
+          % nodes
+          \node[root] (v) at (0,4) {q1};
+          \node[root] (B) at (0,2) {q0};
+      
+      
+          % incoming edge of weight 1
+          \node[above=of v] (src) {};
+          \draw[->] (src) -- node[right] {$\frac{1}{\sqrt{2}}$} (v);
+      
+          \draw[->] (v) edge[bend right=30] node[left, text=blue] {$0$} (B);
+          \draw[->] (v) edge[bend left=30] node[right, text=darkgreen] {$1$} (B);
+      
+          \draw[->] (B) edge[bend right=30] node[left] {$1$} (t);
+          \draw[->] (B) edge[bend left=30] node[right] {$1$} (t);
+      
+        \end{tikzpicture}
+      \]
     \end{column}
   \end{columns}
-\end{frame}
-
-\begin{frame}{Recuperação de um valor da matriz}
-  Para recuperar $M_{31}$:
-
-  \[
-    (3,1)_{10}=(11,01)_2.
-  \]
-
-  \begin{enumerate}
-    \item Converter o índice da linha e da coluna para binário.
-    \item Selecionar a aresta correspondente em cada vértice.
-    \item Percorrer o caminho até o vértice terminal.
-    \item Multiplicar os pesos encontrados no caminho.
-  \end{enumerate}
-
-  \[
-    M_{31}=\frac{1}{\sqrt{2}}\cdot 1\cdot(-1)
-    =-\frac{1}{\sqrt{2}}.
-  \]
 \end{frame}
 
 \begin{frame}{Porta controlada}
@@ -197,47 +257,69 @@
 
 \begin{frame}{Efeito das portas controladas no QMDD}
   \begin{center}
-    \begin{tikzpicture}[root/.style={circle,draw,minimum size=9mm},
-                        leaf/.style={rectangle,draw,minimum size=8mm}]
-      \node[leaf] (terminal) {$1$};
-      \node[root,above left=.8cm and 1.1cm of terminal] (i) {$I$};
-      \node[root,above right=.8cm and 1.1cm of terminal] (x) {$X$};
-      \node[root,above=.8cm of $(i)!0.5!(x)$] (q1) {$q_1$};
-      \node[above=.7cm of q1] (entrada) {};
-      \draw[->] (entrada) -- node[right] {$1$} (q1);
-      \draw[->] (q1) -- node[left] {$q_1=\ket{0}$} (i);
-      \draw[->] (q1) -- node[right] {$q_1=\ket{1}$} (x);
-      \draw[->] (i) -- (terminal);
-      \draw[->] (x) -- (terminal);
+    \begin{tikzpicture}[
+      node distance=18mm,
+      root/.style={circle,draw,minimum size=8mm},
+      leaf/.style={rectangle,draw,minimum size=6mm},
+      baseline={(current bounding box.center)}
+    ]
+  
+      % terminal node
+      \node[leaf] (t) at (3,0) {$1$};
+  
+      % nodes
+      \node[root] (B) at (0,2) {$q0_0$};
+      \node[root] (v) at (6,2) {$q0_1$};
+      \node[root] (C) at (3,4) {q1};
+  
+  
+      % incoming edge of weight 1
+      \node[above=of C] (src) {};
+      \draw[->] (src) -- node[right] {$1$} (C);
+  
+      \draw[->] (C) edge node[left, yshift=12pt] {$1$} (B);
+      \draw[->] (C) edge[bend right=15] node[left, yshift=16pt] {$0$} (t);
+      \draw[->] (C) edge[bend left=15] node[right, yshift=16pt] {$0$} (t);
+      \draw[->] (C) edge node[right, yshift=12pt] {$1$} (v);
+      
+      % Control Qubit is 0. So Target must stay the same
+      \draw[->] (B) edge[bend right=45] node[left] {$1$} (t);
+      \draw[->] (B) edge[bend right=15]  node[left]  {$0$} (t);
+      \draw[->] (B) edge[bend left=15]  node[right, xshift=-4pt, yshift=5pt]  {$0$} (t);
+      \draw[->] (B) edge[bend left=35] node[right, yshift=8pt, xshift=-5pt] {$1$} (t);
+  
+      % Control Qubit is 1. So Target must be flipped
+      \draw[->] (v) edge[bend right=35] node[left, yshift=8pt, xshift=5pt] {$0$} (t);
+      \draw[->] (v) edge[bend right=15]  node[left, xshift=4pt, yshift=5pt]  {$1$} (t);
+      \draw[->] (v) edge[bend left=15]  node[right]  {$1$} (t);
+      \draw[->] (v) edge[bend left=45] node[right] {$0$} (t);
+  
     \end{tikzpicture}
   \end{center}
+  Cada qubit de controle duplica a quantia devértices no grafo.
 
-  Circuitos com muitos controles podem exigir vértices adicionais para representar todos os cenários possíveis.
-
-  \begin{alertblock}{Hipótese}
-    A estrutura deve ser eficiente em circuitos com padrões repetidos e poucos controles.
-  \end{alertblock}
 \end{frame}
 
 \begin{frame}{Implementação no Ket}
-  Os algoritmos necessários foram implementados em Rust e integrados ao código-fonte do Ket.
+  Os algoritmos necessários foram implementados em Rust se baseando em propostas do QMDD na literatura
 
   \begin{columns}[t]
     \begin{column}{.48\textwidth}
-      \begin{block}{Criação e aplicação}
+      \begin{block}{Para o Ket}
         \begin{itemize}
-          \item Normalização.
-          \item Adição de arestas.
+          \item Construção de portas controladas.
           \item Multiplicação de QMDDs.
-          \item Portas controladas.
+          \item Simulação forte
         \end{itemize}
       \end{block}
     \end{column}
     \begin{column}{.48\textwidth}
-      \begin{block}{Otimizações}
+      \begin{block}{Necessário internamente}
         \begin{itemize}
           \item Identificação de vértices duplicados.
           \item Memoização de operações entre arestas.
+          \item Adição de arestas.
+          \item Normalização.
         \end{itemize}
       \end{block}
     \end{column}
@@ -261,7 +343,7 @@
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Medição e simulação forte}
+\begin{frame}{Simulação forte e cálculo de probabilidade}
   \textbf{Recuperação do vetor de amplitudes}
   \begin{itemize}
     \item Percorrer todos os caminhos da aresta inicial ao terminal.
@@ -269,7 +351,15 @@
     \item Associar o produto ao estado correspondente da base computacional.
   \end{itemize}
 
-  \textbf{Medição destrutiva}
+  \textbf{Cálculo de probabilidade}
+  \begin{itemize}
+    \item Somar a probabilidade acumulada de cada vértice do qubit
+    \item Acumular a probabilidade da subárvore de cada vértice do qubit
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Medição}
+\textbf{Medição destrutiva}
   \[
     M_0=
     \begin{bmatrix}
@@ -283,17 +373,19 @@
       0&1
     \end{bmatrix}.
   \]
-
-  Aplicar $M_0$ ou $M_1$ e renormalizar o estado colapsado.
+  
+  \begin{itemize}
+    \item Aplicar $M_0$ ou $M_1$ para \ket{0} ou \ket{1} respectivamente
+    \item Renormalizar o estado de acordo com a probabilidade calculada previamente
+  \end{itemize}
 \end{frame}
 
 \begin{frame}{Testes da implementação}
   \begin{itemize}
     \item Avaliação manual de circuitos pequenos.
-    \item Criação de estados de Bell.
+    \item Criação de estados de Bell e colapso do estado entrelaçado.
     \item Circuito de três qubits com controles em posições diferentes do alvo.
     \item Medição sucessiva de um mesmo qubit.
-    \item Medição independente de diferentes qubits em superposição.
   \end{itemize}
 
   \begin{exampleblock}{Validação}
@@ -303,18 +395,24 @@
 
 \begin{frame}{Experimentos realizados}
   Comparação entre:
-  \begin{itemize}
-    \item simulador QMDD;
-    \item simulador denso;
-    \item simulador esparso.
-  \end{itemize}
-
-  Algoritmos:
-  \begin{itemize}
-    \item Grover;
-    \item FALQON;
-    \item Estimação de Fase Quântica.
-  \end{itemize}
+  \begin{columns}[c]
+    \begin{column}{.48\textwidth}
+      Simuladores
+      \begin{itemize}
+        \item QMDD;
+        \item Denso;
+        \item Esparso.
+      \end{itemize}
+    \end{column}
+    \begin{column}{.48\textwidth}
+      Algoritmos:
+      \begin{itemize}
+        \item Grover;
+        \item FALQON;
+        \item Estimação de Fase Quântica.
+      \end{itemize}
+    \end{column}
+  \end{columns}
 
   Dois tipos de variação:
   \begin{enumerate}
@@ -329,24 +427,11 @@
   \end{block}
 
   \begin{block}{FALQON}
-    Otimização por feedback aplicada ao problema Max-Cut. Possui menos controles que Grover.
+    Otimização por feedback aplicada ao problema Max-Cut. Possui menos controles que Grover e utiliza sucessivamente portas controladas sobre os mesmos qubits.
   \end{block}
 
   \begin{block}{Estimação de Fase Quântica}
     Estima a fase de um operador e combina portas controladas com a Transformada Quântica de Fourier.
-  \end{block}
-\end{frame}
-
-\begin{frame}{Variação do número de qubits}
-  \begin{enumerate}
-    \item Começar com uma quantidade mínima de qubits.
-    \item Executar a simulação dentro do limite de tempo.
-    \item Incrementar o número de qubits após o sucesso.
-    \item Avançar para a próxima combinação quando o limite for ultrapassado.
-  \end{enumerate}
-
-  \begin{block}{Ambiente}
-    As mesmas execuções foram organizadas sequencialmente para reduzir a interferência entre simuladores.
   \end{block}
 \end{frame}
 
@@ -363,7 +448,7 @@
     \includegraphics[width=.86\textwidth,height=.68\textheight,keepaspectratio]{falqon_by_qubits.png}
   \end{center}
 
-  Aos 18 qubits, QMDD, denso e esparso tiveram tempos próximos. O QMDD manteve-se competitivo em um intervalo maior que no Grover.
+  Aos 18 qubits, QMDD e esparso tiveram tempos próximos. O QMDD manteve-se competitivo em um intervalo maior que no Grover.
 \end{frame}
 
 \begin{frame}{Resultado --- Estimação de Fase Quântica}
@@ -417,6 +502,27 @@
   \begin{block}{LIMDD}
     Estender o trabalho para o \emph{Local Invertible Map Decision Diagram}, que usa matrizes invertíveis locais nas arestas.
   \end{block}
+\end{frame}
+
+\begin{frame}{Referências}
+  \begin{thebibliography}{9}
+
+    \bibitem{nisq}
+      Michael A. Nielsen e Isaac L. Chuang.
+      \emph{Quantum Computation and Quantum Information}.
+      Cambridge University Press, 2010.
+
+    \bibitem{qmdd}
+      D. Michael Miller e Mitchell A. Thornton.
+      \emph{QMDD: A Decision Diagram Structure for Representing and
+      Manipulating Quantum Circuits}.
+      International Workshop on Spectral Logic and Applications, 2006.
+
+    \bibitem{ket}
+      \emph{Ket Quantum Programming Platform}.
+      Documentação oficial da biblioteca de programação quântica.
+
+  \end{thebibliography}
 \end{frame}
 
 \contato{Contato: \\ \url{gabriel.sartori@grad.ufsc.br}}
